@@ -10,7 +10,17 @@ const viewName = 'new'
 const DarkCrystalNew = require(`./${viewName}`)
 
 const opts = {
-  scuttle: {},
+  scuttle: {
+    async: {
+      performRitual: (opts, cb) => setTimeout(
+        () => {
+          console.log('Dummy ritual!', opts)
+          cb(null, opts)
+        },
+        1000
+      )
+    }
+  },
   suggest: {
     about: () => {}
   },

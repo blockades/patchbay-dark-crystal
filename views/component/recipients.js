@@ -9,7 +9,7 @@ function Recipients (opts) {
     i18n
   } = opts
 
-  return h('Recipients', [
+  return h('DarkCrystalRecipients', [
     map(state.recps, recp => Recipient({ recp, avatar })),
     RecipientInput({ state, suggest, i18n })
   ])

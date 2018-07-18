@@ -1,31 +1,42 @@
 DarkCrystalNew {
-  font-family: monospace
+  font-family: sans, sans-serif, arial
+  font-size: 1rem
+  color: #fff
+  background: #000
+
+  width: 50rem
+  min-height: 32rem
 
   h1 {
     font-size: 1rem
+    text-transform: uppercase
+    letter-spacing: 0.4rem
+
+    padding: 2rem
+    padding-bottom: 1rem
+    margin: 0
+  }
+
+  section { 
+    padding: 1rem 2rem
   }
 
   section.inputs {
-    margin-bottom: 2rem
-
     display: grid
     grid-gap: 1rem
 
     div {
       display: grid
-      grid-template-columns: 7rem auto
+      grid-template-columns: 7.5rem auto
       align-items: center
 
       label {
-        colour: purple
-      }
-
-      input {
-        padding: .5rem
-      }
-      textarea {
-        padding: .5rem
-      }
+        font-size: .8rem
+        text-transform: uppercase
+        letter-spacing: .1rem
+      } 
+      input { }
+      textarea { min-height: 8rem }
     }
   }
 
@@ -34,6 +45,39 @@ DarkCrystalNew {
     grid-template-columns: auto auto
     grid-gap: 1rem
 
+    padding-bottom: 2rem
+
     justify-content: end
   }
+
+  section.errors {
+    background: #750c37
+
+    display: grid
+    grid-template-columns: 7.5rem auto
+    align-items: center
+  }
+
+  (input) {
+    $DarkCrystalInputs
+  }
+
+  (textarea) {
+    $DarkCrystalInputs
+    font-family: Courier, sans, sans-serif
+    line-height: 1.4
+  }
+}
+
+$DarkCrystalInputs {
+  font-family: sans, sans-serif, arial
+  font-size: 1rem
+  color: #fff
+  ::placeholder { color: #8d8a8e }
+
+  background: #2f1935
+  padding: .5rem
+  border: none
+
+  :focus { outline: none }
 }
