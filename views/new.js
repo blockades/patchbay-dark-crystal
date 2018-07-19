@@ -1,15 +1,16 @@
-const { h, Struct, Value, Array: MutantArray, computed, when, map, resolve } = require('mutant')
+const { h, Struct, Value, Array: MutantArray, computed, when, watch, map, resolve } = require('mutant')
 const Recipients = require('./component/recipients')
+const Errors = require('./component/errors')
 
 const MIN_RECPS = 2
 
 function DarkCrystalNew (opts) {
   const {
     scuttle,
-    afterRitual = console.log,
     suggest,
     avatar,
-    i18n
+    afterRitual = console.log,
+    onCancel = console.log
   } = opts
 
   const initialState = {
@@ -17,13 +18,17 @@ function DarkCrystalNew (opts) {
     secret: '',
     recps: MutantArray([]),
     quorum: undefined,
-    showErrors: false
+    showErrors: false,
+    performingRitual: false
   }
   const state = Struct(initialState)
 
   const errors = Struct({
     validation: computed(state, checkForErrors),
     ritual: Value()
+  })
+  watch(errors.validation, errors => {
+    if (!Object.keys(errors).length) state.showErrors.set(false)
   })
 
   return h('DarkCrystalNew', [
@@ -32,7 +37,7 @@ function DarkCrystalNew (opts) {
       h('div.name', [
         h('label.name', 'Name'),
         h('input.name', {
-          placeholder: 'Name this crystal',
+          placeholder: 'name this crystal',
           value: state.crystalName,
           'ev-input': ev => state.crystalName.set(ev.target.value)
         })
@@ -40,93 +45,79 @@ function DarkCrystalNew (opts) {
       h('div.secret', [
         h('label', 'Secret'),
         h('textarea', {
-          placeholder: "The secret you're going to shard",
+          placeholder: 'your secret',
           value: state.secret,
           'ev-input': ev => state.secret.set(ev.target.value)
         })
       ]),
       h('div.recps', [
         h('label.recps', 'Custodians'),
-        Recipients({ state, suggest, avatar, i18n })
+        Recipients({ state, suggest, avatar })
       ]),
       h('div.quorum', [
         h('label.quorum', 'Quorum'),
-        h('input', {
+        h('input.quorum', {
           type: 'number',
           min: MIN_RECPS,
           steps: 1,
           value: state.quorum,
-          placeholder: 'min number of shards to retrieve secret',
+          placeholder: 'number of shards recover',
           'ev-input': ev => state.quorum.set(Number(ev.target.value) || undefined)
         })
       ])
     ]),
-    h('section.actions', [
-      h('button -subtle', 'Cancel'),
-      when(errors.validation,
-        h('button -subtle', { 'ev-click': () => state.showErrors.set(true) }, 'Perform Ritual'),
-        h('button -primary', { 'ev-click': () => performRitual(state) }, 'Perform Ritual')
-      )
-    ]),
-    when(state.showErrors, ValidationErrors(errors)),
-    when(errors.ritual, RitualErrors(errors))
+    h('section.actions', when(state.performingRitual,
+      h('i.fa.fa-spinner.fa-pulse'),
+      [
+        h('button -subtle', { 'ev-click': () => { state.set(initialState); onCancel() } }, 'Cancel'),
+        when(errors.validation,
+          h('button -subtle', { 'ev-click': () => state.showErrors.set(true) }, 'Perform Ritual'),
+          h('button -primary', { 'ev-click': () => performRitual(state) }, 'Perform Ritual')
+        )
+      ]
+    )),
+    when(state.showErrors,
+      h('section.errors.-validation', [
+        h('div.spacer'),
+        Errors('The ritual ingredients need tuning:', errors.validation)
+      ])
+    ),
+    when(errors.ritual,
+      h('section.errors.-ritual', [
+        h('div.spacer'),
+        Errors('Something went wrong with the ritual', errors.ritual)
+      ])
+    )
   ])
 
   function performRitual (state) {
-    const { name, secret, recps, quorum } = resolve(state)
+    const { crysalName: name, secret, recps, quorum } = resolve(state)
 
-    scuttle.async.performRitutal({ name, secret, recps, quorum }, (err, data) => {
-      // NOTE - some testing errors
-      // const err = 'missing name'
-      err = ['missing name', 'recipients not all valid']
-      // const err = null
+    state.performingRitual.set(true)
+
+    scuttle.async.performRitual({ name, secret, recps, quorum }, (err, data) => {
+      // for testing errors, uncomment:
+      // err = ['missing name', 'recipients not all valid']
+
       if (err) {
-        // display the error
-        state.set(initialState)
+        state.performingRitual.set(false)
+        errors.ritual.set(err)
         return
       }
 
-      // reset the state
       afterRitual(err, data)
+      state.set(initialState)
     })
-
-    // TODO - fill in once scuttle-dark-crystal api resolved
   }
-}
-
-function ValidationErrors (errors) {
-  return computed(errors.validation, errors => {
-    errors = Object.keys(errors)
-      .map(k => errors[k]) // values
-      .map(v => v.toString())
-
-    return h('section.errors.-validation', [
-      h('div.spacer'),
-      h('div', [
-        'The following need ammending before performing the ritual:',
-        h('ul', map(errors, e => h('li', e)))
-      ])
-    ])
-  })
-}
-function RitualErrors (errors) {
-  return computed(errors.ritual, errors => {
-    if (!Array.isArray(errors)) errors = [errors]
-
-    return h('section.errors.-ritual', [
-      h('div', 'Error(s) performing ritual:'),
-      h('ul', errors.map(toString).map(e => h('li', e)))
-    ])
-  })
 }
 
 function checkForErrors ({ crystalName, secret, recps, quorum }) {
   const err = {}
-  if (!crystalName) err.crystalName = 'name: required'
-  if (!secret) err.secret = 'secret: required'
-  if (recps.length < MIN_RECPS) err.recps = `custodians: you need to offer at least ${MIN_RECPS}`
-  if (recps.length < quorum) err.quorum = 'quorum: you need more custodians, or a lower quorum.'
-  if (quorum !== Math.floor(quorum)) err.quorumInt = 'quorum: must be a whole number'
+  if (!crystalName) err.name = 'required'
+  if (!secret) err.secret = 'required'
+  if (recps.length < MIN_RECPS) err.custodians = `you need to offer at least ${MIN_RECPS}`
+  if (recps.length < quorum) err.quorum = 'you need more custodians, or a lower quorum.'
+  if (quorum !== Math.floor(quorum)) err.quorum = 'must be a whole number' // will over-write the above message
 
   if (Object.keys(err).length) return err
   else return false

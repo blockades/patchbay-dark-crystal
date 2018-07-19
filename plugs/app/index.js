@@ -1,5 +1,6 @@
 const nest = require('depnest')
 const { h, Value } = require('mutant')
+// const Scuttle = require('scuttle-dark-crystal')
 const DarkCrystalNew = require('../../views/new')
 
 exports.gives = nest({
@@ -12,10 +13,10 @@ exports.needs = nest({
   'about.html.avatar': 'first',
   'app.html.modal': 'first',
   'app.sync.goTo': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'sbot.obs.connection': 'first'
 })
 
-// TODO ?? extract a module patchbay-devtools ?
 exports.create = function (api) {
   return nest({
     'app.html.menuItem': menuItem,
@@ -30,23 +31,32 @@ exports.create = function (api) {
   }
 
   function darkCrystalPage (location) {
-    const newOpen = Value(false)
-    const newModal = api.app.html.modal(
-      DarkCrystalNew({
-        scuttle: () => {},
-        suggest: {
-          about: api.about.async.suggest
-        },
-        avatar: api.about.html.avatar,
-        i18n: i => i
-      }),
-      { isOpen: newOpen }
-    )
+
+    // const scuttle = Scuttle(api.sbot.obs.connection)
+    // TODO - install actual scuttle-dark-crystal
+    const scuttle = {
+      async: {
+        performRitual: (opts, cb) => setTimeout(() => cb(null, opts), 1000)
+      }
+    }
+    const form = DarkCrystalNew({
+      scuttle,
+      onCancel: () => formOpen.set(false),
+      afterRitual: (err, data) => {
+        if (err) return
+        formOpen.set(false)
+        console.log('ritual complete', data)
+      },
+      suggest: { about: api.about.async.suggest },
+      avatar: api.about.html.avatar
+    })
+    const formOpen = Value(false)
+    const modal = api.app.html.modal(form, { isOpen: formOpen })
 
     return h('DarkCrystal', { title: '/dark-crystal' }, [
-      newModal,
+      modal,
       h('h1', 'Dark Crystal'),
-      h('button -primary', { 'ev-click': () => newOpen.set(true) }, 'New'),
+      h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
       h('section', [
         h('h2', 'queries (temp)'),
         h('a', { href: '#', 'ev-click': goToAll }, 'All'),

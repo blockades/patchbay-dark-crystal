@@ -6,12 +6,11 @@ function Recipients (opts) {
     state,
     suggest,
     avatar,
-    i18n
   } = opts
 
   return h('DarkCrystalRecipients', [
     map(state.recps, recp => Recipient({ recp, avatar })),
-    RecipientInput({ state, suggest, i18n })
+    RecipientInput({ state, suggest })
   ])
 }
 
@@ -30,11 +29,11 @@ function Recipient ({ recp, avatar }) {
   ])
 }
 
-function RecipientInput ({ state, suggest, i18n }) {
+function RecipientInput ({ state, suggest }) {
   const { recps } = state
 
   const input = h('input', {
-    placeholder: i18n('recipients.action.addMoreRecps')
+    placeholder: 'those you trust to gaurd your secret'
   })
 
   var boxActive = false
