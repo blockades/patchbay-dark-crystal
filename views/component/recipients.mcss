@@ -1,0 +1,62 @@
+$RecpientBackground {
+  color: #fff
+
+  background: #2f1935
+}
+
+$RecipientCard {
+  background-color: #fff
+  color: #222
+}
+
+DarkCrystalRecipients {
+  $RecpientBackground
+  flex-grow: 1
+  min-height: 3.8rem
+
+  /* padding-left: .5rem */
+  /* border: 1px solid gainsboro */
+
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+
+  div.recp {
+    $RecipientCard
+    height: 2.5rem
+    margin: .4rem .5rem
+
+    display: flex
+    align-items: center
+    
+    a {
+      height: 2.5rem
+      img.Avatar { 
+        height: 2.5rem
+        width: 2.5rem
+      }
+    }
+
+    div.name {
+      margin: 0 1rem 0 .5rem
+    }
+  }
+
+  input {
+    flex-grow: 1
+    height: 2.5rem
+    box-sizing: border-box
+
+    color: #fff
+
+    margin-right: 1rem
+    border: none
+    outline: none
+    box-shadow: none
+    background: none
+
+    ::placeholder { color: #8d8a8e }
+  }
+}
+
+
