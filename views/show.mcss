@@ -1,0 +1,10 @@
+DarkCrystalShow {
+  font-family: sans, sans-serif, arial
+
+  display: grid
+  grid-gap: .5rem
+
+  pre {
+    line-height: 1.3
+  }
+}

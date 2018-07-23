@@ -33,7 +33,7 @@ function RecipientInput ({ state, suggest }) {
   const { recps } = state
 
   const input = h('input', {
-    placeholder: 'those you trust to gaurd your secret'
+    placeholder: 'those you trust to guard your secret'
   })
 
   var boxActive = false

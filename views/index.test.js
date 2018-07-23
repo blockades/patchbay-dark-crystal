@@ -17,9 +17,9 @@ const names = [ 'dark crystal core', 'MMT longterm wallet', 'Protozoa etherwalle
 pull(
   pull.values(names),
   pull.map(name => {
-    return {type: 'dark-crystal/root', version: '1.0.0', name}
+    return {type: 'dark-crystal/root', version: '1.0.0', name, recps: [server.id]}
   }),
-  pull.asyncMap((content, cb) => server.private.publish(content, [server.id], cb)),
+  pull.asyncMap((content, cb) => server.private.publish(content, content.recps, cb)),
   pull.collect((err, data) => {
     console.log(err, data)
   })

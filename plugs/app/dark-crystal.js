@@ -1,7 +1,9 @@
 const nest = require('depnest')
 const { h, Value } = require('mutant')
+const pull = require('pull-stream')
 // const Scuttle = require('scuttle-dark-crystal')
 const DarkCrystalIndex = require('../../views/index')
+const DarkCrystalShow = require('../../views/show')
 const DarkCrystalNew = require('../../views/new')
 
 exports.gives = nest({
@@ -32,14 +34,10 @@ exports.create = function (api) {
   }
 
   function darkCrystalPage (location) {
-
-    // const scuttle = Scuttle(api.sbot.obs.connection)
     // TODO - install actual scuttle-dark-crystal
-    const scuttle = {
-      async: {
-        performRitual: (opts, cb) => setTimeout(() => cb(null, opts), 1000)
-      }
-    }
+    // const scuttle = Scuttle(api.sbot.obs.connection)
+    const scuttle = fakeScuttle()
+
     const form = DarkCrystalNew({
       scuttle,
       onCancel: () => formOpen.set(false),
@@ -56,13 +54,13 @@ exports.create = function (api) {
 
     return h('DarkCrystal', { title: '/dark-crystal' }, [
       modal,
-      h('h1', 'Dark Crystal'),
+      h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      h('section', [
-        DarkCrystalIndex()
+      h('section.index', [
+        DarkCrystalIndex({ scuttle })
       ]),
-      h('section', [
-        h('h2', 'queries (temp)'),
+      h('section.queries', [
+        h('strong', 'queries:'),
         h('a', { href: '#', 'ev-click': goToAll }, 'All'),
         ' | ',
         h('a', { href: '#', 'ev-click': goToMyRoots }, 'My roots')
@@ -99,5 +97,23 @@ exports.create = function (api) {
       }
     }]
     return api.app.sync.goTo({ page: 'query', initialQuery })
+  }
+
+  function fakeScuttle () {
+    return {
+      async: {
+        performRitual: (opts, cb) => setTimeout(() => cb(null, opts), 1000)
+      },
+      pull: {
+        roots: () => pull.values([
+          { key: 'bobo', value: {timestamp: new Date(2018, 6, 4), content: { name: 'My first wallet backup' }} },
+          { key: 'bobo', value: {timestamp: new Date(), content: { name: 'Protozoa wallet' }} }
+        ]),
+        backlinks: () => pull.values([
+          { key: 'bobo', value: {content: { shard: 'abc-123' }} },
+          { key: 'bobo', value: {content: { shard: 'doop-boop' }} }
+        ])
+      }
+    }
   }
 }

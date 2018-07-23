@@ -1,7 +1,7 @@
 $RecpientBackground {
   color: #fff
 
-  background: #2f1935
+  background: rebeccapurple
 }
 
 $RecipientCard {
@@ -55,7 +55,7 @@ DarkCrystalRecipients {
     box-shadow: none
     background: none
 
-    ::placeholder { color: #8d8a8e }
+    ::placeholder { color: #ccbcc7 }
   }
 }
 

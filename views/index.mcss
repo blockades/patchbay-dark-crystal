@@ -7,11 +7,11 @@ DarkCrystalIndex {
   div.crystal {
     color: white
     letter-spacing: 1px
-    background: mediumpurple
+    background: deeppink
 
     cursor: pointer
 
-    padding: .5rem
+    padding: .5rem 1rem
 
     display: grid
     grid-template-columns: auto auto
@@ -27,7 +27,7 @@ DarkCrystalIndex {
 
     :hover {
       transition: background .5s ease-in
-      background: purple
+      background: rebeccapurple
     }
   }
 }

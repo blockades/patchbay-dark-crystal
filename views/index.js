@@ -9,7 +9,7 @@ function DarkCrystalIndex (opts) {
 
   const roots = getRoots()
   return h('DarkCrystalIndex', [
-    map(roots, msg => Root(msg), { comparer })
+    map(roots, Root, { comparer })
   ])
 
   function Root (msg) {
