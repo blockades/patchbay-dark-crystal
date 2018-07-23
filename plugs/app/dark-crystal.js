@@ -1,6 +1,7 @@
 const nest = require('depnest')
 const { h, Value } = require('mutant')
 // const Scuttle = require('scuttle-dark-crystal')
+const DarkCrystalIndex = require('../../views/index')
 const DarkCrystalNew = require('../../views/new')
 
 exports.gives = nest({
@@ -57,6 +58,9 @@ exports.create = function (api) {
       modal,
       h('h1', 'Dark Crystal'),
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
+      h('section', [
+        DarkCrystalIndex()
+      ]),
       h('section', [
         h('h2', 'queries (temp)'),
         h('a', { href: '#', 'ev-click': goToAll }, 'All'),

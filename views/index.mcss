@@ -1,0 +1,33 @@
+DarkCrystalIndex {
+  font-family: sans, sans-serif, arial
+
+  display: grid
+  grid-gap: .5rem
+
+  div.crystal {
+    color: white
+    letter-spacing: 1px
+    background: mediumpurple
+
+    cursor: pointer
+
+    padding: .5rem
+
+    display: grid
+    grid-template-columns: auto auto
+    justify-content: space-between
+    align-items: center
+    
+    div.name { }
+    div.started {
+      font-family: monospace
+    }
+    
+    transition: background 1s ease-in
+
+    :hover {
+      transition: background .5s ease-in
+      background: purple
+    }
+  }
+}
