@@ -7,6 +7,7 @@ DarkCrystal {
   grid-gap: 1rem
 
   width: 100%
+  overflow-y: scroll
 
   h1 {
     text-transform: uppercase
@@ -32,5 +33,6 @@ DarkCrystal {
     margin-bottom: 2rem
 
     strong { margin-right: .5rem }
+    a { color: rebeccapurple }
   }
 }

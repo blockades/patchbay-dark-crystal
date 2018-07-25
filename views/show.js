@@ -2,12 +2,9 @@ const pull = require('pull-stream')
 const { h, Array: MutantArray, map, throttle } = require('mutant')
 
 function DarkCrystalShow ({ root, scuttle }) {
-  const { name, version } = root.value.content
-  const published = new Date(root.value.timestamp).toLocaleDateString()
-
   const backlinks = getBacklinks()
+
   return h('DarkCrystalShow', [
-    h('div', [name, ' - ', version, ' - ', published]),
     map(backlinks, Msg, { comparer })
   ])
 
@@ -18,7 +15,7 @@ function DarkCrystalShow ({ root, scuttle }) {
   function getBacklinks () {
     const store = MutantArray([])
     pull(
-      scuttle.pull.backlinks(root.key, { live: true }),
+      scuttle.root.pull.backlinks(root.key, { live: true }),
       pull.filter(m => !m.sync),
       pull.drain(m => store.push(m))
     )

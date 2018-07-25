@@ -5,29 +5,31 @@ DarkCrystalIndex {
   grid-gap: .5rem
 
   div.crystal {
-    color: white
-    letter-spacing: 1px
-    background: deeppink
+    div.overview {
+      color: white
+      letter-spacing: 1px
+      background: deeppink
 
-    cursor: pointer
+      cursor: pointer
 
-    padding: .5rem 1rem
+      padding: .5rem 1rem
 
-    display: grid
-    grid-template-columns: auto auto
-    justify-content: space-between
-    align-items: center
-    
-    div.name { }
-    div.started {
-      font-family: monospace
-    }
-    
-    transition: background 1s ease-in
+      display: grid
+      grid-template-columns: auto auto
+      justify-content: space-between
+      align-items: center
+      
+      div.name { }
+      div.started {
+        font-family: monospace
+      }
+      
+      transition: background 1s ease-in
 
-    :hover {
-      transition: background .5s ease-in
-      background: rebeccapurple
+      :hover {
+        transition: background .5s ease-in
+        background: rebeccapurple
+      }
     }
   }
 }

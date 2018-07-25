@@ -1,9 +1,10 @@
 const nest = require('depnest')
 const { h, Value } = require('mutant')
 const pull = require('pull-stream')
-// const Scuttle = require('scuttle-dark-crystal')
+const Scuttle = require('scuttle-dark-crystal')
+
 const DarkCrystalIndex = require('../../views/index')
-const DarkCrystalShow = require('../../views/show')
+// const DarkCrystalShow = require('../../views/show')
 const DarkCrystalNew = require('../../views/new')
 
 exports.gives = nest({
@@ -34,26 +35,12 @@ exports.create = function (api) {
   }
 
   function darkCrystalPage (location) {
-    // TODO - install actual scuttle-dark-crystal
-    // const scuttle = Scuttle(api.sbot.obs.connection)
-    const scuttle = fakeScuttle()
+    const scuttle = Scuttle(api.sbot.obs.connection)
 
-    const form = DarkCrystalNew({
-      scuttle,
-      onCancel: () => formOpen.set(false),
-      afterRitual: (err, data) => {
-        if (err) return
-        formOpen.set(false)
-        console.log('ritual complete', data)
-      },
-      suggest: { about: api.about.async.suggest },
-      avatar: api.about.html.avatar
-    })
-    const formOpen = Value(false)
-    const modal = api.app.html.modal(form, { isOpen: formOpen })
+    const { formModal, formOpen } = Form(scuttle)
 
     return h('DarkCrystal', { title: '/dark-crystal' }, [
-      modal,
+      formModal,
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
       h('section.index', [
@@ -66,6 +53,24 @@ exports.create = function (api) {
         h('a', { href: '#', 'ev-click': goToMyRoots }, 'My roots')
       ])
     ])
+  }
+
+  function Form (scuttle) {
+    const form = DarkCrystalNew({
+      scuttle,
+      onCancel: () => formOpen.set(false),
+      afterRitual: (err, data) => {
+        if (err) return
+        formOpen.set(false)
+        console.log('ritual complete', data)
+      },
+      suggest: { about: api.about.async.suggest },
+      avatar: api.about.html.avatar
+    })
+    const formOpen = Value(false)
+    const formModal = api.app.html.modal(form, { isOpen: formOpen })
+
+    return { formModal, formOpen }
   }
 
   function goToAll (ev) {

@@ -91,14 +91,11 @@ function DarkCrystalNew (opts) {
   ])
 
   function performRitual (state) {
-    const { crysalName: name, secret, recps, quorum } = resolve(state)
+    const { crystalName: name, secret, recps, quorum } = resolve(state)
 
     state.performingRitual.set(true)
 
-    scuttle.async.performRitual({ name, secret, recps, quorum }, (err, data) => {
-      // for testing errors, uncomment:
-      // err = ['missing name', 'recipients not all valid']
-
+    scuttle.share.async.share({ name, secret, recps, quorum }, (err, data) => {
       if (err) {
         state.performingRitual.set(false)
         errors.ritual.set(err)
@@ -115,6 +112,7 @@ function checkForErrors ({ crystalName, secret, recps, quorum }) {
   const err = {}
   if (!crystalName) err.name = 'required'
   if (!secret) err.secret = 'required'
+  if (secret.length > 1350) err.secret = 'your secret must be shorter'
   if (recps.length < MIN_RECPS) err.custodians = `you need to offer at least ${MIN_RECPS}`
   if (recps.length < quorum) err.quorum = 'you need more custodians, or a lower quorum.'
   if (quorum !== Math.floor(quorum)) err.quorum = 'must be a whole number' // will over-write the above message

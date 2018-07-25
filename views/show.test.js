@@ -53,8 +53,10 @@ function addShards (root, cb = console.log) {
 // TODO replace with scuttle-dark-crystal
 function Scuttle (server) {
   return {
-    pull: {
-      backlinks: buildPullBacklinks(server)
+    root: {
+      pull: {
+        backlinks: buildPullBacklinks(server)
+      }
     }
   }
 }

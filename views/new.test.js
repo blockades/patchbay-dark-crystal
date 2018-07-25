@@ -8,14 +8,16 @@ const View = require(`./${viewName}`)
 
 const opts = {
   scuttle: {
-    async: {
-      performRitual: (opts, cb) => setTimeout(
-        () => {
-          console.log('Dummy ritual!', opts)
-          cb(null, opts)
-        },
-        1000
-      )
+    share: {
+      async: {
+        share: (opts, cb) => setTimeout(
+          () => {
+            console.log('Dummy ritual!', opts)
+            cb(null, opts)
+          },
+          1000
+        )
+      }
     }
   },
   suggest: {
