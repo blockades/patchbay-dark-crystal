@@ -1,5 +1,6 @@
 const { h, map } = require('mutant')
 const addSuggest = require('suggest-box')
+const Recipient = require('./recipient')
 
 function Recipients (opts) {
   const {
@@ -17,17 +18,6 @@ function Recipients (opts) {
 module.exports = Recipients
 
 const MIN_RECPS = 0
-
-function Recipient ({ recp, avatar }) {
-  if (typeof recp === 'string') { // assume it's myId
-    return h('div.recp', [ avatar(recp, 'tiny') ])
-  }
-
-  return h('div.recp', [
-    avatar(recp.link, 'tiny'),
-    h('div.name', recp.name)
-  ])
-}
 
 function RecipientInput ({ state, suggest }) {
   const { recps } = state
