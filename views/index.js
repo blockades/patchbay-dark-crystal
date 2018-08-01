@@ -5,10 +5,13 @@ const DarkCrystalShow = require('./show')
 
 function DarkCrystalIndex (opts) {
   const {
-    scuttle
+    scuttle,
+    avatar,
+    modal
   } = opts
 
   const roots = getRoots()
+
   return h('DarkCrystalIndex', [
     map(roots, Root, { comparer })
   ])
@@ -16,13 +19,18 @@ function DarkCrystalIndex (opts) {
   function Root (msg) {
     const show = Value(false)
 
-    return h('div.crystal', { 'ev-click': () => show.set(!show()) }, [
-      h('div.overview', [
+    return h('div.crystal', [
+      h('div.overview', { 'ev-click': () => show.set(!show()) }, [
         h('div.name', msg.value.content.name),
         h('div.started', new Date(msg.value.timestamp).toLocaleDateString())
       ]),
       when(show,
-        DarkCrystalShow({ root: msg, scuttle })
+        DarkCrystalShow({
+          scuttle,
+          root: msg,
+          avatar,
+          modal,
+        })
       )
     ])
   }
@@ -30,7 +38,7 @@ function DarkCrystalIndex (opts) {
   function getRoots () {
     const store = MutantArray([])
     pull(
-      scuttle.root.pull.roots({ live: true }),
+      scuttle.root.pull.mine({ live: true }),
       pull.filter(m => !m.sync),
       pull.drain(root => store.insert(root, 0))
     )
