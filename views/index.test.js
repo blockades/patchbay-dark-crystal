@@ -2,6 +2,7 @@
 // npx electro views/index.test.js
 
 const pull = require('pull-stream')
+const Scuttle = require('scuttle-dark-crystal')
 
 const Server = require('./lib/testbot')
 const attachStyles = require('./lib/attachStyles')
@@ -34,31 +35,4 @@ document.body.appendChild(View(opts))
 attachStyles([
   `${viewName}.mcss`
 ])
-
-
-// TODO replace with scuttle-dark-crystal
-function Scuttle (server) {
-  return {
-    pull: {
-      roots: buildPullRoots(server)
-    }
-  }
-}
-
-// TODO extract into scuttle-dark-crystal
-function buildPullRoots (server) {
-  return function pullRoots (opts = {}) {
-    const query = [{
-      $filter: {
-        value: {
-          content: { type: 'dark-crystal/root' }
-        }
-      }
-    }]
-    return pull(
-      server.query.read(Object.assign({}, opts, { query }))
-      // pull.filter(isRoot)
-    )
-  }
-}
 
