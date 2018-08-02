@@ -43,12 +43,7 @@ exports.create = function (api) {
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
       h('section.index', [
-        DarkCrystalIndex({
-          scuttle,
-          routeTo: api.app.sync.goTo,
-          avatar: api.about.html.avatar,
-          modal: api.app.html.modal
-        })
+        DarkCrystalIndex({ scuttle, routeTo: api.app.sync.goTo })
       ]),
       h('section.queries', [
         h('strong', 'queries:'),

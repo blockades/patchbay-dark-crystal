@@ -5,9 +5,7 @@ const { h, Array: MutantArray, map, throttle, Value, when } = require('mutant')
 function DarkCrystalIndex (opts) {
   const {
     scuttle,
-    routeTo,
-    avatar,
-    modal
+    routeTo
   } = opts
 
   const roots = getRoots()
