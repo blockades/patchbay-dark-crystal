@@ -17,9 +17,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const rootId = root.key
 
   const state = Struct({
-    loaded: false,
     hasShards: false,
-    requesting: false,
     showErrors: false,
     requested: false
   })
@@ -28,56 +26,56 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
     requests: Value()
   })
 
-  const requests = getRequests()
   const shards = getShards()
 
-  const warningOpen = Value(false)
-
-  const warningModal = modal(
-    h('Warning', [
-      h('span', 'Are you sure?'),
-      h('button -subtle', { 'ev-click': () => warningOpen.set(false) }, 'Cancel'),
-      h('button -subtle', { 'ev-click': () => sendRequests() }, 'OK'),
-    ]), {
-      isOpen: warningOpen
-    }
-  )
-
-  const buttonWithModal = h('div', [
-    h('button -primary', { 'ev-click': (e) => warningOpen.set(true) }, 'Request'),
-    warningModal
-  ])
-
-  const canRequest = computed(
-    [state.loaded, state.hasShards, state.requesting, state.requested],
-    (loaded, hasShards, requesting, requested) => loaded && hasShards && !requesting && !requested
-  )
-
   return h('DarkCrystalShow', [
-    map(shards, renderShard, { comparer }),
-    when(canRequest, buttonWithModal)
+    map(shards, Shard, { comparer }),
   ])
 
-  function renderShard (msg) {
-    const { recps = [] } = msg.value.content
+  function Shard (msg) {
+    const {
+      request,
+      value: {
+        timestamp,
+        content: {
+          recps = []
+        }
+      }
+    } = msg
+
+    const shard = Struct({
+      requested: Boolean(request),
+      showWarning: false
+    })
 
     return h('Shard', [
       h('i.fa.fa-diamond'),
-      Recipient({ recp: recps[0], avatar })
+      Recipient({ recp: recps[0], avatar }),
+      h('div.created', `Sent on ${new Date(timestamp).toLocaleDateString()}`),
+      Request({ msg, shard })
     ])
   }
 
-  function getRequests () {
-    const store = MutantArray([])
-    pull(
-      scuttle.recover.pull.requests(rootId, { live: true }),
-      pull.filter(m => !m.sync),
-      pull.through(m => resolve(state.requested) ? null : state.requested.set(true)),
-      pull.drain(m => store.push(m))
-    )
-    // How can I get this to be as a result of the query if its { live: true } and there are no records?
-    state.loaded.set(true)
-    return store
+  function Request ({ msg, shard }) {
+    return h('div', [
+      when(resolve(shard.requested),
+        h('div.sent', `Requested on ${new Date(msg.request && msg.request.value && msg.request.value.timestamp).toLocaleDateString()}`)
+      ),
+      when(!resolve(shard.requested),
+        h('div', [
+          h('button -primary', { 'ev-click': (e) => shard.showWarning.set(true) }, 'Request'),
+          modal(
+            h('Warning', [
+              h('span', 'Are you sure?'),
+              h('button -subtle', { 'ev-click': () => shard.showWarning.set(false) }, 'Cancel'),
+              h('button -subtle', { 'ev-click': () => sendRequests() }, 'OK'),
+            ]), {
+              isOpen: shard.showWarning
+            }
+          )
+        ])
+      )
+    ])
   }
 
   function getShards () {
@@ -85,15 +83,29 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
     pull(
       scuttle.shard.pull.byRoot(rootId, { live: true }),
       pull.filter(m => !m.sync),
-      pull.through(m => state.hasShards.set(true)),
-      pull.drain(m => store.push(m))
+      pull.through(shard => state.hasShards.set(true)),
+      pull.asyncMap((shard, callback) => {
+        pull(
+          scuttle.recover.pull.requests(rootId),
+          pull.filter(m => !m.sync),
+          pull.through(request => resolve(state.requested) ? null : state.requested.set(true)),
+          pull.take(1),
+          pull.drain(request => {
+            shard.request = request
+            callback(null, shard)
+          }, () => {
+            callback(null, shard)
+          })
+        )
+      }),
+      pull.drain(shard => store.push(shard))
     )
     return store
   }
 
-  function sendRequests () {
+  function sendRequest (recipients) {
     state.requesting.set(true)
-    scuttle.recover.async.request(rootId, (err, requests) => {
+    scuttle.recover.async.request(rootId, recipients, (err, requests) => {
       if (err) {
         errors.requests.set(err)
         state.requesting.set(false)
