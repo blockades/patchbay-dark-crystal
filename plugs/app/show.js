@@ -11,11 +11,9 @@ exports.gives = nest({
 })
 
 exports.needs = nest({
-  'about.async.suggest': 'first',
   'about.html.avatar': 'first',
   'app.html.modal': 'first',
   'app.sync.goTo': 'first',
-  'keys.sync.id': 'first',
   'sbot.obs.connection': 'first'
 })
 
