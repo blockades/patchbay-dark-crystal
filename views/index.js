@@ -1,11 +1,11 @@
 const pull = require('pull-stream')
 const { h, Array: MutantArray, map, throttle, Value, when } = require('mutant')
 
-const DarkCrystalShow = require('./show')
 
 function DarkCrystalIndex (opts) {
   const {
     scuttle,
+    routeTo,
     avatar,
     modal
   } = opts
@@ -20,18 +20,10 @@ function DarkCrystalIndex (opts) {
     const show = Value(false)
 
     return h('div.crystal', [
-      h('div.overview', { 'ev-click': () => show.set(!show()) }, [
+      h('div.overview', { 'ev-click': () => routeTo({ page: 'dark-crystal/show', root: msg }) }, [
         h('div.name', msg.value.content.name),
         h('div.started', new Date(msg.value.timestamp).toLocaleDateString())
-      ]),
-      when(show,
-        DarkCrystalShow({
-          scuttle,
-          root: msg,
-          avatar,
-          modal,
-        })
-      )
+      ])
     ])
   }
 

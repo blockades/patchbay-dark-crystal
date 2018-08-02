@@ -1,6 +1,9 @@
 module.exports = {
   darkCrystal: {
-    app: require('./app/dark-crystal'),
+    app: {
+      index: require('./app/index'),
+      show: require('./app/show')
+    },
     router: require('./router'),
     styles: require('./styles')
   }
