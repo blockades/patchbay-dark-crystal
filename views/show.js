@@ -28,14 +28,11 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   })
 
   const shards = getShards()
-  const ritual = getRitual()
+  const rituals = getRitual()
 
   return h('DarkCrystalShow', [
     map(shards, Shard, { comparer }),
-    // commented for the sake of anyone viewing
-    // when(pageState.requested,
-    //   ProgressBar(ritual)
-    // )
+    map(rituals, ProgressBar)
   ])
 
   function Shard (shard) {
@@ -111,6 +108,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
           scuttle.recover.pull.requests(rootId),
           pull.filter(m => !m.sync),
           pull.through(request => resolve(pageState.requested) ? null : pageState.requested.set(true)),
+          pull.through(request => console.log(pageState.requested())),
           pull.take(1),
           pull.drain(request => {
             shard.request = request
@@ -126,29 +124,26 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   }
 
   function ProgressBar(ritual) {
-    return when(resolve(ritual),
-      h('progress', { 'style': { 'margin-left': '10px' }, min: 0, max: 1, value: progress })
-    )
+    const { quorum } = getContent(ritual)
+    return h('progress', { 'style': { 'margin-left': '10px' }, min: 0, max: 1, value: (getReplies().getLength() / quorum) })
+  }
 
-    function progress (total) {
-      var store = MutantArray([])
-      // resolving the observable breaks getContent (cause its null)...
-      const { quorum } = getContent(ritual())
-      pull(
-        scuttle.recover.pull.replies(rootId, { live: true }),
-        pull.filter(m => !m.sync),
-        pull.drain(reply => store.push(reply))
-      )
-      return store.getLength() / (quorum || 0)
-    }
+  function getReplies () {
+    var store = MutantArray([])
+    pull(
+      scuttle.recover.pull.replies(rootId, { live: true }),
+      pull.filter(m => !m.sync),
+      pull.drain(reply => store.push(reply))
+    )
+    return store
   }
 
   function getRitual () {
-    const store = Value()
+    const store = MutantArray([])
     pull(
       scuttle.ritual.pull.byRoot(rootId, { live: true }),
       pull.filter(m => !m.sync),
-      pull.drain(ritual => store.set(ritual))
+      pull.drain(ritual => store.push(ritual))
     )
     return store
   }
