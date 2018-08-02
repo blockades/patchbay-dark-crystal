@@ -20,8 +20,11 @@ let params = {
   quorum: 2
 }
 
-setTimeout(() => scuttle.share.async.share(params, (err, data) => {
+scuttle.share.async.share(params, (err, data) => {
   const { root, ritual, shards } = data
+  console.log(["ROOT DETAILS:", "ID", root.key, "NAME", root.value.content.name].join(' '))
+  console.log(["RITUAL DETAILS:", "ID", ritual.key, "QUORUM", ritual.value.content.quorum].join(' '))
+  console.log(["SHARDS:", "IDS", shards.map(s => s.key).join(' | ')].join(' '))
 
   console.log("PRE-POPULATED DATABASE")
 
@@ -34,31 +37,31 @@ setTimeout(() => scuttle.share.async.share(params, (err, data) => {
 
   console.log("VIEW APPENDED")
 
-  setTimeout(() => {
-    pull(
-      pull.values(shards),
-      pull.map(shard => {
-        const { root, recps = [] } = getContent(shard)
-        return {
-          type: 'invite',
-          version: '1',
-          recps: recps,
-          root: root,
-          body: 'gimme gimme gimme'
-        }
-      }),
-      pull.asyncMap((shard, callback) => {
-        scuttle.recover.async.request(root.key, shard.recps, (err, request) => {
-          callback(null, server.private.unbox(request))
-        })
-      }),
-      pull.drain(request => {
+  pull(
+    pull.values(shards),
+    pull.through(s => console.log),
+    pull.map(shard => {
+      const { root, recps = [] } = getContent(shard)
+      return {
+        type: 'invite',
+        version: '1',
+        recps: recps,
+        root: root,
+        body: 'gimme gimme gimme'
+      }
+    }),
+    pull.asyncMap((shard, callback) => {
+      scuttle.recover.async.request(root.key, shard.recps, (err, request) => {
         console.log(request)
+        callback(null, server.private.unbox(request))
       })
-    )
+    }),
+    pull.drain(request => {
+      console.log(request)
+    })
+  )
 
-  }, 800)
-}), 800)
+})
 
 attachStyles([
   `${viewName}.mcss`
