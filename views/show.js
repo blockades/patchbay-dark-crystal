@@ -32,9 +32,10 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
 
   return h('DarkCrystalShow', [
     map(shards, Shard, { comparer }),
-    when(pageState.requested,
-      map([ritual], ProgressBar)
-    )
+    // commented for the sake of anyone viewing
+    // when(pageState.requested,
+    //   ProgressBar(ritual)
+    // )
   ])
 
   function Shard (shard) {
