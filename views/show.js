@@ -12,11 +12,12 @@ const {
 } = require('mutant')
 
 const Recipient = require('./component/recipient')
+const getContent = require('ssb-msg-content')
 
 function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const rootId = root.key
 
-  const state = Struct({
+  const pageState = Struct({
     hasShards: false,
     showErrors: false,
     requested: false
@@ -27,12 +28,16 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   })
 
   const shards = getShards()
+  const ritual = getRitual()
 
   return h('DarkCrystalShow', [
     map(shards, Shard, { comparer }),
+    when(pageState.requested,
+      map([ritual], ProgressBar)
+    )
   ])
 
-  function Shard (msg) {
+  function Shard (shard) {
     const {
       request,
       value: {
@@ -41,9 +46,9 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
           recps = []
         }
       }
-    } = msg
+    } = shard
 
-    const shard = Struct({
+    const state = Struct({
       requested: Boolean(request),
       showWarning: false
     })
@@ -52,30 +57,46 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
       h('i.fa.fa-diamond'),
       Recipient({ recp: recps[0], avatar }),
       h('div.created', `Sent on ${new Date(timestamp).toLocaleDateString()}`),
-      Request({ msg, shard })
+      Request()
     ])
-  }
 
-  function Request ({ msg, shard }) {
-    return h('div', [
-      when(resolve(shard.requested),
-        h('div.sent', `Requested on ${new Date(msg.request && msg.request.value && msg.request.value.timestamp).toLocaleDateString()}`)
-      ),
-      when(!resolve(shard.requested),
-        h('div', [
-          h('button -primary', { 'ev-click': (e) => shard.showWarning.set(true) }, 'Request'),
-          modal(
-            h('Warning', [
-              h('span', 'Are you sure?'),
-              h('button -subtle', { 'ev-click': () => shard.showWarning.set(false) }, 'Cancel'),
-              h('button -subtle', { 'ev-click': () => sendRequest(recps) }, 'OK'),
-            ]), {
-              isOpen: shard.showWarning
-            }
-          )
-        ])
-      )
-    ])
+    function Request () {
+      return h('div', [
+        when(resolve(state.requested),
+          h('div.sent', `Requested on ${new Date(shard.request && shard.request.value && shard.request.value.timestamp).toLocaleDateString()}`)
+        ),
+        when(!resolve(state.requested),
+          h('div', [
+            h('button -primary', { 'ev-click': (e) => state.showWarning.set(true) }, 'Request'),
+            modal(
+              h('Warning', [
+                h('span', 'Are you sure?'),
+                h('button -subtle', { 'ev-click': () => state.showWarning.set(false) }, 'Cancel'),
+                h('button -subtle', { 'ev-click': () => sendRequest(recps) }, 'OK'),
+              ]), {
+                isOpen: state.showWarning
+              }
+            )
+          ])
+        )
+      ])
+    }
+
+    function sendRequest (recipients) {
+      pageState.requesting.set(true)
+      scuttle.recover.async.request(rootId, recipients, (err, requests) => {
+        if (err) {
+          errors.requests.set(err)
+          pageState.requesting.set(false)
+        }
+        afterRequests()
+      })
+    }
+
+    function afterRequests () {
+      pageState.requested.set(true)
+      pageState.requesting.set(false)
+    }
   }
 
   function getShards () {
@@ -83,12 +104,12 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
     pull(
       scuttle.shard.pull.byRoot(rootId, { live: true }),
       pull.filter(m => !m.sync),
-      pull.through(shard => state.hasShards.set(true)),
+      pull.through(shard => pageState.hasShards.set(true)),
       pull.asyncMap((shard, callback) => {
         pull(
           scuttle.recover.pull.requests(rootId),
           pull.filter(m => !m.sync),
-          pull.through(request => resolve(state.requested) ? null : state.requested.set(true)),
+          pull.through(request => resolve(pageState.requested) ? null : pageState.requested.set(true)),
           pull.take(1),
           pull.drain(request => {
             shard.request = request
@@ -103,20 +124,32 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
     return store
   }
 
-  function sendRequest (recipients) {
-    state.requesting.set(true)
-    scuttle.recover.async.request(rootId, recipients, (err, requests) => {
-      if (err) {
-        errors.requests.set(err)
-        state.requesting.set(false)
-      }
-      afterRequests()
-    })
+  function ProgressBar(ritual) {
+    return when(resolve(ritual),
+      h('progress', { 'style': { 'margin-left': '10px' }, min: 0, max: 1, value: progress })
+    )
+
+    function progress (total) {
+      var store = MutantArray([])
+      // resolving the observable breaks getContent (cause its null)...
+      const { quorum } = getContent(ritual())
+      pull(
+        scuttle.recover.pull.replies(rootId, { live: true }),
+        pull.filter(m => !m.sync),
+        pull.drain(reply => store.push(reply))
+      )
+      return store.getLength() / (quorum || 0)
+    }
   }
 
-  function afterRequests () {
-    state.requested.set(true)
-    state.requesting.set(false)
+  function getRitual () {
+    const store = Value()
+    pull(
+      scuttle.ritual.pull.byRoot(rootId, { live: true }),
+      pull.filter(m => !m.sync),
+      pull.drain(ritual => store.set(ritual))
+    )
+    return store
   }
 }
 
