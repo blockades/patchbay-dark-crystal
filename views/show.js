@@ -68,7 +68,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
             h('Warning', [
               h('span', 'Are you sure?'),
               h('button -subtle', { 'ev-click': () => shard.showWarning.set(false) }, 'Cancel'),
-              h('button -subtle', { 'ev-click': () => sendRequests() }, 'OK'),
+              h('button -subtle', { 'ev-click': () => sendRequest(recps) }, 'OK'),
             ]), {
               isOpen: shard.showWarning
             }
