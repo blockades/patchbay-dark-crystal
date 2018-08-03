@@ -27,12 +27,25 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
     requests: Value()
   })
 
-  const shards = getShards()
   const rituals = getRitual()
+  const shards = getShards()
 
   return h('DarkCrystalShow', [
-    map(shards, Shard, { comparer }),
-    map(rituals, ProgressBar)
+    h('section.ritual', [
+      map(rituals, (ritual) => {
+        const { quorum, shards } = getContent(ritual)
+        return h('section.ritual', [
+          h('p', `Quorum required to reassemble: ${quorum}`)
+        ])
+      }),
+      h('h3', 'Progress'),
+      map(rituals, ProgressBar)
+    ]),
+    h('section.shards', [
+      h('div.shard', [
+        map(shards, Shard, { comparer }),
+      ])
+    ]),
   ])
 
   function Shard (shard) {
@@ -51,8 +64,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
       showWarning: false
     })
 
-    return h('Shard', [
-      h('i.fa.fa-diamond'),
+    return h('div.overview', [
       Recipient({ recp: recps[0], avatar }),
       h('div.created', `Sent on ${new Date(timestamp).toLocaleDateString()}`),
       Request()

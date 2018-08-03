@@ -35,4 +35,16 @@ DarkCrystal {
     strong { margin-right: .5rem }
     a { color: rebeccapurple }
   }
+
+  section.header {
+    display: flex
+    text-transform: uppercase
+  }
+}
+
+i.fa {
+  :hover {
+    color: rebeccapurple
+    cursor: pointer
+  }
 }

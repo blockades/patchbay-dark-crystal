@@ -28,7 +28,14 @@ exports.create = function (api) {
     const { name } = getContent(root)
 
     return h('DarkCrystal', { title: `dark-crystal/${name}` }, [
-      h('button -subtle', { 'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }) }, 'Back'),
+      h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
+      h('section.header', [
+        h('i.fa.fa-arrow-left.fa-lg', {
+          'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }),
+          'title': 'Back'
+        }),
+        h('h2', name)
+      ]),
       DarkCrystalShow({
         scuttle,
         root,
