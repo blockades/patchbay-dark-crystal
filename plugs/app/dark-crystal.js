@@ -1,10 +1,9 @@
 const nest = require('depnest')
-const { h, Value } = require('mutant')
-const pull = require('pull-stream')
+const { h, Value, computed } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 
 const DarkCrystalIndex = require('../../views/index')
-// const DarkCrystalShow = require('../../views/show')
+const DarkCrystalFriendsIndex = require('../../views/friends/index')
 const DarkCrystalNew = require('../../views/new')
 
 exports.gives = nest({
@@ -15,11 +14,16 @@ exports.gives = nest({
 exports.needs = nest({
   'about.async.suggest': 'first',
   'about.html.avatar': 'first',
+  'about.obs.name': 'first',
   'app.html.modal': 'first',
   'app.sync.goTo': 'first',
   'keys.sync.id': 'first',
   'sbot.obs.connection': 'first'
 })
+
+// modes
+const MINE = 'My Crystals'
+const FRIENDS = 'Friends'
 
 exports.create = function (api) {
   return nest({
@@ -36,22 +40,43 @@ exports.create = function (api) {
 
   function darkCrystalPage (location) {
     const scuttle = Scuttle(api.sbot.obs.connection)
-
-    const { formModal, formOpen } = Form(scuttle)
+    const mode = Value(MINE)
 
     return h('DarkCrystal', { title: '/dark-crystal' }, [
-      formModal,
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
-      h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      h('section.index', [
-        DarkCrystalIndex({ scuttle })
-      ]),
+      h('section.picker', [MINE, FRIENDS].map(m => {
+        return h('div', {
+          'ev-click': () => mode.set(m),
+          className: computed(mode, mode => mode === m ? '-active' : '')
+        }, m)
+      })),
+      Mine({ mode, scuttle }),
+      Custodian({ mode, scuttle }),
       h('section.queries', [
         h('strong', 'queries:'),
         h('a', { href: '#', 'ev-click': goToAll }, 'All'),
         ' | ',
         h('a', { href: '#', 'ev-click': goToMyRoots }, 'My roots')
       ])
+    ])
+  }
+
+  function Mine ({ mode, scuttle }) {
+    const { formModal, formOpen } = Form(scuttle)
+    return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
+      formModal,
+      h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
+      DarkCrystalIndex({ scuttle })
+    ])
+  }
+
+  function Custodian ({ mode, scuttle }) {
+    return h('section.content', { className: computed(mode, m => m === FRIENDS ? '-active' : '') }, [
+      DarkCrystalFriendsIndex({ 
+        scuttle,
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name 
+      })
     ])
   }
 
@@ -102,23 +127,5 @@ exports.create = function (api) {
       }
     }]
     return api.app.sync.goTo({ page: 'query', initialQuery })
-  }
-
-  function fakeScuttle () {
-    return {
-      async: {
-        performRitual: (opts, cb) => setTimeout(() => cb(null, opts), 1000)
-      },
-      pull: {
-        roots: () => pull.values([
-          { key: 'bobo', value: {timestamp: new Date(2018, 6, 4), content: { name: 'My first wallet backup' }} },
-          { key: 'bobo', value: {timestamp: new Date(), content: { name: 'Protozoa wallet' }} }
-        ]),
-        backlinks: () => pull.values([
-          { key: 'bobo', value: {content: { shard: 'abc-123' }} },
-          { key: 'bobo', value: {content: { shard: 'doop-boop' }} }
-        ])
-      }
-    }
   }
 }

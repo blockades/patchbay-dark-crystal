@@ -29,8 +29,9 @@ function DarkCrystalIndex (opts) {
 
   function getRoots () {
     const store = MutantArray([])
+
     pull(
-      scuttle.root.pull.roots({ live: true }),
+      scuttle.root.pull.mine({ live: true }),
       pull.filter(m => !m.sync),
       pull.drain(root => store.insert(root, 0))
     )

@@ -17,8 +17,9 @@ exports.create = function (api) {
 
   function mcss (sofar = {}) {
     each(contents, (content, [filename]) => {
-      const name = basename(filename)
-      sofar[`dark-crystal-${name}`] = content
+      // const name = basename(filename)
+      // sofar[`dark-crystal-${name}`] = content
+      sofar[`dark-crystal-${filename}`] = content
     })
 
     return sofar
