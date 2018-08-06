@@ -3,8 +3,8 @@ const { h } = require('mutant')
 
 const Timestamp = require('../component/timestamp')
 
-module.exports = function DarkCrystalRequestShow ({ root, scuttle, request }) {
-  if (!request) throw new Error('missing request')
+module.exports = function DarkCrystalRequestShow ({ root, scuttle, msg }) {
+  if (!msg) throw new Error('missing request')
 
   const {
     value: {
@@ -13,7 +13,7 @@ module.exports = function DarkCrystalRequestShow ({ root, scuttle, request }) {
         body
       }
     }
-  } = request
+  } = msg
 
   return h('div.request', [
     Timestamp({

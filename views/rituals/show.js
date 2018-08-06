@@ -2,9 +2,6 @@ const pull = require('pull-stream')
 const { h } = require('mutant')
 
 module.exports = function DarkCrystalRitualShow ({ scuttle, ritual }) {
-  console.log(ritual)
-  if (!ritual) return null
-
   const {
     value: {
       timestamp,
