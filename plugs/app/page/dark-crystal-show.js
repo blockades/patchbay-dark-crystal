@@ -1,10 +1,9 @@
 const nest = require('depnest')
-const { h, Value, Struct } = require('mutant')
-const pull = require('pull-stream')
+const { h } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 const getContent = require('ssb-msg-content')
 
-const DarkCrystalShow = require('../../views/show')
+const DarkCrystalShow = require('../../../views/show')
 
 exports.gives = nest({
   'app.page.darkCrystalShow': true
@@ -24,8 +23,7 @@ exports.create = function (api) {
 
   function darkCrystalShowPage (location) {
     const scuttle = Scuttle(api.sbot.obs.connection)
-    const root = location.root
-    const { name } = getContent(root)
+    const { name } = getContent(location)
 
     return h('DarkCrystal', { title: `dark-crystal/${name}` }, [
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
@@ -38,7 +36,7 @@ exports.create = function (api) {
       ]),
       DarkCrystalShow({
         scuttle,
-        root,
+        root: location,
         routeTo: api.app.sync.goTo,
         avatar: api.about.html.avatar,
         modal: api.app.html.modal

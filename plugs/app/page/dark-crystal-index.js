@@ -1,10 +1,10 @@
 const nest = require('depnest')
-const { h, Value, Struct } = require('mutant')
+const { h, Value } = require('mutant')
 const pull = require('pull-stream')
 const Scuttle = require('scuttle-dark-crystal')
 
-const DarkCrystalIndex = require('../../views/index')
-const DarkCrystalNew = require('../../views/new')
+const DarkCrystalIndex = require('../../../views/index')
+const DarkCrystalNew = require('../../../views/new')
 
 exports.gives = nest({
   'app.html.menuItem': true,

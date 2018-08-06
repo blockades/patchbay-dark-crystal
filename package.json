@@ -28,8 +28,9 @@
     "depnest": "^1.3.0",
     "mutant": "^3.22.1",
     "read-directory": "^3.0.0",
+    "scuttle-dark-crystal": "^0.1.7",
+    "scuttle-inject": "^1.0.3",
     "ssb-msg-content": "^1.0.1",
-    "scuttle-dark-crystal": "^0.1.4",
     "suggest-box": "^2.2.3"
   },
   "devDependencies": {
