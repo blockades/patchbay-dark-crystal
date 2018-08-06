@@ -36,7 +36,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
     computed([store.ritual], (msg) => msg ? DarkCrystalRitualShow({ scuttle, msg }) : null),
     h('section.shards', map(
       store.shards,
-      (msg) => DarkCrystalShardShow({ root, scuttle, avatar, msg: msg }),
+      (msg) => DarkCrystalShardShow({ root, scuttle, modal, avatar, msg: msg }),
       { comparer }
     )),
     h('section.requests', map(
