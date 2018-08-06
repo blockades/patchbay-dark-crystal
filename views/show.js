@@ -70,7 +70,7 @@ function matched (x) {
 
 function match (x) {
   return {
-    on: (pred, fn) => (pred(x) ? matched(fn(x)) : match(x)),
+    on: (pred, fn) => pred(x) ? matched(fn(x)) : match(x),
     otherwise: fn => fn(x),
   }
 }

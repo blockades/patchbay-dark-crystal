@@ -2,6 +2,7 @@ const pull = require('pull-stream')
 const { h, Value } = require('mutant')
 
 module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, state, recps }) {
+  const rootId = root.key
   const warning = Value(false)
 
   return h('div.request', [
@@ -14,14 +15,14 @@ module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, state, 
       h('div.warning', [
         h('span', 'Are you sure?'),
         h('button -subtle', { 'ev-click': () => warning.set(false) }, 'Cancel'),
-        h('button -subtle', { 'ev-click': () => sendRequest(recps) }, 'OK'),
+        h('button -subtle', { 'ev-click': sendRequest }, 'OK'),
       ]), { isOpen: warning }
     )
   }
 
   function sendRequest () {
     state.requesting.set(true)
-    scuttle.recover.async.request(rootId, recipients, (err, requests) => {
+    scuttle.recover.async.request(rootId, recps, (err, requests) => {
       if (err) {
         state.requesting.set(false)
         // render an error
