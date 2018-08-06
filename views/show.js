@@ -14,8 +14,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const rootId = root.key
 
   const store = Struct({
-    ritual: MutantArray([]),
-    // ritual: Value(),
+    ritual: Value(),
     shards: MutantArray([]),
     requests: MutantArray([]),
     replies: MutantArray([])
@@ -26,8 +25,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
     pull.filter(m => !m.sync),
     pull.drain(msg => {
       match(msg)
-        // .on(isRitual, ritual => store.ritual.set(ritual))
-        .on(isRitual, ritual => store.ritual.push(ritual))
+        .on(isRitual, ritual => store.ritual.set(ritual))
         .on(isShard, shard => store.shards.push(shard))
         .on(isInvite, request => store.requests.push(request))
         .on(isReply, reply => store.replies.push(reply))
@@ -35,16 +33,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   )
 
   return h('DarkCrystalShow', [
-    // This never renders, why?
-    store.ritual(msg => DarkCrystalRitualShow({ scuttle, msg })),
-    // This will however if we change ritual to a MutantArray
-    map(store.ritual, (msg) => DarkCrystalRitualShow({ scuttle, msg })),
-
-    // How can we blend the shards and requests (and replies) datasets & sections?
-    // Requires mapping store.shards onto store.requests
-    // But MutantArray([]).find is not a function despite documentation
-    // Need to somehow match shard.recps against request.recps (and reply.recps next)
-    // while they're still observables
+    computed([store.ritual], (msg) => msg ? DarkCrystalRitualShow({ scuttle, msg }) : null),
     h('section.shards', map(
       store.shards,
       (msg) => DarkCrystalShardShow({ root, scuttle, avatar, msg: msg }),
@@ -54,7 +43,17 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
       store.requests,
       (msg) => DarkCrystalRequestShow({ root, scuttle, msg: msg }),
       { comparer }
+    )),
+    h('section.replies', map(
+      store.replies,
+      (msg) => h('Reply', reply),
+      { comparer }
     ))
+    // How can we blend the shards and requests (and replies) datasets & sections?
+    // Requires mapping store.shards onto store.requests
+    // But MutantArray([]).find is not a function despite documentation
+    // Need to somehow match shard.recps against request.recps (and reply.recps next)
+    // while they're still observables
   ])
 }
 
