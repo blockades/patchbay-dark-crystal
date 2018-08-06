@@ -11,6 +11,10 @@ const {
   Struct
 } = require('mutant')
 
+const DarkCrystalRequestNew = require('./requests/new')
+const DarkCrystalRequestShow = require('./requests/show')
+
+const Timestamp = require('./component/timestamp')
 const Recipient = require('./component/recipient')
 const getContent = require('ssb-msg-content')
 
@@ -20,6 +24,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const pageState = Struct({
     hasShards: false,
     showErrors: false,
+    requesting: false,
     requested: false
   })
 
@@ -64,49 +69,39 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
       showWarning: false
     })
 
+    const requested = computed([state.requested], Boolean)
+
     return h('div.overview', [
       Recipient({ recp: recps[0], avatar }),
-      h('div.created', `Sent on ${new Date(timestamp).toLocaleDateString()}`),
-      Request()
+      Timestamp({ prefix: 'Sent on', timestamp }),
+      when(requested(),
+        DarkCrystalRequestShow({
+          scuttle,
+          modal,
+          request
+        })
+      ),
+      when(!requested(),
+        DarkCrystalRequestNew({
+          root,
+          scuttle,
+          modal,
+          recps,
+          state
+        })
+      )
     ])
+  }
 
-    function Request () {
-      return h('div', [
-        when(resolve(state.requested),
-          h('div.sent', `Requested on ${new Date(shard.request && shard.request.value && shard.request.value.timestamp).toLocaleDateString()}`)
-        ),
-        when(!resolve(state.requested),
-          h('div', [
-            h('button -primary', { 'ev-click': (e) => state.showWarning.set(true) }, 'Request'),
-            modal(
-              h('Warning', [
-                h('span', 'Are you sure?'),
-                h('button -subtle', { 'ev-click': () => state.showWarning.set(false) }, 'Cancel'),
-                h('button -subtle', { 'ev-click': () => sendRequest(recps) }, 'OK'),
-              ]), {
-                isOpen: state.showWarning
-              }
-            )
-          ])
-        )
-      ])
-    }
+  function getBacklinks () {
+    const store = Struct({
+      ritual: Value(),
+      shards: MutantArray([]),
+      requests: MutantArray([]),
+      replies: MutantArray([])
+    })
 
-    function sendRequest (recipients) {
-      pageState.requesting.set(true)
-      scuttle.recover.async.request(rootId, recipients, (err, requests) => {
-        if (err) {
-          errors.requests.set(err)
-          pageState.requesting.set(false)
-        }
-        afterRequests()
-      })
-    }
-
-    function afterRequests () {
-      pageState.requested.set(true)
-      pageState.requesting.set(false)
-    }
+    pull
   }
 
   function getShards () {
