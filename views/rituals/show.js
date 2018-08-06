@@ -1,7 +1,7 @@
 const pull = require('pull-stream')
 const { h } = require('mutant')
 
-module.exports = function DarkCrystalRitualShow ({ scuttle, ritual }) {
+module.exports = function DarkCrystalRitualShow ({ scuttle, msg }) {
   const {
     value: {
       timestamp,
@@ -10,7 +10,7 @@ module.exports = function DarkCrystalRitualShow ({ scuttle, ritual }) {
         shards
       }
     }
-  } = ritual
+  } = msg
 
   return h('section.ritual', [
     h('p', `Quorum required to reassemble: ${quorum}`)

@@ -14,7 +14,8 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const rootId = root.key
 
   const store = Struct({
-    ritual: Value(),
+    ritual: MutantArray([]),
+    // ritual: Value(),
     shards: MutantArray([]),
     requests: MutantArray([]),
     replies: MutantArray([])
@@ -25,7 +26,8 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
     pull.filter(m => !m.sync),
     pull.drain(msg => {
       match(msg)
-        .on(isRitual, ritual => store.ritual.set(ritual))
+        // .on(isRitual, ritual => store.ritual.set(ritual))
+        .on(isRitual, ritual => store.ritual.push(ritual))
         .on(isShard, shard => store.shards.push(shard))
         .on(isInvite, request => store.requests.push(request))
         .on(isReply, reply => store.replies.push(reply))
@@ -33,18 +35,16 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   )
 
   return h('DarkCrystalShow', [
-    h('section.ritual', [
-      store.ritual(ritual => {
-        // This never renders, why?
-        DarkCrystalRitualShow({
-          scuttle,
-          ritual
-        })
-      })
-    ]),
-    // How can we blend the shards and requests section? Requires mapping store.shards onto store.requests
+    // This never renders, why?
+    store.ritual(msg => DarkCrystalRitualShow({ scuttle, msg })),
+    // This will however if we change ritual to a MutantArray
+    map(store.ritual, (msg) => DarkCrystalRitualShow({ scuttle, msg })),
+
+    // How can we blend the shards and requests (and replies) datasets & sections?
+    // Requires mapping store.shards onto store.requests
     // But MutantArray([]).find is not a function despite documentation
-    // Need to match shard.recps against request.recps (and reply.recps next)
+    // Need to somehow match shard.recps against request.recps (and reply.recps next)
+    // while they're still observables
     h('section.shards', map(
       store.shards,
       (msg) => DarkCrystalShardShow({ root, scuttle, avatar, msg: msg }),
