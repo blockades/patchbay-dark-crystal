@@ -1,18 +1,13 @@
 const pull = require('pull-stream')
-const {
-  h,
-  Array: MutantArray,
-  map,
-  throttle,
-  resolve,
-  computed,
-  Value,
-  when,
-  Struct
-} = require('mutant')
+const { h, Array: MutantArray, map, resolve, computed, Value, when, Struct } = require('mutant')
+
+const isRitual = require('scuttle-dark-crystal/isRitual')
+const isShard = require('scuttle-dark-crystal/isShard')
+const { isInvite, isReply } = require('ssb-invite-schema')
 
 const DarkCrystalRequestNew = require('./requests/new')
 const DarkCrystalRequestShow = require('./requests/show')
+const DarkCrystalRitualShow = require('./rituals/show')
 
 const Timestamp = require('./component/timestamp')
 const Recipient = require('./component/recipient')
@@ -21,36 +16,18 @@ const getContent = require('ssb-msg-content')
 function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const rootId = root.key
 
-  const pageState = Struct({
-    hasShards: false,
-    showErrors: false,
-    requesting: false,
-    requested: false
-  })
-
-  const errors = Struct({
-    requests: Value()
-  })
-
-  const rituals = getRitual()
-  const shards = getShards()
+  const store = getBacklinks()
 
   return h('DarkCrystalShow', [
     h('section.ritual', [
-      map(rituals, (ritual) => {
-        const { quorum, shards } = getContent(ritual)
-        return h('section.ritual', [
-          h('p', `Quorum required to reassemble: ${quorum}`)
-        ])
-      }),
-      h('h3', 'Progress'),
-      map(rituals, ProgressBar)
-    ]),
-    h('section.shards', [
-      h('div.shard', [
-        map(shards, Shard, { comparer }),
-      ])
-    ]),
+      store.ritual(ritual => {
+        console.log("RITUAL SHOW", ritual)
+        DarkCrystalRitualShow({
+          scuttle,
+          ritual
+        })
+      })
+    ])
   ])
 
   function Shard (shard) {
@@ -74,14 +51,13 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
     return h('div.overview', [
       Recipient({ recp: recps[0], avatar }),
       Timestamp({ prefix: 'Sent on', timestamp }),
-      when(requested(),
+      when(
+        requested(),
         DarkCrystalRequestShow({
           scuttle,
           modal,
           request
-        })
-      ),
-      when(!requested(),
+        }),
         DarkCrystalRequestNew({
           root,
           scuttle,
@@ -101,7 +77,19 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
       replies: MutantArray([])
     })
 
-    pull
+    pull(
+      scuttle.root.pull.backlinks(rootId, { live: true }),
+      pull.filter(m => !m.sync),
+      pull.drain(msg => {
+        match(msg)
+          .on(isRitual, ritual => store.ritual.set(ritual))
+          .on(isShard, shard => store.shards.push(shard))
+          .on(isInvite, request => store.requests.push(request))
+          .on(isReply, reply => store.replies.push(reply))
+      })
+    )
+
+    return store
   }
 
   function getShards () {
@@ -158,6 +146,20 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
 
 function comparer (a, b) {
   return a && b && a.key === b.key
+}
+
+function matched (x) {
+  return {
+    on: () => matched(x),
+    otherwise: () => x,
+  }
+}
+
+function match (x) {
+  return {
+    on: (pred, fn) => (pred(x) ? matched(fn(x)) : match(x)),
+    otherwise: fn => fn(x),
+  }
 }
 
 module.exports = DarkCrystalShow
