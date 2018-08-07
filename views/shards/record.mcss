@@ -1,0 +1,16 @@
+ShardRecord {
+  display: grid
+  grid-template-columns: auto auto
+  grid-gap: .5rem
+  justify-content: start
+  align-content: start
+
+  div {
+    grid-column: 2
+  }
+
+  div.Recipient {
+    grid-column: 1
+    grid-row: 1 / 3
+  }
+}

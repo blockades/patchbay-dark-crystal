@@ -1,11 +1,12 @@
+const { h } = require('mutant')
+
 module.exports = function Recipient ({ recp, avatar }) {
   if (typeof recp === 'string') { // assume it's myId
-    return h('div.recp', [ avatar(recp, 'tiny') ])
+    return h('Recipient', [ avatar(recp, 'tiny') ])
   }
 
-  return h('div.recp', [
+  return h('Recipient', [
     avatar(recp.link, 'tiny'),
     h('div.name', recp.name)
   ])
 }
-

@@ -1,18 +1,14 @@
-const pull = require('pull-stream')
-const { h } = require('mutant')
+const { h, computed } = require('mutant')
+const getContent = require('ssb-msg-content')
 
-module.exports = function DarkCrystalRitualShow ({ scuttle, msg }) {
-  const {
-    value: {
-      timestamp,
-      content: {
-        quorum,
-        shards
-      }
-    }
-  } = msg
+module.exports = function DarkCrystalRitualShow (msg) {
+  return computed(msg, msg => {
+    if (!msg) return
 
-  return h('section.ritual', [
-    h('p', `Quorum required to reassemble: ${quorum}`)
-  ])
+    const { quorum } = getContent(msg)
+
+    return h('section.ritual', [
+      h('p', `Quorum required to reassemble: ${quorum}`)
+    ])
+  })
 }

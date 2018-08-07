@@ -15,7 +15,7 @@ DarkCrystal {
     font-size: 1.2rem
 
     i {
-      margin-left: .9rem }
+      margin-left: .9rem
       :hover {
         color: rebeccapurple
         cursor: pointer
