@@ -1,0 +1,23 @@
+ShardRecord {
+  display: grid
+  grid-template-columns: auto auto
+  grid-gap: .5rem
+  justify-content: start
+  align-content: start
+
+  div.Recipient {
+    grid-column: 1
+    grid-row: 1 / 3
+  }
+
+  div.historyItem {
+    grid-column: 2
+
+    display: flex
+    align-items: center
+  }
+
+  div.request {
+    grid-column: 2
+  }
+}

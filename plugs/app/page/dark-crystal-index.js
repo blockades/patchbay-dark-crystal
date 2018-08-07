@@ -38,7 +38,7 @@ exports.create = function (api) {
 
     const { formModal, formOpen } = Form(scuttle)
 
-    return h('DarkCrystal', { title: '/dark-crystal' }, [
+    return h('DarkCrystal -index', { title: '/dark-crystal' }, [
       formModal,
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
