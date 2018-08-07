@@ -1,12 +1,19 @@
-const pull = require('pull-stream')
-const { h, Value } = require('mutant')
+const { h, Value, when } = require('mutant')
 
-module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, state, recps }) {
+module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, recipients = null }, callback) {
+  // if recipients is null, then all shard holders get a request!
   const rootId = root.key
-  const warning = Value(false)
+  const requesting = Value(false)
+  const warningOpen = Value(false)
 
   return h('div.request', [
-    h('button -primary', { 'ev-click': (e) => warning.set(true) }, 'Request'),
+    h('button',
+      { 'ev-click': (e) => warningOpen.set(true) },
+      when(requesting,
+        h('i.fa.fa-spinner.fa-pulse'),
+        'Request'
+      )
+    ),
     warningModal()
   ])
 
@@ -14,23 +21,21 @@ module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, state, 
     return modal(
       h('div.warning', [
         h('span', 'Are you sure?'),
-        h('button -subtle', { 'ev-click': () => warning.set(false) }, 'Cancel'),
-        h('button -subtle', { 'ev-click': sendRequest }, 'OK'),
-      ]), { isOpen: warning }
+        h('button -subtle', { 'ev-click': () => warningOpen.set(false) }, 'Cancel'),
+        h('button -subtle', { 'ev-click': sendRequest }, 'OK')
+      ]), { isOpen: warningOpen }
     )
   }
 
   function sendRequest () {
-    state.requesting.set(true)
-    scuttle.recover.async.request(rootId, recps, (err, requests) => {
-      if (err) {
-        state.requesting.set(false)
-        // render an error
-      } else {
-        state.requested.set(true)
-        state.requesting.set(false)
-        warning.set(false)
-      }
+    warningOpen.set(false)
+    requesting.set(true)
+
+    scuttle.recover.async.request(rootId, recipients, (err, requests) => {
+      requesting.set(false)
+      if (err) return callback(err)
+
+      callback(null, requests)
     })
   }
 }
