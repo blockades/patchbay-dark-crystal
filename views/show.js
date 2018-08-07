@@ -15,6 +15,8 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const store = Struct({
     ready: Value(false),
     ritual: Value(),
+    replyRecords: MutantArray([]),
+    requestRecords: MutantArray([]),
     shardRecords: MutantArray([])
   })
 
@@ -22,7 +24,11 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   watchForUpdates()
 
   return h('DarkCrystalShow', [
-    DarkCrystalRitualShow(store.ritual),
+    DarkCrystalRitualShow({
+      ritual: store.ritual,
+      replies: store.replyRecords,
+      requests: store.requestRecords
+    }),
     h('section.shards', computed(store.shardRecords, records => {
       return records.map(record => {
         return DarkCrystalShardRecord({ root, record, scuttle, modal, avatar })
@@ -40,20 +46,18 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
           const ritual = msgs.find(isRitual)
           store.ritual.set(ritual)
 
+          const requestRecords = msgs.filter(isInvite)
+          const replyRecords = msgs.filter(isReply)
+
           // recorvery is a "dialogue" between you and each friend
           // gather all messages related to each dialogue into a "record" of form { root, shard, requests, replies }
           const shardRecords = msgs
             .filter(isShard)
-            .map(shard => {
-              const dialogueMsgs = getDialogue(shard, msgs)
+            .map(shard => joinInvitesAndReplies(shard, msgs))
 
-              return {
-                shard,
-                requests: dialogueMsgs.filter(isInvite),
-                replies: dialogueMsgs.filter(isReply)
-              }
-            })
           store.shardRecords.set(shardRecords)
+          store.requestRecords.set(requestRecords)
+          store.replyRecords.set(replyRecords)
         },
         () => store.ready.set(true)
       )
@@ -77,10 +81,21 @@ function getDialogue (shard, msgs) {
 
   return msgs.filter(msg => recpsKey(msg) === dialogueKey)
 }
+
 function recpsKey (msg) {
   const content = getContent(msg)
   if (!content.recps) return null
   return content.recps.sort().join('')
+}
+
+function joinInvitesAndReplies (shard, msgs) {
+  const dialogueMsgs = getDialogue(shard, msgs)
+
+  return {
+    shard,
+    requests: dialogueMsgs.filter(isInvite),
+    replies: dialogueMsgs.filter(isReply)
+  }
 }
 
 module.exports = DarkCrystalShow

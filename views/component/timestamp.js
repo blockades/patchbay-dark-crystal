@@ -9,7 +9,7 @@ module.exports = function Timestamp ({ prefix, timestamp, suffix }) {
     .filter(isString)
     .join(' ')
 
-  return h('div.timestamp', text)
+  return h('div.Timestamp', text)
 }
 
 function isString (i) {
