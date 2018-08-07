@@ -45,7 +45,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
           const shardRecords = msgs
             .filter(isShard)
             .map(shard => {
-              const dialogueMsgs = getDialgogue(shard, msgs)
+              const dialogueMsgs = getDialogue(shard, msgs)
 
               return {
                 shard,
@@ -72,14 +72,15 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   }
 }
 
-function getDialgogue (shard, msgs) {
+function getDialogue (shard, msgs) {
   const dialogueKey = recpsKey(shard)
 
   return msgs.filter(msg => recpsKey(msg) === dialogueKey)
 }
 function recpsKey (msg) {
-  // a 'dialogue' can be determined by the recps in that dialogue
-  return getContent(msg).recps.sort().join('')
+  const content = getContent(msg)
+  if (!content.recps) return null
+  return content.recps.sort().join('')
 }
 
 module.exports = DarkCrystalShow
