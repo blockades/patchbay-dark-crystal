@@ -12,7 +12,7 @@ module.exports = function ProgressBar (opts) {
 
   return computed(records, (records) => {
     const value = records ? records.length : 0
-    const titleText = [title, value].filter(isString).join(' ')
+    const titleText = [title, String(value)].filter(isString).join(' ')
 
     return h('div.ProgressBar', [
       prepend,

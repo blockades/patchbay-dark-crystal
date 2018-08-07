@@ -14,7 +14,10 @@ module.exports = function DarkCrystalRitualShow ({ ritual, replies, requests }) 
     )
 
     return h('section.ritual', [
-      h('p', `Quorum required to reassemble: ${quorum}`),
+      h('div.quorum', [
+        h('span', 'Quorum required: '),
+        h('strong', quorum)
+      ]),
       computed(requests,
         (requests) => {
           if (!requests) return
