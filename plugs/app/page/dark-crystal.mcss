@@ -14,7 +14,13 @@ DarkCrystal {
     letter-spacing: .5rem
     font-size: 1.2rem
 
-    i { margin-left: .9rem }
+    i {
+      margin-left: .9rem
+      :hover {
+        color: rebeccapurple
+        cursor: pointer
+      }
+    }
 
     margin-top: 2.5rem
   }
@@ -24,10 +30,6 @@ DarkCrystal {
     justify-self: end
   }
 
-  section.index {
-  }
-
-
   section.queries {
     align-self: end
     margin-bottom: 2rem
@@ -36,3 +38,4 @@ DarkCrystal {
     a { color: rebeccapurple }
   }
 }
+

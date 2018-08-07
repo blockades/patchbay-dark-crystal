@@ -2,76 +2,67 @@
 // npx electro views/index.test.js
 
 const pull = require('pull-stream')
+const Scuttle = require('scuttle-dark-crystal')
 
 const Server = require('./lib/testbot')
 const attachStyles = require('./lib/attachStyles')
 const viewName = 'show'
 const View = require(`./${viewName}`)
+const getContent = require('ssb-msg-content')
 
 const server = Server()
+const scuttle = Scuttle(server)
 
+let params = {
+  name: 'MMT longterm wallet',
+  secret: 'test',
+  recps: [server.createFeed().id, server.createFeed().id],
+  quorum: 2
+}
 
-// TODO replace with some scuttle-dark-crystal methods
-const rootContent = {type: 'dark-crystal/root', version: '1.0.0', name: 'MMT longterm wallet'}
-server.private.publish(rootContent, [server.id], (err, root) => {
-  console.log(err, root)
-  root.value.content = rootContent // skipping unboxing!
+scuttle.share.async.share(params, (err, data) => {
+  const { root, ritual, shards } = data
+  console.log(["ROOT DETAILS:", "ID", root.key, "NAME", root.value.content.name].join(' '))
+  console.log(["RITUAL DETAILS:", "ID", ritual.key, "QUORUM", ritual.value.content.quorum].join(' '))
+  console.log(["SHARDS:", "IDS", shards.map(s => s.key).join(' | ')].join(' '))
 
-  const opts = {
+  console.log("PRE-POPULATED DATABASE")
+
+  document.body.appendChild(View({
+    scuttle,
     root,
-    scuttle: Scuttle(server)
-  }
-  document.body.appendChild(View(opts))
+    avatar: () => {},
+    modal: () => {},
+  }))
 
-  setTimeout(() => addShards(root.key), 800)
+  console.log("VIEW APPENDED")
+
+  pull(
+    pull.values(shards),
+    pull.through(s => console.log),
+    pull.map(shard => {
+      const { root, recps = [] } = getContent(shard)
+      return {
+        type: 'invite',
+        version: '1',
+        recps: recps,
+        root: root,
+        body: 'gimme gimme gimme'
+      }
+    }),
+    pull.asyncMap((shard, callback) => {
+      scuttle.recover.async.request(root.key, shard.recps, (err, request) => {
+        console.log(request)
+        callback(null, server.private.unbox(request))
+      })
+    }),
+    pull.drain(request => {
+      console.log(request)
+    })
+  )
+
 })
 
 attachStyles([
   `${viewName}.mcss`
 ])
-
-function addShards (root, cb = console.log) {
-  const shards = ['abc-124', 'doop-doop', 'swag-dag']
-  pull(
-    pull.values(shards),
-    pull.map(shard => {
-      return {
-        type: 'dark-crystal/shard', version: '1.0.0', root, shard, recps: [server.id, server.createFeed().id]
-      }
-    }),
-    pull.asyncMap((content, cb) => {
-      server.private.publish(content, content.recps, cb)
-    }),
-    pull.collect((err, data) => {
-      if (err) return cb(err)
-
-      cb(null, data)
-    })
-  )
-}
-
-// TODO replace with scuttle-dark-crystal
-function Scuttle (server) {
-  return {
-    root: {
-      pull: {
-        backlinks: buildPullBacklinks(server)
-      }
-    }
-  }
-}
-
-// TODO extract into scuttle-dark-crystal
-function buildPullBacklinks (server) {
-  return function pullBacklinks (key, opts = {}) {
-    const query = [{
-      $filter: { dest: key }
-      // index: 'DTA' // don't think this is needed?
-    }]
-    return pull(
-      server.backlinks.read(Object.assign({}, opts, { query }))
-      // pull.filter(m => isShard(m) || isRitual(m))
-    )
-  }
-}
-

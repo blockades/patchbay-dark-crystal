@@ -1,0 +1,43 @@
+ShardRecord {
+  border: 1px solid gainsboro
+  border-radius: 0.5rem
+  padding: .5rem
+  display: grid
+  letter-spacing: 1px
+  grid-template-columns: auto auto
+  grid-gap: .5rem
+
+  div.ShardDetails {
+    grid-column: 1
+  }
+
+  div.history {
+    grid-column: 2
+
+    div.historyItem {
+      color: white
+      margin-bottom: .5rem
+      background: deeppink
+      padding: 1rem
+
+      display: flex
+      align-items: center
+    }
+  }
+
+  div.request {
+    align-items: right
+    grid-column: 3
+
+    button {
+      border: none
+      justify-self: end
+      background: #9754de
+      color: white
+      :hover {
+        transition: background .5s ease-in
+        background: deeppink
+      }
+    }
+  }
+}

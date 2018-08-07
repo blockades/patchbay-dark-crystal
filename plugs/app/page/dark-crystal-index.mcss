@@ -1,0 +1,7 @@
+DarkCrystal -index {
+  button {
+    width: 4rem
+    justify-self: end
+  }
+}
+

@@ -18,12 +18,12 @@ DarkCrystalIndex {
       grid-template-columns: auto auto
       justify-content: space-between
       align-items: center
-      
+
       div.name { }
       div.started {
         font-family: monospace
       }
-      
+
       transition: background 1s ease-in
 
       :hover {

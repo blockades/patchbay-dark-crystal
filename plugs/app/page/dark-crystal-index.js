@@ -3,13 +3,12 @@ const { h, Value } = require('mutant')
 const pull = require('pull-stream')
 const Scuttle = require('scuttle-dark-crystal')
 
-const DarkCrystalIndex = require('../../views/index')
-// const DarkCrystalShow = require('../../views/show')
-const DarkCrystalNew = require('../../views/new')
+const DarkCrystalIndex = require('../../../views/index')
+const DarkCrystalNew = require('../../../views/new')
 
 exports.gives = nest({
   'app.html.menuItem': true,
-  'app.page.darkCrystal': true
+  'app.page.darkCrystalIndex': true
 })
 
 exports.needs = nest({
@@ -24,7 +23,7 @@ exports.needs = nest({
 exports.create = function (api) {
   return nest({
     'app.html.menuItem': menuItem,
-    'app.page.darkCrystal': darkCrystalPage
+    'app.page.darkCrystalIndex': darkCrystalIndexPage
   })
 
   function menuItem () {
@@ -34,17 +33,17 @@ exports.create = function (api) {
     }, '/dark-crystal')
   }
 
-  function darkCrystalPage (location) {
+  function darkCrystalIndexPage (location) {
     const scuttle = Scuttle(api.sbot.obs.connection)
 
     const { formModal, formOpen } = Form(scuttle)
 
-    return h('DarkCrystal', { title: '/dark-crystal' }, [
+    return h('DarkCrystal -index', { title: '/dark-crystal' }, [
       formModal,
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
       h('section.index', [
-        DarkCrystalIndex({ scuttle })
+        DarkCrystalIndex({ scuttle, routeTo: api.app.sync.goTo })
       ]),
       h('section.queries', [
         h('strong', 'queries:'),

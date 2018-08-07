@@ -1,10 +1,10 @@
 const nest = require('depnest')
+const isRoot = require('scuttle-dark-crystal/isRoot')
 
 exports.gives = nest('router.sync.routes')
 exports.needs = nest({
-  'app.page': {
-    'darkCrystal': 'first'
-  }
+  'app.page.darkCrystalIndex': 'first',
+  'app.page.darkCrystalShow': 'first'
 })
 
 exports.create = (api) => {
@@ -12,9 +12,9 @@ exports.create = (api) => {
     const pages = api.app.page
 
     const routes = [
-      [ loc => loc.page === 'dark-crystal', pages.darkCrystal ]
+      [ loc => loc.page === 'dark-crystal', pages.darkCrystalIndex ],
+      [ loc => isRoot(loc), pages.darkCrystalShow ]
     ]
-    // TODO - consider if we want all actions inside this one page (like chess) or to break out into multiple
 
     return [...sofar, ...routes]
   })
