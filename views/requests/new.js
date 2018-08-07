@@ -1,4 +1,4 @@
-const { h, Value, when } = require('mutant')
+const { h, Value, when, Struct } = require('mutant')
 
 module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, recipients = null }, callback) {
   // if recipients is null, then all shard holders get a request!
@@ -39,3 +39,22 @@ module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, recipie
     })
   }
 }
+
+// beginnings of a form for when we allow input of body to the request
+
+// function Form (scuttle) {
+//   const state = Struct({
+//     body: Value()
+//   })
+
+//   return h('section.inputs', [
+//     h('div.body', [
+//       h('label.body', 'Message'),
+//       h('input.body', {
+//         placeholder: 'Enter your message',
+//         value: state.body,
+//         'ev-input': (ev) => state.body.set(ev.target.value)
+//       })
+//     ])
+//   ])
+// }

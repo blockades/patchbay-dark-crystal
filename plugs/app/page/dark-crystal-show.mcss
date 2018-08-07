@@ -1,3 +1,13 @@
 DarkCrystal -show {
-}
 
+  section.header {
+    display: flex
+  }
+
+  section.shards {
+    display: grid
+    align-content: start
+    grid-gap: 1rem
+  }
+
+}

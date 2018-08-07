@@ -32,7 +32,7 @@ exports.create = function (api) {
           'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }),
           'title': 'Back'
         }),
-        h('h2', name)
+        h('h2.inline-block', name)
       ]),
       DarkCrystalShow({
         scuttle,
