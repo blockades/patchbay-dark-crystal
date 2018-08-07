@@ -16,11 +16,17 @@ module.exports = function DarkCrystalShardShow ({ root, record, scuttle, modal, 
     Recipient({ recp, avatar }),
     Timestamp({ prefix: 'Shard sent on', timestamp: shard.value.timestamp }),
     recoveryHistory.map(msg => {
-      return h('div', [ // WORSE IS BETTER (i.e. anyone can improve this!)
-        getContent(msg).type,
+      const { type, body } = getContent(msg)
+      var icon = type === 'invite'
+        ? h('i.fa.fa-question-circle', { title: type })
+        : type === 'invite-reply' ? h('i.fa.fa-puzzle-piece', { title: type }) : ''
+
+      return h('div.historyItem', [
+        icon,
         ' - ',
-        getContent(msg).body,
-        Timestamp({ timestamp: msg.value.timestamp })
+        Timestamp({ timestamp: msg.value.timestamp }),
+        ' - ',
+        body
       ])
     }),
     DarkCrystalRequestNew({ root, scuttle, modal, recipients: [recp] }, console.log)

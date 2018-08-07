@@ -7,6 +7,6 @@ DarkCrystalShow {
 
   section.shards {
     display: grid
-    grid-gap: 1rem
+    grid-gap: 2rem
   }
 }

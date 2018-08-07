@@ -7,7 +7,7 @@ module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, recipie
   const warningOpen = Value(false)
 
   return h('div.request', [
-    h('button -primary',
+    h('button',
       { 'ev-click': (e) => warningOpen.set(true) },
       when(requesting,
         h('i.fa.fa-spinner.fa-pulse'),
