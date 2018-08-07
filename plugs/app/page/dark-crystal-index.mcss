@@ -1,50 +1,7 @@
-DarkCrystal {
-  display: grid
-  align-content: start
-  justify-content: center
-  grid-template-columns: 40rem
-  grid-template-rows: 7rem 2rem 1fr auto
-  grid-gap: 1rem
-
-  width: 100%
-  overflow-y: scroll
-
-  h1 {
-    text-transform: uppercase
-    letter-spacing: .5rem
-    font-size: 1.2rem
-
-    i { margin-left: .9rem }
-
-    margin-top: 2.5rem
-  }
-
+DarkCrystal -index {
   button {
     width: 4rem
     justify-self: end
   }
-
-  section.index {
-  }
-
-
-  section.queries {
-    align-self: end
-    margin-bottom: 2rem
-
-    strong { margin-right: .5rem }
-    a { color: rebeccapurple }
-  }
-
-  section.header {
-    display: flex
-    text-transform: uppercase
-  }
 }
 
-i.fa {
-  :hover {
-    color: rebeccapurple
-    cursor: pointer
-  }
-}
