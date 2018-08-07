@@ -1,7 +1,26 @@
 DarkCrystal -show {
-
   section.header {
-    display: flex
+    display: grid
+
+    div.Back {
+      -webkit-margin-before: 0.83em;
+      -webkit-margin-after: 0.83em;
+
+      grid-column: 1
+
+      i.fa {
+        cursor: pointer
+
+        :hover {
+          transition: color 0.2s ease-in
+          color: rebeccapurple
+        }
+      }
+    }
+
+    div.Header {
+      grid-column: 2
+    }
   }
 
   section.shards {
@@ -9,5 +28,4 @@ DarkCrystal -show {
     align-content: start
     grid-gap: 1rem
   }
-
 }

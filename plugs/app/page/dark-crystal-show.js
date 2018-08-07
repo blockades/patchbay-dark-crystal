@@ -28,11 +28,15 @@ exports.create = function (api) {
     return h('DarkCrystal -show', { title: `dark-crystal/${name}` }, [
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
       h('section.header', [
-        h('i.fa.fa-arrow-left.fa-lg', {
-          'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }),
-          'title': 'Back'
-        }),
-        h('h2.inline-block', name)
+        h('div.Back', [
+          h('i.fa.fa-arrow-left.fa-lg', {
+            'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }),
+            'title': 'Back'
+          }),
+        ]),
+        h('div.Header', [
+          h('h2', name)
+        ])
       ]),
       DarkCrystalShow({
         scuttle,

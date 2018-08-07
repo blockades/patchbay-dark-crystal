@@ -1,5 +1,6 @@
 ShardRecord {
-  border: 1px solid grey
+  border: 1px solid gainsboro
+  border-radius: 0.5rem
   padding: .5rem
   display: grid
   letter-spacing: 1px
