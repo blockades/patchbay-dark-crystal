@@ -18,7 +18,7 @@ module.exports = function DarkCrystalRitualShow ({ ritual, replies, requests }) 
         h('span', 'Quorum required: '),
         h('strong', quorum)
       ]),
-      computed(requests,
+      computed(hasRequests,
         (requests) => {
           if (!requests) return
           const prepend = h('h3', 'Progress')
