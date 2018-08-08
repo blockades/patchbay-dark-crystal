@@ -25,6 +25,11 @@ module.exports = function DarkCrystalRitualShow ({ ritual, shardRecords }) {
           title: 'Replies:',
           records: recordsWithReplies
         })
+      ),
+      when(quorumMet,
+        h('div.recombine', [
+          h('span', 'Quorum reached!')
+        ])
       )
     ])
   })
