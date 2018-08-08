@@ -88,11 +88,12 @@ function joinInvitesAndReplies (shard, msgs) {
   return {
     shard,
     requests: dialogueMsgs.filter(isInvite),
-    replies: dialogueMsgs.filter(isReply).filter(validateReply)
+    replies: dialogueMsgs.filter(isReply).filter(validateShard)
   }
 }
 
-function validateReply (possibleReply) {
+// this function should probably be moved to scutte-dark-crystal
+function validateShard (possibleReply) {
   var shard = getContent(possibleReply).body
 console.log(shard);
   // validate that shard is a shard using secrets.js
