@@ -9,6 +9,8 @@ const { isInvite, isReply } = require('ssb-invite-schema')
 const DarkCrystalRitualShow = require('./rituals/show')
 const DarkCrystalShardRecord = require('./shards/record')
 
+const secrets = require('secrets.js-grempe')
+
 function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const rootId = root.key
 
@@ -86,8 +88,21 @@ function joinInvitesAndReplies (shard, msgs) {
   return {
     shard,
     requests: dialogueMsgs.filter(isInvite),
-    replies: dialogueMsgs.filter(isReply)
+    replies: dialogueMsgs.filter(isReply).filter(validateReply)
   }
+}
+
+function validateReply (possibleReply) {
+  var shard = getContent(possibleReply).body
+console.log(shard);
+  // validate that shard is a shard using secrets.js
+  try {
+    secrets.extractShareComponents(shard)
+  } catch (err) {
+    return false
+  }
+
+  return true
 }
 
 module.exports = DarkCrystalShow
