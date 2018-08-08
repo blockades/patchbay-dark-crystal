@@ -1,30 +1,101 @@
 const pull = require('pull-stream')
-const { h, Array: MutantArray, map, throttle } = require('mutant')
+const { h, Array: MutantArray, computed, Value, Struct } = require('mutant')
+const getContent = require('ssb-msg-content')
 
-function DarkCrystalShow ({ root, scuttle }) {
-  const backlinks = getBacklinks()
+const isRitual = require('scuttle-dark-crystal/isRitual')
+const isShard = require('scuttle-dark-crystal/isShard')
+const { isInvite, isReply } = require('ssb-invite-schema')
+
+const DarkCrystalRitualShow = require('./rituals/show')
+const DarkCrystalShardRecord = require('./shards/record')
+
+function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
+  const rootId = root.key
+
+  const store = Struct({
+    ready: Value(false),
+    ritual: Value(),
+    replyRecords: MutantArray([]),
+    requestRecords: MutantArray([]),
+    shardRecords: MutantArray([])
+  })
+
+  updateStore()
+  watchForUpdates()
 
   return h('DarkCrystalShow', [
-    map(backlinks, Msg, { comparer })
+    DarkCrystalRitualShow({
+      ritual: store.ritual,
+      replies: store.replyRecords,
+      requests: store.requestRecords
+    }),
+    h('section.shards', computed(store.shardRecords, records => {
+      return records.map(record => {
+        return DarkCrystalShardRecord({ root, record, scuttle, modal, avatar })
+      })
+    }))
   ])
 
-  function Msg (msg) {
-    return h('pre', JSON.stringify(msg.value.content, null, 2))
+  function updateStore () {
+    pull(
+      scuttle.root.pull.backlinks(rootId, { live: false }),
+      pull.collect(
+        (err, msgs) => {
+          if (err) throw err
+
+          const ritual = msgs.find(isRitual)
+          store.ritual.set(ritual)
+
+          const requestRecords = msgs.filter(isInvite)
+          const replyRecords = msgs.filter(isReply)
+
+          // recorvery is a "dialogue" between you and each friend
+          // gather all messages related to each dialogue into a "record" of form { root, shard, requests, replies }
+          const shardRecords = msgs
+            .filter(isShard)
+            .map(shard => joinInvitesAndReplies(shard, msgs))
+
+          store.shardRecords.set(shardRecords)
+          store.requestRecords.set(requestRecords)
+          store.replyRecords.set(replyRecords)
+        },
+        () => store.ready.set(true)
+      )
+    )
   }
 
-  function getBacklinks () {
-    const store = MutantArray([])
+  function watchForUpdates () {
+    // when any new messages come int related to this root, just get all the data again and write over it.
+    // triggering a big render of who page... 
     pull(
-      scuttle.root.pull.backlinks(root.key, { live: true }),
+      scuttle.root.pull.backlinks(rootId, { live: true, old: false }), // old: false means start from now on
       pull.filter(m => !m.sync),
-      pull.drain(m => store.push(m))
+      // pull.through(m => console.log('NEW MSG! update the page!!!', m)),
+      pull.drain(m => updateStore())
     )
-    return throttle(store, 100)
   }
 }
 
-function comparer (a, b) {
-  return a && b && a.key === b.key
+function getDialogue (shard, msgs) {
+  const dialogueKey = recpsKey(shard)
+
+  return msgs.filter(msg => recpsKey(msg) === dialogueKey)
+}
+
+function recpsKey (msg) {
+  const content = getContent(msg)
+  if (!content.recps) return null
+  return content.recps.sort().join('')
+}
+
+function joinInvitesAndReplies (shard, msgs) {
+  const dialogueMsgs = getDialogue(shard, msgs)
+
+  return {
+    shard,
+    requests: dialogueMsgs.filter(isInvite),
+    replies: dialogueMsgs.filter(isReply)
+  }
 }
 
 module.exports = DarkCrystalShow

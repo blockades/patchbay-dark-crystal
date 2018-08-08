@@ -1,5 +1,20 @@
 // run this with electro:
-// npx electro views/custodian/index.test.js
+// npx electro views/others-shards/index.test.js
+//
+// NOTE - currently not in working order
+//
+// PROBLEM - if you run server.createFeed(), this doesn't have access to installed plugins...
+// pull(
+//   pull.values(shards),
+//   pull.map(name => {
+//     return {type: 'dark-crystal/root', version: '1.0.0', name, recps: [server.id]}
+//   }),
+//   pull.asyncMap((content, cb) => server.private.publish(content, content.recps, cb)),
+//   pull.collect((err, data) => {
+//     console.log(err, data)
+//   })
+// )
+
 
 const pull = require('pull-stream')
 const Scuttle = require('scuttle-dark-crystal')
@@ -15,19 +30,6 @@ runRitual(server, console.log)
 
 // publish some dark-crystal/roots !
 const shards = [ 'ABC.box', '010101.box', 'asdaslkjasd.box' ]
-
-// TODO replace with some scuttle-dark-crystal methods
-// PROBLEM - if you run server.createFeed(), this doesn't have access to installed plugins...
-// pull(
-//   pull.values(shards),
-//   pull.map(name => {
-//     return {type: 'dark-crystal/root', version: '1.0.0', name, recps: [server.id]}
-//   }),
-//   pull.asyncMap((content, cb) => server.private.publish(content, content.recps, cb)),
-//   pull.collect((err, data) => {
-//     console.log(err, data)
-//   })
-// )
 
 const opts = {
   scuttle: Scuttle(server),

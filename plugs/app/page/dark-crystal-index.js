@@ -2,13 +2,13 @@ const nest = require('depnest')
 const { h, Value, computed } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 
-const DarkCrystalIndex = require('../../views/index')
-const DarkCrystalFriendsIndex = require('../../views/friends/index')
-const DarkCrystalNew = require('../../views/new')
+const DarkCrystalIndex = require('../../../views/index')
+const DarkCrystalNew = require('../../../views/new')
+const DarkCrystalOthersShardsIndex = require('../../../views/others-shards/index')
 
 exports.gives = nest({
   'app.html.menuItem': true,
-  'app.page.darkCrystal': true
+  'app.page.darkCrystalIndex': true
 })
 
 exports.needs = nest({
@@ -28,7 +28,7 @@ const FRIENDS = 'Friends'
 exports.create = function (api) {
   return nest({
     'app.html.menuItem': menuItem,
-    'app.page.darkCrystal': darkCrystalPage
+    'app.page.darkCrystalIndex': darkCrystalIndexPage
   })
 
   function menuItem () {
@@ -38,11 +38,11 @@ exports.create = function (api) {
     }, '/dark-crystal')
   }
 
-  function darkCrystalPage (location) {
+  function darkCrystalIndexPage (location) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const mode = Value(MINE)
 
-    return h('DarkCrystal', { title: '/dark-crystal' }, [
+    return h('DarkCrystal -index', { title: '/dark-crystal' }, [
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
       h('section.picker', [MINE, FRIENDS].map(m => {
         return h('div', {
@@ -51,7 +51,7 @@ exports.create = function (api) {
         }, m)
       })),
       Mine({ mode, scuttle }),
-      Custodian({ mode, scuttle }),
+      OthersShards({ mode, scuttle }),
       h('section.queries', [
         h('strong', 'queries:'),
         h('a', { href: '#', 'ev-click': goToAll }, 'All'),
@@ -66,16 +66,16 @@ exports.create = function (api) {
     return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
       formModal,
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      DarkCrystalIndex({ scuttle })
+      DarkCrystalIndex({ scuttle, routeTo: api.app.sync.goTo })
     ])
   }
 
-  function Custodian ({ mode, scuttle }) {
+  function OthersShards ({ mode, scuttle }) {
     return h('section.content', { className: computed(mode, m => m === FRIENDS ? '-active' : '') }, [
-      DarkCrystalFriendsIndex({ 
+      DarkCrystalOthersShardsIndex({
         scuttle,
         avatar: api.about.html.avatar,
-        name: api.about.obs.name 
+        name: api.about.obs.name
       })
     ])
   }
