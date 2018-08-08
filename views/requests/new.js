@@ -1,4 +1,4 @@
-const { h, Value, when, Struct } = require('mutant')
+const { h, Value, when } = require('mutant')
 
 module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, recipients = null }, callback) {
   // if recipients is null, then all shard holders get a request!

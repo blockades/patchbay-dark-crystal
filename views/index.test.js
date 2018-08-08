@@ -27,7 +27,7 @@ pull(
 )
 
 const opts = {
-  scuttle: Scuttle(server),
+  scuttle: Scuttle(server)
 }
 
 document.body.appendChild(View(opts))
@@ -35,4 +35,3 @@ document.body.appendChild(View(opts))
 attachStyles([
   `${viewName}.mcss`
 ])
-

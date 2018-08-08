@@ -4,8 +4,8 @@
   "description": "a patchbay interface for dark-crystal (scuttlebutt based secret sharing)",
   "main": "plugs/index.js",
   "scripts": {
-    "test": "echo 'RUN UI test with electro' && npm run test:lint",
-    "test:lint": "standard"
+    "test": "echo 'RUN UI test with electro' && npm run lint",
+    "lint": "standard --fix"
   },
   "repository": {
     "type": "git",

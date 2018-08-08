@@ -1,5 +1,5 @@
 const pull = require('pull-stream')
-const { h, Array: MutantArray, map, throttle, Value, when } = require('mutant')
+const { h, Array: MutantArray, map, throttle, Value } = require('mutant')
 
 // const DarkCrystalShowShard = require('./show')
 

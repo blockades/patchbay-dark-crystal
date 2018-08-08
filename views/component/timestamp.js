@@ -1,4 +1,3 @@
-const pull = require('pull-stream')
 const { h } = require('mutant')
 
 module.exports = function Timestamp ({ prefix, timestamp, suffix }) {

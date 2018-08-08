@@ -32,7 +32,7 @@ exports.create = function (api) {
           h('i.fa.fa-arrow-left.fa-lg', {
             'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }),
             'title': 'Back'
-          }),
+          })
         ]),
         h('div.Header', [
           h('h2', name)

@@ -15,8 +15,7 @@
 //   })
 // )
 
-
-const pull = require('pull-stream')
+// const pull = require('pull-stream')
 const Scuttle = require('scuttle-dark-crystal')
 
 const Server = require('../lib/testbot')
@@ -29,10 +28,10 @@ const server = Server()
 runRitual(server, console.log)
 
 // publish some dark-crystal/roots !
-const shards = [ 'ABC.box', '010101.box', 'asdaslkjasd.box' ]
+// const shards = [ 'ABC.box', '010101.box', 'asdaslkjasd.box' ]
 
 const opts = {
-  scuttle: Scuttle(server),
+  scuttle: Scuttle(server)
 }
 
 document.body.appendChild(View(opts))
@@ -43,8 +42,6 @@ attachStyles([
 
 function runRitual (server, cb) {
   var peer = server.createFeed()
-
-  debugger
 
   peer.private = server.private
   peer.query = server.query

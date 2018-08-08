@@ -6,7 +6,7 @@ function Recipients (opts) {
   const {
     state,
     suggest,
-    avatar,
+    avatar
   } = opts
 
   return h('DarkCrystalRecipients', [

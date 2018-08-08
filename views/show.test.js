@@ -21,21 +21,23 @@ let params = {
 }
 
 scuttle.share.async.share(params, (err, data) => {
-  const { root, ritual, shards } = data
-  console.log(["ROOT DETAILS:", "ID", root.key, "NAME", root.value.content.name].join(' '))
-  console.log(["RITUAL DETAILS:", "ID", ritual.key, "QUORUM", ritual.value.content.quorum].join(' '))
-  console.log(["SHARDS:", "IDS", shards.map(s => s.key).join(' | ')].join(' '))
+  if (err) throw err
 
-  console.log("PRE-POPULATED DATABASE")
+  const { root, ritual, shards } = data
+  console.log(['ROOT DETAILS:', 'ID', root.key, 'NAME', root.value.content.name].join(' '))
+  console.log(['RITUAL DETAILS:', 'ID', ritual.key, 'QUORUM', ritual.value.content.quorum].join(' '))
+  console.log(['SHARDS:', 'IDS', shards.map(s => s.key).join(' | ')].join(' '))
+
+  console.log('PRE-POPULATED DATABASE')
 
   document.body.appendChild(View({
     scuttle,
     root,
     avatar: () => {},
-    modal: () => {},
+    modal: () => {}
   }))
 
-  console.log("VIEW APPENDED")
+  console.log('VIEW APPENDED')
 
   pull(
     pull.values(shards),
@@ -52,6 +54,8 @@ scuttle.share.async.share(params, (err, data) => {
     }),
     pull.asyncMap((shard, callback) => {
       scuttle.recover.async.request(root.key, shard.recps, (err, request) => {
+        if (err) throw err
+
         console.log(request)
         callback(null, server.private.unbox(request))
       })
@@ -60,7 +64,6 @@ scuttle.share.async.share(params, (err, data) => {
       console.log(request)
     })
   )
-
 })
 
 attachStyles([
