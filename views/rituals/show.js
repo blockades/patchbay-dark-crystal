@@ -8,9 +8,10 @@ module.exports = function DarkCrystalRitualShow ({ ritual, shardRecords }) {
     if (!ritual) return
 
     const { quorum, recps = [] } = getContent(ritual)
-    const hasRequests = records.some(r => r.requests.length > 1)
-    const recordsWithReplies = records.filter(r => r.replies.length > 1)
+    const hasRequests = records.some(r => r.requests.length > 0)
+    const recordsWithReplies = records.filter(r => r.replies.length > 0)
 
+    console.log('rrr',recordsWithReplies);
     return h('section.ritual', [
       h('div.quorum', [
         h('span', 'Quorum required: '),
