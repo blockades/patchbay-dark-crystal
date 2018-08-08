@@ -15,8 +15,6 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const store = Struct({
     ready: Value(false),
     ritual: Value(),
-    replyRecords: MutantArray([]),
-    requestRecords: MutantArray([]),
     shardRecords: MutantArray([])
   })
 
@@ -26,8 +24,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   return h('DarkCrystalShow', [
     DarkCrystalRitualShow({
       ritual: store.ritual,
-      replies: store.replyRecords,
-      requests: store.requestRecords
+      shardRecords: store.shardRecords
     }),
     h('section.shards', computed(store.shardRecords, records => {
       return records.map(record => {
@@ -46,9 +43,6 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
           const ritual = msgs.find(isRitual)
           store.ritual.set(ritual)
 
-          const requestRecords = msgs.filter(isInvite)
-          const replyRecords = msgs.filter(isReply)
-
           // recorvery is a "dialogue" between you and each friend
           // gather all messages related to each dialogue into a "record" of form { root, shard, requests, replies }
           const shardRecords = msgs
@@ -56,8 +50,6 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
             .map(shard => joinInvitesAndReplies(shard, msgs))
 
           store.shardRecords.set(shardRecords)
-          store.requestRecords.set(requestRecords)
-          store.replyRecords.set(replyRecords)
         },
         () => store.ready.set(true)
       )
@@ -66,7 +58,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
 
   function watchForUpdates () {
     // when any new messages come int related to this root, just get all the data again and write over it.
-    // triggering a big render of who page... 
+    // triggering a big render of who page...
     pull(
       scuttle.root.pull.backlinks(rootId, { live: true, old: false }), // old: false means start from now on
       pull.filter(m => !m.sync),

@@ -4,7 +4,7 @@ module.exports = function ProgressBar (opts) {
   const {
     prepend,
     maximum,
-    middle,
+    // middle,
     records,
     title,
     append
@@ -14,7 +14,7 @@ module.exports = function ProgressBar (opts) {
     const value = records ? records.length : 0
     const titleText = [title, String(value)].filter(isString).join(' ')
 
-    return h('div.ProgressBar', [
+    return h('ProgressBar', [
       prepend,
       h('progress', { min: 0, max: maximum, value: value, title: titleText }),
       append
