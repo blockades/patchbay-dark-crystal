@@ -23,7 +23,7 @@ exports.needs = nest({
 
 // modes
 const MINE = 'My Crystals'
-const FRIENDS = 'Friends'
+const OTHERS = 'Others Shards'
 
 exports.create = function (api) {
   return nest({
@@ -44,7 +44,7 @@ exports.create = function (api) {
 
     return h('DarkCrystal -index', { title: '/dark-crystal' }, [
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
-      h('section.picker', [MINE, FRIENDS].map(m => {
+      h('section.picker', [MINE, OTHERS].map(m => {
         return h('div', {
           'ev-click': () => mode.set(m),
           className: computed(mode, mode => mode === m ? '-active' : '')
@@ -71,7 +71,7 @@ exports.create = function (api) {
   }
 
   function OthersShards ({ mode, scuttle }) {
-    return h('section.content', { className: computed(mode, m => m === FRIENDS ? '-active' : '') }, [
+    return h('section.content', { className: computed(mode, m => m === OTHERS ? '-active' : '') }, [
       DarkCrystalOthersShardsIndex({
         scuttle,
         avatar: api.about.html.avatar,
