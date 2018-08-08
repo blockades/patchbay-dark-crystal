@@ -4,7 +4,8 @@ const getContent = require('ssb-msg-content')
 
 const isRitual = require('scuttle-dark-crystal/isRitual')
 const isShard = require('scuttle-dark-crystal/isShard')
-const { isInvite, isReply } = require('ssb-invite-schema')
+const isRequest = require('scuttle-dark-crystal/isRequest')
+const isReply = require('scuttle-dark-crystal/isReply')
 
 const DarkCrystalRitualShow = require('./rituals/show')
 const DarkCrystalShardRecord = require('./shards/record')
@@ -85,7 +86,7 @@ function joinInvitesAndReplies (shard, msgs) {
 
   return {
     shard,
-    requests: dialogueMsgs.filter(isInvite),
+    requests: dialogueMsgs.filter(isRequest),
     replies: dialogueMsgs.filter(isReply)
   }
 }

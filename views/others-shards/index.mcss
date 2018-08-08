@@ -5,41 +5,54 @@ DarkCrystalFriendsIndex {
   grid-gap: .5rem
 
   div.shard {
-    div.overview {
+    letter-spacing: 1px
+
+    cursor: pointer
+
+    padding: .5rem 1rem
+
+    display: grid
+    justify-content: space-between
+    justify-items: start
+    align-items: center
+    grid-gap: 1rem
+
+    -received {
+      color: deeppink
+      grid-template-columns: auto 1fr auto auto
+    }
+
+    -requested {
       color: white
-      letter-spacing: 1px
       background: deeppink
+      grid-template-columns: auto 1fr auto auto auto
+    }
 
-      cursor: pointer
-
-      padding: .5rem 1rem
-
-      display: grid
-      grid-template-columns: auto 1fr auto
-      justify-content: space-between
-      justify-items: start
-      align-items: center
-      grid-gap: 1rem
-      
-      div.avatar {
-        a { display: flex }
-        (img) {
-          width: 2rem
-          height: 2rem
-        }
+    -replied {
+      color: deeppink
+      grid-template-columns: auto auto 1fr auto
+      opacity: .5
+    }
+    
+    div.avatar {
+      a { display: flex }
+      (img) {
+        width: 2rem
+        height: 2rem
       }
-      div.name { }
-      div.received {
-        font-family: monospace
-        font-weight: 600
-      }
-      
-      transition: background 1s ease-in
+    }
+    div.name { }
+    div.received {
+      font-family: monospace
+      font-weight: 600
+    }
+    
+    transition: background 1s ease-in
 
-      :hover {
-        transition: background .5s ease-in
-        background: rebeccapurple
-      }
+    :hover {
+      transition: background .5s ease-in
+      color: white
+      background: rebeccapurple
     }
   }
 }
