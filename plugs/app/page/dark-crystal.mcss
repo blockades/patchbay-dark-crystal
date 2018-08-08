@@ -3,7 +3,7 @@ DarkCrystal {
   align-content: start
   justify-content: center
   grid-template-columns: 40rem
-  grid-template-rows: 7rem 2rem 1fr auto
+  grid-template-rows: 6rem 1rem 1fr auto
   grid-gap: 1rem
 
   width: 100%
@@ -23,11 +23,6 @@ DarkCrystal {
     }
 
     margin-top: 2.5rem
-  }
-
-  button {
-    width: 4rem
-    justify-self: end
   }
 
   section.queries {

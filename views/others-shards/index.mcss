@@ -1,10 +1,10 @@
-DarkCrystalIndex {
+DarkCrystalFriendsIndex {
   font-family: sans, sans-serif, arial
 
   display: grid
   grid-gap: .5rem
 
-  div.crystal {
+  div.shard {
     div.overview {
       color: white
       letter-spacing: 1px
@@ -15,16 +15,25 @@ DarkCrystalIndex {
       padding: .5rem 1rem
 
       display: grid
-      grid-template-columns: auto auto
+      grid-template-columns: auto 1fr auto
       justify-content: space-between
+      justify-items: start
       align-items: center
-
+      grid-gap: 1rem
+      
+      div.avatar {
+        a { display: flex }
+        (img) {
+          width: 2rem
+          height: 2rem
+        }
+      }
       div.name { }
-      div.started {
+      div.received {
         font-family: monospace
         font-weight: 600
       }
-
+      
       transition: background 1s ease-in
 
       :hover {
