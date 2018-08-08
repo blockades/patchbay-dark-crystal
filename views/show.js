@@ -26,7 +26,8 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   return h('DarkCrystalShow', [
     DarkCrystalRitualShow({
       ritual: store.ritual,
-      shardRecords: store.shardRecords
+      shardRecords: store.shardRecords,
+      scuttle
     }),
     h('section.shards', computed(store.shardRecords, records => {
       return records.map(record => {
