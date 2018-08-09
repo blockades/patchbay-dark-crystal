@@ -11,7 +11,7 @@ module.exports = function ProgressBar (opts) {
   } = opts
 
   return computed(records, (records) => {
-    const value = records ? records.length : 0
+    const value = Array.isArray(records) ? records.length : 0
     const titleText = [title, String(value)].filter(isString).join(' ')
 
     return h('ProgressBar', [
