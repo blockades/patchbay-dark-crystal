@@ -1,7 +1,7 @@
 const { h, when, computed } = require('mutant')
 const getContent = require('ssb-msg-content')
 
-const ProgressBar = require('../component/progress')
+const ProgressBar = require('../component/progress-bar')
 
 module.exports = function DarkCrystalRitualShow ({ ritual, shardRecords }) {
   return computed([ritual, shardRecords], (ritual, records) => {
@@ -21,7 +21,7 @@ module.exports = function DarkCrystalRitualShow ({ ritual, shardRecords }) {
           prepend: h('h3', 'Progress'),
           maximum: records.length,
           middle: quorum,
-          title: 'Replies:',
+          title: 'Shards retrieved',
           records: recordsWithReplies
         })
       )
