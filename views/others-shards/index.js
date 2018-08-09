@@ -35,9 +35,20 @@ function DarkCrystalFriendsIndex (opts) {
     const { author, timestamp } = shard.value
 
     var state = RECEIVED
-    if (requests.length) {
-      if (!replies.length) state = REQUESTED
-      else state = REPLIED
+    if (requests.length) state = REQUESTED
+    if (replies.length) state = REPLIED
+
+    // NOTE - it's possible to have replied without having received a request
+    // I think being able to return a shard because you're about to lose your computer is important
+    // At the moment this is hard to do because scuttle assumes an invite to be replying to ):
+
+    const returnShard = () => {
+      scuttle.recover.async.reply(requests[0], (err, data) => {
+        if (err) throw err
+
+        console.log('shard returned', data)
+        getRecords() // refresh the view
+      })
     }
 
     switch (state) {
@@ -45,7 +56,8 @@ function DarkCrystalFriendsIndex (opts) {
         return h('div.shard -received', [
           h('div.avatar', avatar(author)),
           h('div.name', name(author)),
-          h('button', { 'ev-click': () => console.log(shard) }, 'Return Shard'),
+          // h('button', { 'ev-click': returnShard }, 'Return Shard'),
+          h('button', { disabled: true }, 'Return Shard'),
           h('div.received', new Date(timestamp).toLocaleDateString())
         ])
 
@@ -57,7 +69,7 @@ function DarkCrystalFriendsIndex (opts) {
             h('i.fa.fa-warning'),
             ' - shard requested'
           ]),
-          h('button -primary', { 'ev-click': () => console.log(shard) }, 'Return Shard'),
+          h('button -primary', { 'ev-click': returnShard }, 'Return Shard'),
           h('div.received', new Date(timestamp).toLocaleDateString())
         ])
 
@@ -107,6 +119,9 @@ function DarkCrystalFriendsIndex (opts) {
       pull.filter(m => !m.sync),
       pull.drain(m => getRecords())
     )
+
+    // TODO watch for others requests + replies sent to others
+    // actually only watch requests... 
   }
 }
 

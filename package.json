@@ -30,7 +30,7 @@
     "pull-paramap": "^1.2.2",
     "pull-stream": "^3.6.8",
     "read-directory": "^3.0.0",
-    "scuttle-dark-crystal": "^0.1.7",
+    "scuttle-dark-crystal": "^0.1.8",
     "scuttle-inject": "^1.0.3",
     "ssb-msg-content": "^1.0.1",
     "suggest-box": "^2.2.3"
