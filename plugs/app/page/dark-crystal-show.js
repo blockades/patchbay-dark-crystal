@@ -25,7 +25,7 @@ exports.create = function (api) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const { name } = getContent(location)
 
-    return h('DarkCrystal -show', { title: `dark-crystal/${name}` }, [
+    return h('DarkCrystal -show', { title: `dark-crystal — ${name}` }, [
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
       h('section.header', [
         h('div.Back', [
