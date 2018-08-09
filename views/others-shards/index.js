@@ -126,14 +126,10 @@ function DarkCrystalFriendsIndex (opts) {
     )
 
     // TODO watch for others requests + replies sent to others
-    // actually only watch requests... 
+    // actually only watch requests...
   }
 }
 
 function identity (id) { return id }
-
-function comparer (a, b) {
-  return a && b && a.key === b.key
-}
 
 module.exports = DarkCrystalFriendsIndex
