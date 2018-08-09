@@ -31,7 +31,8 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
     DarkCrystalRecombineShow({
       ritual: store.ritual,
       shardRecords: store.shardRecords,
-      scuttle, modal
+      scuttle,
+      modal
     }),
     h('section.shards', computed(store.shardRecords, records => {
       return records.map(record => {
