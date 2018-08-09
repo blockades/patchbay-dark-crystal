@@ -4,13 +4,11 @@ const getContent = require('ssb-msg-content')
 
 const isRitual = require('scuttle-dark-crystal/isRitual')
 const isShard = require('scuttle-dark-crystal/isShard')
-const { isInvite, isReply } = require('ssb-invite-schema')
-
+const isRequest = require('scuttle-dark-crystal/isRequest')
+const isReply = require('scuttle-dark-crystal/isReply')
 const DarkCrystalRitualShow = require('./rituals/show')
 const DarkCrystalRecombineShow = require('./recombine/show')
 const DarkCrystalShardRecord = require('./shards/record')
-
-const secrets = require('secrets.js-grempe')
 
 function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const rootId = root.key
@@ -93,23 +91,9 @@ function joinInvitesAndReplies (shard, msgs) {
 
   return {
     shard,
-    requests: dialogueMsgs.filter(isInvite),
-    replies: dialogueMsgs.filter(isReply).filter(validateShard)
+    requests: dialogueMsgs.filter(isRequest),
+    replies: dialogueMsgs.filter(isReply)
   }
-}
-
-// this function should probably be moved to scutte-dark-crystal
-function validateShard (possibleReply) {
-  var shard = getContent(possibleReply).body
-  
-  // validate that shard is a shard using secrets.js
-  try {
-    secrets.extractShareComponents(shard)
-  } catch (err) {
-    return false
-  }
-
-  return true
 }
 
 module.exports = DarkCrystalShow

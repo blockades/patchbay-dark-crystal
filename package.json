@@ -31,7 +31,6 @@
     "read-directory": "^3.0.0",
     "scuttle-dark-crystal": "^0.1.10",
     "scuttle-inject": "^1.0.3",
-    "secrets.js-grempe": "^1.1.0",
     "ssb-msg-content": "^1.0.1",
     "suggest-box": "^2.2.3"
   },
