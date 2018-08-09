@@ -29,8 +29,3 @@ module.exports = function DarkCrystalRitualShow ({ ritual, shardRecords }) {
   })
 }
 
-
-function copyToClipboard(text) {
-  // TODO
-  return true
-}
