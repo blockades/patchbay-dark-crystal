@@ -60,7 +60,9 @@ module.exports = function DarkCrystalRecombineShow ({ ritual, shardRecords, scut
             h('div.secret', [
               h('h3', 'Secret recovered successfully:'),
               h('span', secret),
-              h('button -subtle', { 'ev-click': () => copyToClipboard(secret) }, 'Copy to clipboard'),
+              // TODO: get this fontawesome clipboard icon to display
+              // h('i', { 'class': 'fas fa-copy' }) 
+              h('button -subtle', { 'ev-click': () => copyToClipboard('cheese') }, 'Copy to clipboard' ),
               h('button -subtle', { 'ev-click': () => secretOpen.set(false) }, 'OK')
             ])
           )
@@ -72,6 +74,24 @@ module.exports = function DarkCrystalRecombineShow ({ ritual, shardRecords, scut
 
 
 function copyToClipboard(text) {
-  // TODO
-  return true
+  // TODO:  is this the best way to copy to the clipboard?
+  // const {clipboard} = require('electron')
+  // clipboard.writeText('Example String')
+
+  console.log('text to copy',text)
+  var textArea = document.createElement("textarea");
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    var successful = document.execCommand('copy');
+    var msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Fallback: Copying text command was ' + msg);
+  } catch (err) {
+    console.error('Fallback: Oops, unable to copy', err);
+  }
+
+  document.body.removeChild(textArea);
 }
