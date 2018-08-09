@@ -7,6 +7,7 @@ const isShard = require('scuttle-dark-crystal/isShard')
 const { isInvite, isReply } = require('ssb-invite-schema')
 
 const DarkCrystalRitualShow = require('./rituals/show')
+const DarkCrystalRecombineShow = require('./recombine/show')
 const DarkCrystalShardRecord = require('./shards/record')
 
 const secrets = require('secrets.js-grempe')
@@ -25,6 +26,10 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
 
   return h('DarkCrystalShow', [
     DarkCrystalRitualShow({
+      ritual: store.ritual,
+      shardRecords: store.shardRecords
+    }),
+    DarkCrystalRecombineShow({
       ritual: store.ritual,
       shardRecords: store.shardRecords,
       scuttle, modal
