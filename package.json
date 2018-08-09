@@ -29,7 +29,7 @@
     "mutant": "^3.22.1",
     "pull-stream": "^3.6.8",
     "read-directory": "^3.0.0",
-    "scuttle-dark-crystal": "^0.1.7",
+    "scuttle-dark-crystal": "^0.1.10",
     "scuttle-inject": "^1.0.3",
     "secrets.js-grempe": "^1.1.0",
     "ssb-msg-content": "^1.0.1",
