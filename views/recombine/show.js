@@ -9,7 +9,6 @@ module.exports = function DarkCrystalRecombineShow ({ ritual, shardRecords, scut
     const recordsWithReplies = records.filter(r => r.replies.length > 0)
     
     const quorumMet = recordsWithReplies.length >= quorum
-    //const quorumMet = true 
     
     const secretOpen = Value(false)
 
@@ -60,8 +59,8 @@ module.exports = function DarkCrystalRecombineShow ({ ritual, shardRecords, scut
 
             h('div.secret', [
               h('h3', 'Secret recovered successfully:'),
-              // h('span', secret),
-              h('button -subtle', { 'ev-click': () => copyToClipboard('') }, 'Copy to clipboard'),
+              h('span', secret),
+              h('button -subtle', { 'ev-click': () => copyToClipboard(secret) }, 'Copy to clipboard'),
               h('button -subtle', { 'ev-click': () => secretOpen.set(false) }, 'OK')
             ])
           )
