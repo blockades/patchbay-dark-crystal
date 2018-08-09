@@ -54,6 +54,7 @@ function DarkCrystalFriendsIndex (opts) {
       case REQUESTED:
         const returning = Value(false)
         const returnShard = () => {
+          returning.set(true)
           scuttle.recover.async.reply(requests[0], (err, data) => {
             if (err) throw err
 
@@ -125,7 +126,7 @@ function DarkCrystalFriendsIndex (opts) {
       pull.drain(m => getRecords())
     )
 
-    // TODO watch for others requests + replies sent to others
+    // TODO watch for others requests
     // actually only watch requests...
   }
 }
