@@ -1,6 +1,6 @@
 const pull = require('pull-stream')
 pull.paramap = require('pull-paramap')
-const { h, Array: MutantArray, computed } = require('mutant')
+const { h, Array: MutantArray, computed, Value, when } = require('mutant')
 const getContent = require('ssb-msg-content')
 const isRequest = require('scuttle-dark-crystal/isRequest')
 const isReply = require('scuttle-dark-crystal/isReply')
@@ -42,35 +42,40 @@ function DarkCrystalFriendsIndex (opts) {
     // I think being able to return a shard because you're about to lose your computer is important
     // At the moment this is hard to do because scuttle assumes an invite to be replying to ):
 
-    const returnShard = () => {
-      scuttle.recover.async.reply(requests[0], (err, data) => {
-        if (err) throw err
-
-        console.log('shard returned', data)
-        getRecords() // refresh the view
-      })
-    }
-
     switch (state) {
       case RECEIVED:
         return h('div.shard -received', [
           h('div.avatar', avatar(author)),
           h('div.name', name(author)),
-          // h('button', { 'ev-click': returnShard }, 'Return Shard'),
-          h('button', { disabled: true }, 'Return Shard'),
-          h('div.received', new Date(timestamp).toLocaleDateString())
+          h('button', { disabled: true }, 'Return Shard'), // TODO
+          h('div.rts', new Date(timestamp).toLocaleDateString())
         ])
 
       case REQUESTED:
+        const returning = Value(false)
+        const returnShard = () => {
+          scuttle.recover.async.reply(requests[0], (err, data) => {
+            if (err) throw err
+
+            console.log('shard returned', data)
+            getRecords() // refresh the view
+          })
+        }
+
         return h('div.shard -requested', [
           h('div.avatar', avatar(author)),
           h('div.name', name(author)),
-          h('div.info', [
-            h('i.fa.fa-warning'),
-            ' - shard requested'
-          ]),
-          h('button -primary', { 'ev-click': returnShard }, 'Return Shard'),
-          h('div.received', new Date(timestamp).toLocaleDateString())
+          when(returning,
+            h('div.info'),
+            h('div.info', [
+              h('i.fa.fa-warning'), ' - shard requested'
+            ])
+          ),
+          when(returning,
+            h('i.fa.fa-spinner.fa-pulse'),
+            h('button -primary', { 'ev-click': returnShard }, 'Return Shard')
+          ),
+          h('div.rts', new Date(timestamp).toLocaleDateString())
         ])
 
       case REPLIED:
@@ -78,7 +83,7 @@ function DarkCrystalFriendsIndex (opts) {
           h('div.avatar', avatar(author)),
           h('div.name', name(author)),
           h('div.info', '(returned)'),
-          h('div.received', new Date(timestamp).toLocaleDateString())
+          h('div.rts', new Date(timestamp).toLocaleDateString())
         ])
     }
   }

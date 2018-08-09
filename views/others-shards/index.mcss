@@ -19,18 +19,18 @@ DarkCrystalFriendsIndex {
 
     -received {
       color: deeppink
-      grid-template-columns: auto 1fr auto auto
+      grid-template-columns: auto 1fr 9rem auto
     }
 
     -requested {
       color: white
       background: deeppink
-      grid-template-columns: auto 1fr auto auto auto
+      grid-template-columns: auto 1fr auto 9rem auto
     }
 
     -replied {
       color: deeppink
-      grid-template-columns: auto auto 1fr auto
+      grid-template-columns: auto 1fr 9rem auto
       opacity: .5
     }
     
@@ -42,7 +42,13 @@ DarkCrystalFriendsIndex {
       }
     }
     div.name { }
-    div.received {
+
+    div.info { justify-self: center }
+    button, i {
+      justify-self: center
+    }
+
+    div.rts {
       font-family: monospace
       font-weight: 600
     }
