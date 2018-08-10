@@ -4,7 +4,7 @@ const sort = require('ssb-sort')
 
 const Recipient = require('../component/recipient')
 const Timestamp = require('../component/timestamp')
-const DarkCrystalRequestNew = require('../requests/new')
+const RequestNew = require('../requests/new')
 const getRecp = require('../lib/get-recp')
 
 module.exports = function DarkCrystalShardsRecord ({ root, record, scuttle, modal, avatar, msg }) {
@@ -31,6 +31,6 @@ module.exports = function DarkCrystalShardsRecord ({ root, record, scuttle, moda
         ])
       })
     ]),
-    DarkCrystalRequestNew({ root, scuttle, modal, recipients: [recp] }, console.log)
+    RequestNew({ root, scuttle, modal, recipients: [recp] }, console.log)
   ])
 }

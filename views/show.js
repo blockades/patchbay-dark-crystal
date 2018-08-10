@@ -1,5 +1,5 @@
 const pull = require('pull-stream')
-const { h, Array: MutantArray, computed, Value, Struct } = require('mutant')
+const { h, Array: MutantArray, Value, Struct } = require('mutant')
 const getContent = require('ssb-msg-content')
 
 const isRitual = require('scuttle-dark-crystal/isRitual')
@@ -7,8 +7,8 @@ const isShard = require('scuttle-dark-crystal/isShard')
 const isRequest = require('scuttle-dark-crystal/isRequest')
 const isReply = require('scuttle-dark-crystal/isReply')
 
-const DarkCrystalShardsSummary = require('./shards/summary')
-const DarkCrystalShardRecord = require('./shards/record')
+const ShardsSummary = require('./shards/summary')
+const ShardsRecords = require('./shards/records')
 
 function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   const rootId = root.key
@@ -23,24 +23,20 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   watchForUpdates()
 
   return h('DarkCrystalShow', [
-    DarkCrystalShardsSummary({
+    ShardsSummary({
       ritual: store.ritual,
       shardRecords: store.shardRecords,
       scuttle,
       modal,
       avatar
     }),
-    h('section.shards', computed(store.shardRecords, records => {
-      return records.map(record => {
-        return DarkCrystalShardRecord({
-          root,
-          record,
-          scuttle,
-          modal,
-          avatar
-        })
-      })
-    }))
+    ShardsRecords({
+      root,
+      records: store.shardRecords,
+      scuttle,
+      modal,
+      avatar
+    })
   ])
 
   function updateStore () {
