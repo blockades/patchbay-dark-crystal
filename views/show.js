@@ -22,7 +22,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   updateStore()
   watchForUpdates()
 
-  return h('DarkCrystalShow', [
+  return h('DarkCrystalShow', { title: '' }, [ // title blank stops everything inside getting a generic tooltip
     ShardsSummary({
       ritual: store.ritual,
       shardRecords: store.shardRecords,

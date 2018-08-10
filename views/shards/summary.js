@@ -74,27 +74,40 @@ module.exports = function DarkCrystalShardsSummary ({ ritual, shardRecords, scut
 
 function RecombineModal (modal, state) {
   const { error, modalOpen, secret } = state
+  const copyBtnVisible = Value(true)
+  const copySecret = () => {
+    copyBtnVisible.set(false)
+    clipboard.writeText(resolve(secret))
 
-  const content = h('DarkCrystalSecret', [
-    when(error,
-      h('div.recombineError', [
-        h('h1', [
-          'Error combining shards!!!'
-        ]),
-        h('pre', computed(error, e => (e || '').toString())),
-        h('button -subtle', { 'ev-click': () => modalOpen.set(false) }, 'OK')
+    setTimeout(() => copyBtnVisible.set(true), 500)
+  }
+
+  // TODO - extract? (and extract styles)
+  const content = h('DarkCrystalSecret', when(error,
+    [
+      h('h1', [
+        'Error combining shards!!!'
       ]),
-      h('div.secret', [
-        h('h3', 'Secret recovered successfully:'),
-        h('pre', secret),
-        h('button -subtle', { 'ev-click': () => clipboard.writeText(resolve(secret)) }, [
-          h('i.fa.fa-copy'),
-          'Copy to clipboard'
-        ]),
-        h('button -subtle', { 'ev-click': () => modalOpen.set(false) }, 'OK')
+      h('pre', computed(error, e => (e || '').toString())),
+      h('div.actions', [
+        h('button -subtle', { 'ev-click': () => modalOpen.set(false) }, 'close')
       ])
-    )
-  ])
+    ],
+    [
+      h('h1', 'Your secret'),
+      h('pre', secret),
+      h('div.actions', [
+        when(copyBtnVisible,
+          h('button -primary', { 'ev-click': copySecret }, [
+            h('i.fa.fa-copy'),
+            'Copy to clipboard'
+          ]),
+          h('button', `(ﾉ´ヮ´)ﾉ*:･ﾟ✧`)
+        ),
+        h('button -subtle', { 'ev-click': () => modalOpen.set(false) }, 'close')
+      ])
+    ])
+  )
 
   return modal(content, { isOpen: modalOpen })
 }

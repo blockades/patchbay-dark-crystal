@@ -26,12 +26,6 @@ exports.create = function (api) {
     const { name } = getContent(location)
 
     return h('DarkCrystal -show', { title: `/dark-crystal — ${name}` }, [
-      h('div.Back', [
-        h('i.fa.fa-arrow-left.fa-lg', {
-          'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }),
-          'title': 'Back'
-        })
-      ]),
       h('h1', ['Dark Crystal', h('i.fa.fa-diamond')]),
       h('h2', name),
       DarkCrystalShow({
@@ -40,7 +34,13 @@ exports.create = function (api) {
         routeTo: api.app.sync.goTo,
         avatar: api.about.html.avatar,
         modal: api.app.html.modal
-      })
+      }),
+      h('div.Back', [
+        h('i.fa.fa-arrow-left.fa-lg', {
+          'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }),
+          'title': 'Back'
+        })
+      ]),
     ])
   }
 }

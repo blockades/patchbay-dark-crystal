@@ -14,23 +14,46 @@ module.exports = function DarkCrystalShardsRecord ({ root, record, scuttle, moda
   const recoveryHistory = sort([...requests, ...replies])
 
   return h('DarkCrystalShardsRecord', [
-    h('div.ShardDetails', [
-      Recipient({ recp, avatar }),
-      Timestamp({ timestamp: shard.value.timestamp })
+    h('div.author', [
+      Recipient({ recp, avatar })
     ]),
     h('div.history', [
-      h('h3', 'Requests / Replies'),
+      h('div.historyItem', [
+        h('div.action', [
+          h('i.fa.fa-arrow-right'),
+          h('i.fa.fa-diamond'),
+          'shard sent'
+        ]),
+        Timestamp({ timestamp: shard.value.timestamp })
+      ]),
       recoveryHistory.map(msg => {
-        const author = msg.value.author
-        const { body } = getContent(msg)
+        const { type } = getContent(msg)
 
-        return h('div.historyItem', [
-          Recipient({ recp: author, avatar }),
-          Timestamp({ timestamp: msg.value.timestamp }),
-          body
-        ])
+        switch (type) {
+          case 'invite':
+            return h('div.historyItem', [
+              h('div.action', [
+                h('i'),
+                h('i'),
+                'requested return'
+              ]),
+              Timestamp({ timestamp: msg.value.timestamp })
+            ])
+
+          case 'invite-reply':
+            return h('div.historyItem', [
+              h('div.action -shard-return', [
+                h('i.fa.fa-diamond'),
+                h('i.fa.fa-arrow-left'),
+                'returned'
+              ]),
+              Timestamp({ timestamp: msg.timestamp }) // received time matters more here
+            ])
+        }
       })
     ]),
-    RequestNew({ root, scuttle, modal, recipients: [recp] }, console.log)
+    replies.length
+      ? ''
+      : RequestNew({ root, scuttle, modal, recipients: [recp] }, console.log)
   ])
 }

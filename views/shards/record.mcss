@@ -1,32 +1,59 @@
 DarkCrystalShardsRecord {
-  border: 1px solid gainsboro
-  border-radius: 0.5rem
-  padding: .5rem
+  padding: 1rem
+  border: 1px solid black
+  
   display: grid
-  letter-spacing: 1px
-  grid-template-columns: auto auto
-  grid-gap: .5rem
+  grid-template-columns: auto 1fr auto
+  justify-content: start
+  grid-row-gap: 1rem
+  grid-column-gap: 4rem
 
-  div.ShardDetails {
+  div.author {
     grid-column: 1
+    grid-row: 1 / 3
+
+    max-height: 4rem
   }
 
   div.history {
     grid-column: 2
 
-    div.historyItem {
-      color: white
-      margin-bottom: .5rem
-      background: deeppink
-      padding: 1rem
+    display: grid
+    grid-gap: .5rem
 
-      display: flex
-      align-items: center
+    div.historyItem {
+      display: grid
+      grid-template-columns: 13rem auto
+      grid-gap: 2rem
+      justify-content: start
+
+      div.Timestamp {
+        color: darkgrey
+        font-family: sans
+        letter-spacing: 2px
+        font-size: .8rem
+
+        visibility: hidden
+      }
+
+      div.action {
+        display: grid
+        grid-gap: .5rem
+        grid-template-columns: 1rem 1rem auto
+        align-items: baseline
+        justify-content: start
+
+        -shard-return { color: deeppink }
+
+      }
+
+      :hover {
+        div.Timestamp { visibility: visible }
+      }
     }
   }
 
   div.request {
-    align-items: right
     grid-column: 3
 
     button {

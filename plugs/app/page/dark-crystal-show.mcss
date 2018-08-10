@@ -4,6 +4,7 @@ DarkCrystal -show {
   div.Back {
     position: absolute
     top: 2.4rem
+    left: 1rem
 
     i.fa {
       cursor: pointer
@@ -20,9 +21,7 @@ DarkCrystal -show {
   }
 
 
-  section.shards {
-    display: grid
-    align-content: start
-    grid-gap: 1rem
+  div.DarkCrystalShow {
+    margin-top: 1rem
   }
 }

@@ -1,15 +1,3 @@
 DarkCrystalShow {
   font-family: sans, sans-serif, arial
-
-  display: grid
-  grid-gap: 1rem
-  align-content: start
-
-  section.header {
-    display: flex
-  }
-  section.shards {
-    display: grid
-    grid-gap: 2rem
-  }
 }
