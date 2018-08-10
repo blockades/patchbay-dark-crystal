@@ -7,8 +7,7 @@ const isShard = require('scuttle-dark-crystal/isShard')
 const isRequest = require('scuttle-dark-crystal/isRequest')
 const isReply = require('scuttle-dark-crystal/isReply')
 
-const DarkCrystalRitualShow = require('./rituals/show')
-const DarkCrystalRecombineShow = require('./recombine/show')
+const DarkCrystalShardsSummary = require('./shards/summary')
 const DarkCrystalShardRecord = require('./shards/record')
 
 function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
@@ -24,19 +23,22 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   watchForUpdates()
 
   return h('DarkCrystalShow', [
-    DarkCrystalRitualShow({
-      ritual: store.ritual,
-      shardRecords: store.shardRecords
-    }),
-    DarkCrystalRecombineShow({
+    DarkCrystalShardsSummary({
       ritual: store.ritual,
       shardRecords: store.shardRecords,
       scuttle,
-      modal
+      modal,
+      avatar
     }),
     h('section.shards', computed(store.shardRecords, records => {
       return records.map(record => {
-        return DarkCrystalShardRecord({ root, record, scuttle, modal, avatar })
+        return DarkCrystalShardRecord({
+          root,
+          record,
+          scuttle,
+          modal,
+          avatar
+        })
       })
     }))
   ])

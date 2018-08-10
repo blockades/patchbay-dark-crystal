@@ -25,19 +25,15 @@ exports.create = function (api) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const { name } = getContent(location)
 
-    return h('DarkCrystal -show', { title: `dark-crystal — ${name}` }, [
-      h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
-      h('section.header', [
-        h('div.Back', [
-          h('i.fa.fa-arrow-left.fa-lg', {
-            'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }),
-            'title': 'Back'
-          })
-        ]),
-        h('div.Header', [
-          h('h2', name)
-        ])
+    return h('DarkCrystal -show', { title: `/dark-crystal — ${name}` }, [
+      h('div.Back', [
+        h('i.fa.fa-arrow-left.fa-lg', {
+          'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }),
+          'title': 'Back'
+        })
       ]),
+      h('h1', ['Dark Crystal', h('i.fa.fa-diamond')]),
+      h('h2', name),
       DarkCrystalShow({
         scuttle,
         root: location,

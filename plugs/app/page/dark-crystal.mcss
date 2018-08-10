@@ -14,8 +14,13 @@ DarkCrystal {
     letter-spacing: .5rem
     font-size: 1.2rem
 
+    display: grid
+    grid-template-columns: repeat(4, auto)
+    grid-gap: .9rem
+    justify-content: start
+    align-items: baseline
+
     i {
-      margin-left: .9rem
       :hover {
         color: rebeccapurple
         cursor: pointer

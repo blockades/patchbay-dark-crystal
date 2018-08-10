@@ -5,16 +5,17 @@ module.exports = function ProgressBar (opts) {
     prepend,
     maximum,
     // middle,
-    records,
+    records = [],
+    value,
     title,
     append
   } = opts
 
-  const value = Array.isArray(records) ? records.length : 0
+  const _value = value || records.length
   const titleText = `${title}: ${value} / ${maximum}`
   return h('ProgressBar', [
     prepend,
-    h('progress', { min: 0, max: maximum, value: value, title: titleText }),
+    h('progress', { min: 0, max: maximum, value: _value, title: titleText }),
     append
   ])
 }

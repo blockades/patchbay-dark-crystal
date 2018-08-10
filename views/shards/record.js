@@ -5,14 +5,15 @@ const sort = require('ssb-sort')
 const Recipient = require('../component/recipient')
 const Timestamp = require('../component/timestamp')
 const DarkCrystalRequestNew = require('../requests/new')
+const getRecp = require('../lib/get-recp')
 
-module.exports = function DarkCrystalShardShow ({ root, record, scuttle, modal, avatar, msg }) {
+module.exports = function DarkCrystalShardsRecord ({ root, record, scuttle, modal, avatar, msg }) {
   const { shard, requests, replies } = record
 
   const recp = getRecp(shard)
   const recoveryHistory = sort([...requests, ...replies])
 
-  return h('div.ShardRecord', [
+  return h('DarkCrystalShardsRecord', [
     h('div.ShardDetails', [
       Recipient({ recp, avatar }),
       Timestamp({ timestamp: shard.value.timestamp })
@@ -32,10 +33,4 @@ module.exports = function DarkCrystalShardShow ({ root, record, scuttle, modal, 
     ]),
     DarkCrystalRequestNew({ root, scuttle, modal, recipients: [recp] }, console.log)
   ])
-}
-
-// TODO extract this into a scuttle-dc method if we use it a lot
-function getRecp (shard) {
-  return getContent(shard).recps
-    .find(r => r !== shard.value.author)
 }

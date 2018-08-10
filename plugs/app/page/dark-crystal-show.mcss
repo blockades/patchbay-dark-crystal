@@ -1,27 +1,24 @@
 DarkCrystal -show {
-  section.header {
-    display: grid
+  position: relative
 
-    div.Back {
-      -webkit-margin-before: 0.83em;
-      -webkit-margin-after: 0.83em;
+  div.Back {
+    position: absolute
+    top: 2.4rem
 
-      grid-column: 1
+    i.fa {
+      cursor: pointer
 
-      i.fa {
-        cursor: pointer
-
-        :hover {
-          transition: color 0.2s ease-in
-          color: rebeccapurple
-        }
+      :hover {
+        transition: color 0.2s ease-in
+        color: rebeccapurple
       }
     }
-
-    div.Header {
-      grid-column: 2
-    }
   }
+
+  h2 {
+    margin: 0
+  }
+
 
   section.shards {
     display: grid
