@@ -21,7 +21,7 @@ DarkCrystalRecipients {
   flex-wrap: wrap
   align-items: center
 
-  div.recp {
+  div.DarkCrystalRecipient {
     $RecipientCard
     height: 2.5rem
     margin: .4rem .5rem

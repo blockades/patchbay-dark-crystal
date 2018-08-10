@@ -10,7 +10,6 @@ DarkCrystalShardsRecord {
 
   div.author {
     grid-column: 1
-    grid-row: 1 / 3
 
     max-height: 4rem
   }
@@ -19,11 +18,12 @@ DarkCrystalShardsRecord {
     grid-column: 2
 
     display: grid
-    grid-gap: .5rem
+    grid-gap: .2rem
+    align-content: start
 
     div.historyItem {
       display: grid
-      grid-template-columns: 13rem auto
+      grid-template-columns: 12rem auto
       grid-gap: 2rem
       justify-content: start
 
