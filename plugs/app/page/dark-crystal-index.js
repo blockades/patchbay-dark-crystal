@@ -42,7 +42,7 @@ exports.create = function (api) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const mode = Value(MINE)
 
-    return h('DarkCrystal -index', { title: '/dark-crystal' }, [
+    const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
       h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
       h('section.picker', [MINE, OTHERS].map(m => {
         return h('div', {
@@ -59,6 +59,9 @@ exports.create = function (api) {
         h('a', { href: '#', 'ev-click': goToMyRoots }, 'My roots')
       ])
     ])
+
+    page.scroll = () => {} // stops keyboard shortcuts from breaking
+    return page
   }
 
   function Mine ({ mode, scuttle }) {
