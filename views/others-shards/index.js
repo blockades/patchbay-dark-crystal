@@ -126,8 +126,12 @@ function DarkCrystalFriendsIndex (opts) {
       pull.drain(m => getRecords())
     )
 
-    // TODO watch for others requests
-    // actually only watch requests...
+    // watch for others requests
+    pull(
+      scuttle.recover.pull.requests({ live: true, old: false }),
+      pull.filter(m => !m.sync),
+      pull.drain(m => getRecords())
+    )
   }
 }
 

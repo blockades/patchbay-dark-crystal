@@ -25,7 +25,7 @@ exports.create = function (api) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const { name } = getContent(location)
 
-    return h('DarkCrystal -show', { title: `/dark-crystal — ${name}` }, [
+    const page = h('DarkCrystal -show', { title: `/dark-crystal — ${name}` }, [
       h('h1', ['Dark Crystal', h('i.fa.fa-diamond')]),
       h('h2', name),
       DarkCrystalShow({
@@ -40,7 +40,10 @@ exports.create = function (api) {
           'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' }),
           'title': 'Back'
         })
-      ]),
+      ])
     ])
+
+    page.scroll = () => {} // stops keyboard shortcuts from breaking
+    return page
   }
 }
