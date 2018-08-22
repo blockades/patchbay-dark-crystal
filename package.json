@@ -24,15 +24,15 @@
   },
   "homepage": "https://github.com/blockades/patchbay-dark-crystal#readme",
   "dependencies": {
-    "depject": "^4.1.1",
     "depnest": "^1.3.0",
+    "libnested": "^1.3.2",
     "mutant": "^3.22.1",
     "pull-paramap": "^1.2.2",
     "pull-stream": "^3.6.8",
     "read-directory": "^3.0.0",
     "scuttle-dark-crystal": "^0.1.11",
-    "scuttle-inject": "^1.0.3",
     "ssb-msg-content": "^1.0.1",
+    "ssb-sort": "^1.1.0",
     "suggest-box": "^2.2.3"
   },
   "devDependencies": {
