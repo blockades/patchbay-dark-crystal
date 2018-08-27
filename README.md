@@ -4,4 +4,4 @@ A [Dark Crystal](https://github.com/blockades/scuttle-dark-crystal) module for [
 
 To use, install and run Patchbay ([multi-platform installers here](https://github.com/ssbc/patchbay/releases)) and enter `/dark-crystal` in the navigation input box on the top-right. 
 
-![screencast](img/screencast.gif)
+![screencast](http://ehion.com/~ameba/download/screencast.gif)
