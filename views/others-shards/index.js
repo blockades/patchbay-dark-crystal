@@ -47,7 +47,7 @@ function DarkCrystalFriendsIndex (opts) {
         return h('div.shard -received', [
           h('div.avatar', avatar(author)),
           h('div.name', name(author)),
-          h('button', { disabled: true }, 'Return Shard'), // TODO
+          h('button', { disabled: true, style: { visibility: 'hidden' } }, 'Return Shard'), // TODO
           h('div.rts', new Date(timestamp).toLocaleDateString())
         ])
 

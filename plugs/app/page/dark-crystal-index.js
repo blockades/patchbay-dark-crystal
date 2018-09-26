@@ -77,7 +77,7 @@ exports.create = function (api) {
     return h('section.content', { className: computed(mode, m => m === OTHERS ? '-active' : '') }, [
       DarkCrystalOthersShardsIndex({
         scuttle,
-        avatar: api.about.html.avatar,
+        avatar: id => api.about.html.avatar(id, 2),
         name: api.about.obs.name
       })
     ])
