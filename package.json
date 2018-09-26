@@ -1,6 +1,6 @@
 {
   "name": "patchbay-dark-crystal",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "a patchbay interface for dark-crystal (scuttlebutt based secret sharing)",
   "main": "plugs/index.js",
   "scripts": {
