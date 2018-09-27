@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "electro": "^2.1.1",
-    "electron": "^1.8.7",
+    "electron": "^1.8.8",
     "micro-css": "^2.0.1",
     "scuttle-testbot": "^1.1.6",
     "ssb-backlinks": "^0.7.3",
