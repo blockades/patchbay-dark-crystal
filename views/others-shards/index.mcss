@@ -35,7 +35,10 @@ DarkCrystalFriendsIndex {
     }
     
     div.avatar {
-      a { display: flex }
+      a {
+        width: 2rem
+        height: 2rem
+      }
       (img) {
         width: 2rem
         height: 2rem
