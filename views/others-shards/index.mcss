@@ -2,66 +2,58 @@ DarkCrystalFriendsIndex {
   font-family: sans, sans-serif, arial
 
   display: grid
+  grid-template-columns: repeat(auto-fill, 6rem)
+  grid-column-gap: 2rem
+  grid-row-gap: 1.5rem
+  align-content: start
+
+  div.DarkCrystalFriendShards {
+
+  }
+
+}
+
+DarkCrystalFriendShards {
+  display: grid
   grid-gap: .5rem
+  align-content: start
 
-  div.shard {
-    letter-spacing: 1px
-
-    cursor: pointer
-
-    padding: .5rem 1rem
-
+  div.avatar {}
+  div.name {}
+  div.shards {
     display: grid
-    justify-content: space-between
-    justify-items: start
-    align-items: center
-    grid-gap: 1rem
+    grid-template-columns: repeat(auto-fill, 1rem)
+    grid-gap: .5rem
+  }
+}
 
-    -received {
-      color: deeppink
-      grid-template-columns: auto 1fr 9rem auto
-    }
+DarkCrystalShard {
+  -received {
+    color: purple
+    /* filter: drop-shadow(grey 0 0 5px) */
+  }
 
-    -requested {
-      color: white
-      background: deeppink
-      grid-template-columns: auto 1fr auto 9rem auto
-    }
+  -requested {
+    color: fuchsia
+    animation: pulse 1s infinite
+  }
 
-    -replied {
-      color: deeppink
-      grid-template-columns: auto 1fr 9rem auto
-      opacity: .5
-    }
-    
-    div.avatar {
-      a {
-        width: 2rem
-        height: 2rem
-      }
-      (img) {
-        width: 2rem
-        height: 2rem
-      }
-    }
-    div.name { }
+  -returned {
+    color: rgba(0,0,0,.3)
+  }
 
-    div.info { justify-self: center }
-    button, i {
-      justify-self: center
-    }
+}
 
-    div.rts {
-      font-family: monospace
-      font-weight: 600
-    }
-    
-    transition: background 1s ease-in
+@keyframes pulse {
+  0% {
+    filter: drop-shadow(hsl(300, 100%, 100%) 0 0 5px);
+  }
 
-    :hover {
-      transition: background .5s ease-in
-      color: white
-      background: rebeccapurple
-    }
+  66% {
+    filter: drop-shadow(hsl(300, 100%, 75%) 0 0 5px);
+  }
+
+  100% {
+    filter: drop-shadow(hsl(300, 100%, 50%) 0 0 5px);
   }
 }
