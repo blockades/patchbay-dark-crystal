@@ -9,6 +9,7 @@ function DarkCrystalIndex (opts) {
 
   const roots = getRoots()
 
+  // mix: should be called DarkCrystalMySecretsIndex? but this will do for now
   return h('DarkCrystalIndex', [
     map(roots, Root, { comparer })
   ])

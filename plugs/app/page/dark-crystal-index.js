@@ -2,8 +2,8 @@ const nest = require('depnest')
 const { h, Value, computed } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 
-const DarkCrystalIndex = require('../../../views/index')
-const DarkCrystalNew = require('../../../views/new')
+const DarkCrystalIndex = require('../../../views/my-secrets/index')
+const DarkCrystalNew = require('../../../views/my-secrets/new')
 const DarkCrystalOthersShardsIndex = require('../../../views/others-shards/index')
 
 exports.gives = nest({

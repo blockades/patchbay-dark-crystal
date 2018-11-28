@@ -1,7 +1,7 @@
 // run this with electro:
 // npx electro views/new.test.js
 
-const attachStyles = require('./lib/attachStyles')
+const attachStyles = require('../lib/attachStyles')
 
 const viewName = 'new'
 const View = require(`./${viewName}`)

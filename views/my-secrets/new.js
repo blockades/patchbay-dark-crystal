@@ -1,6 +1,6 @@
 const { h, Struct, Value, Array: MutantArray, computed, when, watch, resolve } = require('mutant')
-const Recipients = require('./component/recipients')
-const Errors = require('./component/errors')
+const Recipients = require('../component/recipients')
+const Errors = require('../component/errors')
 
 const MIN_RECPS = 2
 

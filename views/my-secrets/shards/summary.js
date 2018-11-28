@@ -2,8 +2,8 @@ const { h, when, computed, Value, resolve } = require('mutant')
 const getContent = require('ssb-msg-content')
 const { clipboard } = require('electron')
 
-const ProgressBar = require('../component/progress-bar')
-const getRecp = require('../lib/get-recp')
+const ProgressBar = require('../../component/progress-bar')
+const getRecp = require('../../lib/get-recp')
 
 module.exports = function DarkCrystalShardsSummary ({ ritual, shardRecords, scuttle, modal, avatar }) {
   const state = {
