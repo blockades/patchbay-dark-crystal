@@ -3,8 +3,10 @@ const isRoot = require('scuttle-dark-crystal/isRoot')
 
 exports.gives = nest('router.sync.routes')
 exports.needs = nest({
+  'app.page.darkCrystalHome': 'first',
   'app.page.darkCrystalIndex': 'first',
-  'app.page.darkCrystalShow': 'first'
+  'app.page.darkCrystalNew': 'first',
+  // 'app.page.darkCrystalShow': 'first'
 })
 
 exports.create = (api) => {
@@ -12,8 +14,10 @@ exports.create = (api) => {
     const pages = api.app.page
 
     const routes = [
-      [ loc => loc.page === 'dark-crystal', pages.darkCrystalIndex ],
-      [ loc => isRoot(loc), pages.darkCrystalShow ]
+      [ loc => loc.page === 'dark-crystal', pages.darkCrystalHome ],
+      [ loc => loc.page === 'dark-crystal/new', pages.darkCrystalNew ],
+      [ loc => loc.page === 'dark-crystal/index', pages.darkCrystalIndex ]
+      // [ loc => isRoot(loc), pages.darkCrystalShow ]
     ]
 
     return [...sofar, ...routes]

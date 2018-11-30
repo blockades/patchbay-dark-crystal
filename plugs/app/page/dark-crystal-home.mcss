@@ -1,0 +1,62 @@
+DarkCrystal -home {
+  background: #140c12
+
+  display: grid
+  grid-gap: .5rem
+
+  h1 {
+    font-size: 2rem
+    color: #fff
+  }
+
+  p {
+    color: #fff
+  }
+
+  section.picker {
+    div.option {
+      padding: .5rem 1rem
+      margin: 1rem 0 1rem 0
+      cursor: pointer
+      display: grid
+
+      grid-template-columns: 5% 95%
+      justify-content: space-between
+      align-items: left
+
+      div.crystal {
+        margin: auto 1rem auto auto
+      }
+
+      div.inner {
+        display: flex
+        width: 100%
+        background: rebeccapurple
+        color: #fff
+        text-transform: capitalize
+        letter-spacing: 1px
+
+        padding: .5rem 1rem
+        transition: background 1s ease-in
+
+        div.name {
+          font-family: monospace
+          font-weight: 600
+        }
+      }
+
+      :hover {
+        div.inner {
+          transition: background .1s ease-in
+          background: #8259ac
+        }
+        div.crystal {
+          i {
+            transition: color .1s ease-in
+            color: #fff
+          }
+        }
+      }
+    }
+  }
+}

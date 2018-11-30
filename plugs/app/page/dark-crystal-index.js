@@ -15,7 +15,6 @@ const ForwardNew = require('../../../views/forward/new')
 // const ForwardIndex = require('../../../views/forward/index')
 
 exports.gives = nest({
-  'app.html.menuItem': true,
   'app.page.darkCrystalIndex': true
 })
 
@@ -36,40 +35,37 @@ const FORWARDS = 'Others Crystals'
 
 exports.create = function (api) {
   return nest({
-    'app.html.menuItem': menuItem,
     'app.page.darkCrystalIndex': darkCrystalIndexPage
   })
-
-  function menuItem () {
-    return h('a', {
-      style: { order: 1 },
-      'ev-click': () => api.app.sync.goTo({ page: 'dark-crystal' })
-    }, '/dark-crystal')
-  }
 
   function darkCrystalIndexPage (location) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const mode = Value(MINE)
 
-    // mix: TODO seperate this page and the routing out
-
-    const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
-      h('h1', { title: '' }, [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
-      h('section.picker', { title: '' }, [MINE, OTHERS, FORWARDS].map(m => {
-        return h('div', {
-          'ev-click': () => mode.set(m),
-          className: computed(mode, mode => mode === m ? '-active' : '')
-        }, m)
-      })),
-      MySecrets({ mode, scuttle }),
-      OthersShards({ mode, scuttle }),
-      FriendsCrystals({ mode, scuttle })
-      // ForwardShards({ mode, scuttle })
+    const page = h('DarkCrystal -index', { title: '/dark-crystal/index' }, [
+      DarkCrystalIndex({ scuttle, routeTo: api.app.sync.goTo }),
     ])
 
     // page.scroll = () => {} // stops keyboard shortcuts from breaking
     return page
   }
+
+// <<<<<<< b750c4485e3eb77c6d8790ad812da68548f12eb5
+//     // mix: TODO seperate this page and the routing out
+
+//     const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
+//       h('h1', { title: '' }, [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
+//       h('section.picker', { title: '' }, [MINE, OTHERS, FORWARDS].map(m => {
+//         return h('div', {
+//           'ev-click': () => mode.set(m),
+//           className: computed(mode, mode => mode === m ? '-active' : '')
+//         }, m)
+//       })),
+//       MySecrets({ mode, scuttle }),
+//       OthersShards({ mode, scuttle }),
+//       FriendsCrystals({ mode, scuttle })
+//       // ForwardShards({ mode, scuttle })
+// =======
 
   function MySecrets ({ mode, scuttle }) {
     const { formModal, formOpen } = NewCrystalForm(scuttle)
@@ -77,14 +73,17 @@ exports.create = function (api) {
     return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
       formModal,
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      h('CrystalsIndex', [
-        CrystalsIndex({
-          scuttle,
-          routeTo: api.app.sync.goTo
-        })
-      ])
     ])
   }
+// <<<<<<< b750c4485e3eb77c6d8790ad812da68548f12eb5
+//       h('CrystalsIndex', [
+//         CrystalsIndex({
+//           scuttle,
+//           routeTo: api.app.sync.goTo
+//         })
+//       ])
+// =======
+// >>>>>>> create a landing page
 
   function OthersShards ({ mode, scuttle }) {
     const view = Value('Dogs are cool')
