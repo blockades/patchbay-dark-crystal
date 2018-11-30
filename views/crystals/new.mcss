@@ -2,7 +2,6 @@ DarkCrystalCrystalsNew {
   font-family: sans, sans-serif, arial
   font-size: 1rem
   color: #fff
-  background: #000
 
   width: 50rem
   min-height: 32rem
@@ -17,13 +16,9 @@ DarkCrystalCrystalsNew {
     margin: 0
   }
 
-  section { 
-    padding: 1rem 2rem
-  }
-
   section.inputs {
     display: grid
-    grid-gap: 1rem
+    grid-gap: 3rem
 
     div {
       display: grid
@@ -39,7 +34,7 @@ DarkCrystalCrystalsNew {
       input.quorum {
         max-width: 18rem
       }
-      textarea { min-height: 8rem }
+      textarea { min-height: 10rem }
     }
   }
 

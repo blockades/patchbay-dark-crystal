@@ -29,6 +29,7 @@ module.exports = function CrystalsNew (opts) {
     validation: computed(state, checkForErrors),
     ritual: Value()
   })
+
   watch(errors.validation, errors => {
     if (!Object.keys(errors).length) state.showErrors.set(false)
   })

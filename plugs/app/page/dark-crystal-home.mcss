@@ -22,6 +22,11 @@ DarkCrystal -home {
 
       div.crystal {
         margin: auto 1rem auto auto
+
+        i {
+          color: #fff
+          cursor: pointer
+        }
       }
 
       div.inner {
@@ -29,7 +34,6 @@ DarkCrystal -home {
         width: 100%
         background: rebeccapurple
         color: #fff
-        text-transform: capitalize
         letter-spacing: 1px
 
         padding: .5rem 1rem
@@ -49,7 +53,7 @@ DarkCrystal -home {
         div.crystal {
           i {
             transition: color .1s ease-in .1s ease-out
-            color: #fff
+            color: rebeccapurple
           }
         }
       }

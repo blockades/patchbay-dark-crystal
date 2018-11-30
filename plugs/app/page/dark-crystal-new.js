@@ -2,7 +2,7 @@ const nest = require('depnest')
 const { h, Value, computed } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 
-const DarkCrystalNew = require('../../../views/new')
+const DarkCrystalNew = require('../../../views/crystals/new')
 
 exports.gives = nest({
   'app.page.darkCrystalNew': true
@@ -24,16 +24,27 @@ exports.create = function (api) {
   function darkCrystalNewPage (location) {
     const scuttle = Scuttle(api.sbot.obs.connection)
 
-    return DarkCrystalNew({
-      scuttle,
-      onCancel: () => formOpen.set(false),
-      afterRitual: (err, data) => {
-        if (err) return
-        formOpen.set(false)
-        console.log('ritual complete', data)
-      },
-      suggest: { about: api.about.async.suggest },
-      avatar: api.about.html.avatar
-    })
+    return h('DarkCrystal -new', { title: '/dark-crystal/new' }, [
+      h('div.header', [
+        h('div.arrow', [
+          h('i', {
+            classList: ['fa', 'fa-arrow-left', 'fa-lg'],
+            'ev-click': goBack
+          })
+        ]),
+        h('h1', 'Create a new Dark Crystal')
+      ]),
+      DarkCrystalNew({
+        scuttle,
+        onCancel: goBack,
+        afterRitual: goBack,
+        suggest: { about: api.about.async.suggest },
+        avatar: api.about.html.avatar
+      })
+    ])
+
+    function goBack () {
+      api.app.sync.goTo({ page: 'dark-crystal' })
+    }
   }
 }
