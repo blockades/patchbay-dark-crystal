@@ -4,7 +4,7 @@ DarkCrystal {
   justify-content: center
   grid-template-columns: 40rem
   grid-template-rows: 6rem 1rem 1fr auto
-  grid-gap: 1rem
+  grid-gap: 2rem
 
   width: 100%
   overflow-y: scroll

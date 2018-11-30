@@ -1,10 +1,10 @@
 DarkCrystal -new {
   background: #140c12
   display: grid
-  grid-gap: 2rem
+  grid-gap: 5rem
 
-  div.header {
-    margin-top: 2rem
+  header {
+    margin-top: 4rem
     display: grid
     grid-template-columns: 10% 90%
     justify-content: space-between
@@ -12,7 +12,9 @@ DarkCrystal -new {
 
     h1 {
       margin: 0
-      font-size: 2rem
+      text-transform: uppercase
+      letter-spacing: .5rem
+      font-size: 1.2rem
       color: #fff
     }
 

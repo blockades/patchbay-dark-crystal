@@ -2,9 +2,10 @@ DarkCrystal -home {
   background: #140c12
 
   display: grid
-  grid-gap: .5rem
+  grid-gap: 2rem
 
   h1 {
+    margin: 4rem 0 0 0
     font-size: 2rem
     color: #fff
   }

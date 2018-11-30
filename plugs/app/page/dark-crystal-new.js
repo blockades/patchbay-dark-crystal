@@ -25,7 +25,7 @@ exports.create = function (api) {
     const scuttle = Scuttle(api.sbot.obs.connection)
 
     return h('DarkCrystal -new', { title: '/dark-crystal/new' }, [
-      h('div.header', [
+      h('header', [
         h('div.arrow', [
           h('i', {
             classList: ['fa', 'fa-arrow-left', 'fa-lg'],
