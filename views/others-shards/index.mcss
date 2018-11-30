@@ -28,6 +28,8 @@ DarkCrystalFriendShards {
 }
 
 DarkCrystalShard {
+  cursor: pointer
+
   -received {
     color: purple
     /* filter: drop-shadow(grey 0 0 5px) */

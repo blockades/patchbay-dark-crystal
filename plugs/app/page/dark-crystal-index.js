@@ -4,7 +4,8 @@ const Scuttle = require('scuttle-dark-crystal')
 
 const DarkCrystalIndex = require('../../../views/my-secrets/index')
 const DarkCrystalNew = require('../../../views/my-secrets/new')
-const DarkCrystalOthersShardsIndex = require('../../../views/others-shards/index')
+const ShardsIndex = require('../../../views/others-shards/index')
+const FriendShow = require('../../../views/others-shards/friend/show')
 
 exports.gives = nest({
   'app.html.menuItem': true,
@@ -42,30 +43,27 @@ exports.create = function (api) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const mode = Value(MINE)
 
+    // mix: TODO seperate this page and the routing out
+
     const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
-      h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
-      h('section.picker', [MINE, OTHERS].map(m => {
+      h('h1', { title: '' }, [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
+      h('section.picker', { title: '' }, [MINE, OTHERS].map(m => {
         return h('div', {
           'ev-click': () => mode.set(m),
           className: computed(mode, mode => mode === m ? '-active' : '')
         }, m)
       })),
-      Mine({ mode, scuttle }),
-      OthersShards({ mode, scuttle }),
-      h('section.queries', [
-        h('strong', 'queries:'),
-        h('a', { href: '#', 'ev-click': goToAll }, 'All'),
-        ' | ',
-        h('a', { href: '#', 'ev-click': goToMyRoots }, 'My roots')
-      ])
+      MySecrets({ mode, scuttle }),
+      OthersShards({ mode, scuttle })
     ])
 
-    page.scroll = () => {} // stops keyboard shortcuts from breaking
+    // page.scroll = () => {} // stops keyboard shortcuts from breaking
     return page
   }
 
-  function Mine ({ mode, scuttle }) {
-    const { formModal, formOpen } = Form(scuttle)
+  function MySecrets ({ mode, scuttle }) {
+    const { formModal, formOpen } = NewCrystalForm(scuttle)
+
     return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
       formModal,
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
@@ -74,16 +72,32 @@ exports.create = function (api) {
   }
 
   function OthersShards ({ mode, scuttle }) {
+    const view = Value('Dogs are cool')
+    const isOpen = Value(false)
+    const friendModal = api.app.html.modal(view, { isOpen })
+
+    const showFriend = (opts) => {
+      view.set(FriendShow(Object.assign({}, opts, {
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        scuttle,
+        onCancel: () => isOpen.set(false)
+      })))
+      isOpen.set(true)
+    }
+
     return h('section.content', { className: computed(mode, m => m === OTHERS ? '-active' : '') }, [
-      DarkCrystalOthersShardsIndex({
+      ShardsIndex({
         scuttle,
         avatar: api.about.html.avatar,
-        name: api.about.obs.name
-      })
+        name: api.about.obs.name,
+        showFriend
+      }),
+      friendModal
     ])
   }
 
-  function Form (scuttle) {
+  function NewCrystalForm (scuttle) {
     const form = DarkCrystalNew({
       scuttle,
       onCancel: () => formOpen.set(false),
@@ -99,36 +113,5 @@ exports.create = function (api) {
     const formModal = api.app.html.modal(form, { isOpen: formOpen })
 
     return { formModal, formOpen }
-  }
-
-  function goToAll (ev) {
-    ev.preventDefault()
-
-    const initialQuery = [{
-      $filter: {
-        value: {
-          timestamp: { $gt: 0 }, // needed for how I set up /query page
-          content: {
-            type: { $prefix: 'dark-crystal' }
-          }
-        }
-      }
-    }]
-    return api.app.sync.goTo({ page: 'query', initialQuery })
-  }
-
-  function goToMyRoots (ev) {
-    ev.preventDefault()
-
-    const initialQuery = [{
-      $filter: {
-        value: {
-          author: api.keys.sync.id(),
-          timestamp: { $gt: 0 }, // needed for how I set up /query page
-          content: { type: 'dark-crystal/root' }
-        }
-      }
-    }]
-    return api.app.sync.goTo({ page: 'query', initialQuery })
   }
 }
