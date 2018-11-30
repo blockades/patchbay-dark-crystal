@@ -12,12 +12,17 @@ exports.needs = nest({
   'sbot.obs.connection': 'first'
 })
 
-const NEW_DARK_CRYSTAL = 'Create a new Dark Crystal'
-const SHOW_RITUALS = 'Return a friends shard'
+const NEW_DARK_CRYSTAL = "Create a new Dark Crystal"
+const SHOW_RITUALS = "View and Recover a Dark Crystal"
+const RETURN_A_SHARD = "Return a friend's shard"
+const FORWARD_A_SHARD = "Forward shards to a new identity"
 
 const PATHWAYS = [
   { name: NEW_DARK_CRYSTAL, page: 'dark-crystal/new' },
-  { name: SHOW_RITUALS, page: 'dark-crystal/index' }
+  { name: SHOW_RITUALS, page: 'dark-crystal/index' },
+  { name: RETURN_A_SHARD, page: '' },
+  { name: FORWARD_A_SHARD, page: '' }
+  // { name: SHOW_RITUALS, page: 'dark-crystal' }
 ]
 
 exports.create = function (api) {
@@ -40,7 +45,7 @@ exports.create = function (api) {
         const { name, page, option } = pathway
         const label = `${option} - ${name}`
 
-        return h('div.option', { 'ev-click': () => api.app.sync.goTo({ page }) }, [
+        return h('div.option', { title: name, 'ev-click': () => api.app.sync.goTo({ page }) }, [
           h('div.crystal', [
             h('i.fa.fa-diamond.fa-lg')
           ]),
