@@ -3,7 +3,7 @@ const { h } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 const getContent = require('ssb-msg-content')
 
-const DarkCrystalShow = require('../../../views/my-secrets/show')
+const CrystalsShow = require('../../../views/crystals/show')
 
 exports.gives = nest({
   'app.page.darkCrystalShow': true
@@ -34,7 +34,7 @@ exports.create = function (api) {
     const page = h('DarkCrystal -show', { title: `/dark-crystal — ${name}` }, [
       h('h1', ['Dark Crystal', h('i.fa.fa-diamond')]),
       h('h2', name),
-      DarkCrystalShow({
+      CrystalsShow({
         scuttle,
         root: location,
         routeTo: api.app.sync.goTo,

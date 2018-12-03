@@ -2,10 +2,10 @@ const nest = require('depnest')
 const { h, Value, computed } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 
-const DarkCrystalIndex = require('../../../views/my-secrets/index')
-const DarkCrystalNew = require('../../../views/my-secrets/new')
-const ShardsIndex = require('../../../views/others-shards/index')
-const FriendShow = require('../../../views/others-shards/friend/show')
+const CrystalsIndex = require('../../../views/crystals/index')
+const CrystalsNew = require('../../../views/crystals/new')
+const FriendsIndex = require('../../../views/friends/index')
+const FriendsShow = require('../../../views/friends/show')
 
 exports.gives = nest({
   'app.html.menuItem': true,
@@ -67,7 +67,7 @@ exports.create = function (api) {
     return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
       formModal,
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      DarkCrystalIndex({ scuttle, routeTo: api.app.sync.goTo })
+      CrystalsIndex({ scuttle, routeTo: api.app.sync.goTo })
     ])
   }
 
@@ -77,7 +77,7 @@ exports.create = function (api) {
     const friendModal = api.app.html.modal(view, { isOpen })
 
     const showFriend = (opts) => {
-      view.set(FriendShow(Object.assign({}, opts, {
+      view.set(FriendsShow(Object.assign({}, opts, {
         avatar: api.about.html.avatar,
         name: api.about.obs.name,
         scuttle,
@@ -87,7 +87,7 @@ exports.create = function (api) {
     }
 
     return h('section.content', { className: computed(mode, m => m === OTHERS ? '-active' : '') }, [
-      ShardsIndex({
+      FriendsIndex({
         scuttle,
         avatar: api.about.html.avatar,
         name: api.about.obs.name,
@@ -98,7 +98,7 @@ exports.create = function (api) {
   }
 
   function NewCrystalForm (scuttle) {
-    const form = DarkCrystalNew({
+    const form = CrystalsNew({
       scuttle,
       onCancel: () => formOpen.set(false),
       afterRitual: (err, data) => {

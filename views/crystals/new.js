@@ -4,7 +4,7 @@ const Errors = require('../component/errors')
 
 const MIN_RECPS = 2
 
-function DarkCrystalNew (opts) {
+module.exports = function CrystalsNew (opts) {
   const {
     scuttle,
     suggest,
@@ -31,7 +31,7 @@ function DarkCrystalNew (opts) {
     if (!Object.keys(errors).length) state.showErrors.set(false)
   })
 
-  return h('DarkCrystalNew', [
+  return h('DarkCrystalCrystalsNew', [
     h('h1', 'New Dark Crystal'),
     h('section.inputs', [
       h('div.name', [
@@ -120,5 +120,3 @@ function checkForErrors ({ crystalName, secret, recps, quorum }) {
   if (Object.keys(err).length) return err
   else return false
 }
-
-module.exports = DarkCrystalNew

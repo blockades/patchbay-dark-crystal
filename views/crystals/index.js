@@ -1,7 +1,7 @@
 const pull = require('pull-stream')
 const { h, Array: MutantArray, map, throttle } = require('mutant')
 
-function DarkCrystalIndex (opts) {
+module.exports = function CrystalsIndex (opts) {
   const {
     scuttle,
     routeTo
@@ -9,8 +9,7 @@ function DarkCrystalIndex (opts) {
 
   const roots = getRoots()
 
-  // mix: should be called DarkCrystalMySecretsIndex? but this will do for now
-  return h('DarkCrystalIndex', [
+  return h('DarkCrystalCrystalsIndex', [
     map(roots, Root, { comparer })
   ])
 
@@ -38,5 +37,3 @@ function DarkCrystalIndex (opts) {
 function comparer (a, b) {
   return a && b && a.key === b.key
 }
-
-module.exports = DarkCrystalIndex

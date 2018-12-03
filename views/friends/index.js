@@ -3,6 +3,7 @@ const pullParamap = require('pull-paramap')
 const { h, Value, computed } = require('mutant')
 const set = require('lodash.set')
 const transform = require('lodash.transform')
+const sortBy = require('lodash.sortby')
 const getContent = require('ssb-msg-content')
 const isRequest = require('scuttle-dark-crystal/isRequest')
 const isReply = require('scuttle-dark-crystal/isReply')
@@ -15,7 +16,7 @@ const RECEIVED = 'received'
 const REQUESTED = 'requested'
 const RETURNED = 'returned'
 
-function DarkCrystalFriendsIndex (opts) {
+module.exports = function FriendsIndex (opts) {
   const {
     avatar = identity,
     name = identity,
@@ -58,12 +59,9 @@ function DarkCrystalFriendsIndex (opts) {
   }
 
   function Shard ({ root, receivedAt, state }) {
-    const className = '-' + state
-    const title = `${receivedAt}\n${root}`
-
     return h('i.DarkCrystalShard.fa.fa-diamond', {
-      title,
-      className
+      title: `${receivedAt}\n${root}`,
+      className: '-' + state
     })
   }
 }
@@ -82,26 +80,30 @@ function getRecords ({ scuttle, state }) {
     // mix: TODO write a tigher query which gets only data needed
     scuttle.shard.pull.fromOthers({ reverse: true, live: false }),
     pullParamap((shard, done) => {
-      const { root } = getContent(shard)
-      // root is the unique key for a shard
+      const { root } = getContent(shard) // root is the unique key for a shard
+      set(newRecords, [shard.value.author, root, 'receivedAt'], new Date(shard.timestamp).toLocaleDateString())
 
       pull(
-        scuttle.root.pull.backlinks(root),
+        scuttle.root.pull.backlinks(root, { reverse: true }),
         pull.filter(m => getContent(m).root === root), // root.pull.backlinks should perhaps do this for us
         pull.collect((err, thread) => {
           if (err) return done(err)
 
-          set(newRecords, [shard.value.author, root, 'receivedAt'], new Date(shard.timestamp).toLocaleDateString())
+          var state
+          var request = thread.find(isRequest)
+          // mix: TODO this is not necessarily an unanswered request..., it's just the most recent (backlinks reverse: true)
 
-          const state = thread.some(isReply) ? RETURNED
-            : thread.some(isRequest) ? REQUESTED
-              : RECEIVED
+          if (thread.some(isReply)) state = RETURNED
+          else if (request) {
+            state = REQUESTED
+            set(newRecords, [shard.value.author, root, 'request'], request)
+          } else state = RECEIVED
           set(newRecords, [shard.value.author, root, 'state'], state)
 
-          // mix: TODO this is really crude / not water tight
-          // If we ensure invites and replies have `branch` we can sort accurately
-          // and make sure we're replied to the most recent request (will be more relevant with ephemeral keys)
-          // sort(thread).reverse().find(isRequest) // most recent request
+          // mix: TODO this is really crude
+          // If we ensure invites and replies have `branch` we can sort accurately (might already have?)
+          // and make sure we're replying to the most recent request (will be more relevant with ephemeral keys)
+          // e.g. sort(thread).reverse().find(isRequest) // most recent request (but is it unanswered?)
 
           done(null)
         })
@@ -111,21 +113,14 @@ function getRecords ({ scuttle, state }) {
       if (err) return console.error(err)
 
       // transform is a reduce for object. Iterator signature (acc, value, key, obj)
-      const newRecordsArray = transform(newRecords, (acc, shards, feedId) => {
-        const _shards = transform(shards, (acc, state, root) => {
-          acc.push(Object.assign({ root }, state))
-        }, [])
-
-        acc.push({ feedId, shards: _shards })
-      }, []).sort((a, b) => {
-        // sort friends with 'active' shards to the top
-        const aActive = a.shards.find(s => s.state === REQUESTED)
-        const bActive = b.shards.find(s => s.state === REQUESTED)
-        if (aActive && bActive) return 0
-        if (aActive) return -1
-        if (bActive) return +1
-        return 0
-      })
+      var newRecordsArray = transform(newRecords, (acc, shards, feedId) => {
+        acc.push({
+          feedId,
+          shards: transform(shards, (acc, state, root) => {
+            acc.push(Object.assign({ root }, state))
+          }, [])
+        })
+      }, [])
 
       // newRecordsArray Shape
       // [
@@ -133,30 +128,52 @@ function getRecords ({ scuttle, state }) {
       //   { feedId, shards: [ { rootId, receivedAt, state }, ... ] },
       // ]
 
-      state.friends.set(newRecordsArray)
+      state.friends.set(sortBy(newRecordsArray, [sortFor(REQUESTED), sortFor(RECEIVED)]))
       state.isLoading.set(false)
     })
   )
 }
 
+function sortFor (state) {
+  return function (a, b) {
+    if (!a || !b) return 0
+
+    const _a = a.shards.find(s => s.state === state)
+    const _b = b.shards.find(s => s.state === state)
+
+    if (_a && _b) return 0
+    if (_a) return -1
+    if (_b) return +1
+    return 0
+  }
+}
+
 function watchForUpdates ({ scuttle, refresh }) {
-  // when any new messages come int related to this root, just get all the data again and write over it.
-  // triggering a big render of who page...
+  // anything new comes in, just do a big of redraw
+
+  // watch shards
   pull(
     scuttle.shard.pull.fromOthers({ live: true, old: false }),
     pull.filter(m => !m.sync),
     pull.drain(m => refresh())
   )
 
-  // watch for others requests
+  // watch requests
   pull(
-    scuttle.recover.pull.requests({ live: true, old: false }),
+    scuttle.recover.pull.requests(null, { live: true, old: false }),
     pull.filter(m => !m.sync),
+    pull.through(() => console.log('Request received')),
+    pull.drain(m => refresh())
+  )
+
+  // watch replies
+  pull(
+    scuttle.recover.pull.replies(null, { live: true, old: false }),
+    pull.filter(m => !m.sync),
+    pull.through(() => console.log('DarkCrystal Reply!')),
     pull.drain(m => refresh())
   )
 }
 
 function identity (id) { return id }
 function noop () {}
-
-module.exports = DarkCrystalFriendsIndex

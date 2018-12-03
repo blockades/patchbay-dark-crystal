@@ -5,7 +5,7 @@ const RECEIVED = 'received'
 const REQUESTED = 'requested'
 const RETURNED = 'returned'
 
-module.exports = function DarkCrystalShowFriend (opts) {
+module.exports = function FriendsShow (opts) {
   const {
     avatar = identity,
     name = identity,
@@ -15,7 +15,7 @@ module.exports = function DarkCrystalShowFriend (opts) {
     scuttle
   } = opts
 
-  return h('DarkCrystalFriendShow', computed([friends, selectedFriend], (friends, feedId) => {
+  return h('DarkCrystalFriendsShow', computed([friends, selectedFriend], (friends, feedId) => {
     const i = friends.findIndex(friend => friend.feedId === feedId)
     const { shards } = friends[i]
 
@@ -44,7 +44,7 @@ module.exports = function DarkCrystalShowFriend (opts) {
   }))
 
   function ShardDetailed (shard) {
-    const { root, receivedAt, state } = shard
+    const { receivedAt, state, request } = shard
 
     switch (state) {
       case RECEIVED:
@@ -57,9 +57,10 @@ module.exports = function DarkCrystalShowFriend (opts) {
         const returning = Value(false)
         const returnShard = () => {
           returning.set(true)
-          scuttle.recover.async.reply(root, (err, data) => {
+          scuttle.recover.async.reply(request, (err, data) => {
             if (err) throw err
 
+            returning.set(false)
             console.log('shard returned', data)
           })
         }
