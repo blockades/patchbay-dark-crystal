@@ -4,8 +4,8 @@
 const pull = require('pull-stream')
 const Scuttle = require('scuttle-dark-crystal')
 
-const Server = require('./lib/testbot')
-const attachStyles = require('./lib/attachStyles')
+const Server = require('../lib/testbot')
+const attachStyles = require('../lib/attachStyles')
 const viewName = 'index'
 const View = require(`./${viewName}`)
 

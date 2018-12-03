@@ -10,7 +10,7 @@ const isReply = require('scuttle-dark-crystal/isReply')
 const ShardsSummary = require('./shards/summary')
 const ShardsRecords = require('./shards/records')
 
-function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
+module.exports = function CrystalsShow ({ root, scuttle, avatar, modal }) {
   const rootId = root.key
 
   const store = Struct({
@@ -22,7 +22,7 @@ function DarkCrystalShow ({ root, scuttle, avatar, modal }) {
   updateStore()
   watchForUpdates()
 
-  return h('DarkCrystalShow', { title: '' }, [ // title blank stops everything inside getting a generic tooltip
+  return h('DarkCrystalCrystalsShow', { title: '' }, [ // title blank stops everything inside getting a generic tooltip
     ShardsSummary({
       ritual: store.ritual,
       shardRecords: store.shardRecords,
@@ -95,5 +95,3 @@ function joinInvitesAndReplies (shard, msgs) {
     replies: dialogueMsgs.filter(isReply)
   }
 }
-
-module.exports = DarkCrystalShow

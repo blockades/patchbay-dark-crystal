@@ -2,10 +2,10 @@ const { h } = require('mutant')
 const getContent = require('ssb-msg-content')
 const sort = require('ssb-sort')
 
-const Recipient = require('../component/recipient')
-const Timestamp = require('../component/timestamp')
+const Recipient = require('../../component/recipient')
+const Timestamp = require('../../component/timestamp')
+const getRecp = require('../../lib/get-recp')
 const RequestNew = require('../requests/new')
-const getRecp = require('../lib/get-recp')
 
 module.exports = function DarkCrystalShardsRecord ({ root, record, scuttle, modal, avatar, msg }) {
   const { shard, requests, replies } = record

@@ -1,0 +1,99 @@
+DarkCrystalFriendsShow {
+  --side-pad: 1rem
+
+  width: 30rem
+  height: 40rem
+  padding: 2rem 0 1rem
+
+  display: grid
+  grid-template-columns: auto 1fr auto
+
+  section.left, section.right {
+    padding: 0 .5rem
+    cursor: pointer
+
+    display: grid
+    align-content: center
+    justify-content: center
+
+    -disabled {
+      color: lightgre5
+      cursor: initial
+    }
+  }
+
+  section.body {
+    overflow-y: hidden
+
+    display: grid
+    align-content: start
+    grid-template-rows: auto auto auto 1fr
+    grid-gap: 1rem
+
+    div.avatar {
+      padding: 0 var(--side-pad)
+    }
+
+    div.name {
+      font-size: 1rem
+      font-weight: 600
+      letter-spacing: 1px
+
+      padding: 0 var(--side-pad)
+    }
+
+    div.shards {
+      margin-top: 1rem
+      overflow-y: auto
+
+      display: grid
+      grid-gap: .2rem
+
+      div.shard {
+        letter-spacing: 1px
+
+        padding: .5rem var(--side-pad)
+        display: grid
+        grid-auto-flow: column
+        justify-content: space-between
+        justify-items: start
+        align-items: center
+        grid-gap: 1rem
+
+        -received {
+          color: deeppink
+        }
+
+        -requested {
+          color: white
+          background: deeppink
+        }
+
+        -returned {
+          color: grey
+        }
+
+        div.rts {
+          font-family: monospace
+          font-weight: 600
+        }
+        
+        transition: background 1s ease-in
+
+        :hover {
+          transition: background .5s ease-in
+          color: white
+          background: rebeccapurple
+        }
+      }
+    }
+
+    div.actions {
+      padding: 0 var(--side-pad)
+      align-self: end
+
+      display: grid
+      justify-content: center
+    }
+  }
+}
