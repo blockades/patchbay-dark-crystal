@@ -1,7 +1,5 @@
 DarkCrystal -index {
   section.picker {
-    display: flex
-
     div {
       text-transform: capitalize
       letter-spacing: .2rem

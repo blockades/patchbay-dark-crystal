@@ -2,20 +2,20 @@ const nest = require('depnest')
 const { h, Value, computed } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 
-const CrystalsIndex = require('../../../views/crystals/index')
-const CrystalsNew = require('../../../views/crystals/new')
+const DarkCrystalRitualsIndex = require('../../../../views/crystals/index')
+const DarkCrystalNew = require('../../../../views/crystals/new')
 
-const FriendsCrystalsIndex = require('../../../views/friends/crystals/index')
-const FriendsCrystalsShow = require('../../../views/friends/crystals/show')
+const FriendsCrystalsIndex = require('../../../../views/friends/crystals/index')
+const FriendsCrystalsShow = require('../../../../views/friends/crystals/show')
 
-const FriendsIndex = require('../../../views/friends/index')
-const FriendsShow = require('../../../views/friends/show')
+const FriendsIndex = require('../../../../views/friends/index')
+const FriendsShow = require('../../../../views/friends/show')
 
-const ForwardNew = require('../../../views/forward/new')
+const ForwardNew = require('../../../../views/forward/new')
 // const ForwardIndex = require('../../../views/forward/index')
 
 exports.gives = nest({
-  'app.page.darkCrystalIndex': true
+  'app.page.darkCrystalRitualsIndex': true
 })
 
 exports.needs = nest({
@@ -35,15 +35,19 @@ const FORWARDS = 'Others Crystals'
 
 exports.create = function (api) {
   return nest({
-    'app.page.darkCrystalIndex': darkCrystalIndexPage
+    'app.page.darkCrystalRitualsIndex': darkCrystalRitualsIndexPage
   })
 
-  function darkCrystalIndexPage (location) {
+  function darkCrystalRitualsIndexPage (location) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const mode = Value(MINE)
 
-    const page = h('DarkCrystal -index', { title: '/dark-crystal/index' }, [
-      DarkCrystalIndex({ scuttle, routeTo: api.app.sync.goTo }),
+    const page = h('DarkCrystalRituals -index', { title: '/dark-crystal/rituals' }, [
+      h('header', [
+        h('div.arrow', [ h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack }) ]),
+        h('h1', 'View and Recover a Dark Crystal')
+      ]),
+      DarkCrystalRitualsIndex({ scuttle, routeTo: api.app.sync.goTo }),
     ])
 
     // page.scroll = () => {} // stops keyboard shortcuts from breaking
@@ -195,5 +199,9 @@ exports.create = function (api) {
     const formModal = api.app.html.modal(form, { isOpen: formOpen })
 
     return { formModal, formOpen }
+  }
+
+  function goBack () {
+    api.app.sync.goTo({ page: 'dark-crystal' })
   }
 }

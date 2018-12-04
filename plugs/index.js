@@ -1,11 +1,16 @@
-module.exports = {
+var api  = {
   darkCrystal: {
     app: {
       page: {
-        home: require('./app/page/dark-crystal-home'),
-        new: require('./app/page/dark-crystal-new'),
-        index: require('./app/page/dark-crystal-index'),
-        show: require('./app/page/dark-crystal-show')
+        index: require('./app/page/index'),
+        rituals: {
+          new: require('./app/page/rituals/new'),
+          index: require('./app/page/rituals/index'),
+          show: require('./app/page/rituals/show')
+        },
+        forward: {
+          new: require('./app/page/forward/new')
+        }
       }
     },
     router: {
@@ -18,3 +23,5 @@ module.exports = {
     }
   }
 }
+console.log(api)
+module.exports = api

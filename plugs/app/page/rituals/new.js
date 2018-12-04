@@ -2,7 +2,7 @@ const nest = require('depnest')
 const { h, Value, computed } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 
-const DarkCrystalNew = require('../../../views/crystals/new')
+const DarkCrystalNew = require('../../../../views/crystals/new')
 
 exports.gives = nest({
   'app.page.darkCrystalNew': true

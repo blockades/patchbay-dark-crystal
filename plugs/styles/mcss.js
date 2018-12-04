@@ -19,6 +19,7 @@ exports.create = function (api) {
     each(contents, (content, [filename]) => {
       // const name = basename(filename)
       // sofar[`dark-crystal-${name}`] = content
+      console.log(filename)
       sofar[`dark-crystal-${filename}`] = content
     })
 

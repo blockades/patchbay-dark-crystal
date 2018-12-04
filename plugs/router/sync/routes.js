@@ -3,10 +3,12 @@ const isRoot = require('scuttle-dark-crystal/isRoot')
 
 exports.gives = nest('router.sync.routes')
 exports.needs = nest({
-  'app.page.darkCrystalHome': 'first',
   'app.page.darkCrystalIndex': 'first',
+  'app.page.darkCrystalRitualsIndex': 'first',
   'app.page.darkCrystalNew': 'first',
-  // 'app.page.darkCrystalShow': 'first'
+  'app.page.darkCrystalRitualsShow': 'first',
+  // 'app.page.darkCrystalOthersShardsIndex': 'first',
+  // 'app.page.darkCrystalForwardNew': 'first'
 })
 
 exports.create = (api) => {
@@ -14,10 +16,12 @@ exports.create = (api) => {
     const pages = api.app.page
 
     const routes = [
-      [ loc => loc.page === 'dark-crystal', pages.darkCrystalHome ],
+      [ loc => loc.page === 'dark-crystal', pages.darkCrystalIndex ],
       [ loc => loc.page === 'dark-crystal/new', pages.darkCrystalNew ],
-      [ loc => loc.page === 'dark-crystal/index', pages.darkCrystalIndex ]
-      // [ loc => isRoot(loc), pages.darkCrystalShow ]
+      [ loc => loc.page === 'dark-crystal/rituals', pages.darkCrystalRitualsIndex ],
+      [ loc => isRoot(loc), pages.darkCrystalRitualsShow ]
+      // [ loc => loc.page === 'dark-crystal/others-shards', pages.darkCrystalOthersShardsIndex ],
+      // [ loc => loc.page === 'dark-crystal/forward/new', pages.darkCrystalForwardNew ]
     ]
 
     return [...sofar, ...routes]

@@ -3,7 +3,7 @@ const { h, Value, computed } = require('mutant')
 
 exports.gives = nest({
   'app.html.menuItem': true,
-  'app.page.darkCrystalHome': true
+  'app.page.darkCrystalIndex': true
 })
 
 exports.needs = nest({
@@ -19,16 +19,15 @@ const FORWARD_A_SHARD = "Forward shards to a new identity"
 
 const PATHWAYS = [
   { name: NEW_DARK_CRYSTAL, page: 'dark-crystal/new' },
-  { name: SHOW_RITUALS, page: 'dark-crystal/index' },
-  { name: RETURN_A_SHARD, page: '' },
-  { name: FORWARD_A_SHARD, page: '' }
-  // { name: SHOW_RITUALS, page: 'dark-crystal' }
+  { name: SHOW_RITUALS, page: 'dark-crystal/rituals' },
+  { name: RETURN_A_SHARD, page: 'dark-crystal/others-shards' },
+  { name: FORWARD_A_SHARD, page: 'dark-crystal/forward/new' }
 ]
 
 exports.create = function (api) {
   return nest({
     'app.html.menuItem': menuItem,
-    'app.page.darkCrystalHome': darkCrystalHomePage
+    'app.page.darkCrystalIndex': darkCrystalIndexPage
   })
 
   function menuItem () {
@@ -38,8 +37,8 @@ exports.create = function (api) {
     }, '/dark-crystal')
   }
 
-  function darkCrystalHomePage (location) {
-    return h('DarkCrystal -home', { title: '/dark-crystal' }, [
+  function darkCrystalIndexPage (location) {
+    return h('DarkCrystal -index', { title: '/dark-crystal' }, [
       h('h1', 'Dark Crystal'),
       h('section.picker', PATHWAYS.map((pathway, index) => {
         const { name, page, option } = pathway

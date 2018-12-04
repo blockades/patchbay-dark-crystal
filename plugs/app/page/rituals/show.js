@@ -3,10 +3,10 @@ const { h } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 const getContent = require('ssb-msg-content')
 
-const CrystalsShow = require('../../../views/crystals/show')
+const DarkCrystalShow = require('../../../../views/crystals/show')
 
 exports.gives = nest({
-  'app.page.darkCrystalShow': true
+  'app.page.darkCrystalRitualsShow': true
 })
 
 exports.needs = nest({
@@ -18,10 +18,10 @@ exports.needs = nest({
 
 exports.create = function (api) {
   return nest({
-    'app.page.darkCrystalShow': darkCrystalShowPage
+    'app.page.darkCrystalRitualsShow': darkCrystalRitualsShowPage
   })
 
-  function darkCrystalShowPage (location) {
+  function darkCrystalRitualsShowPage (location) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const { name } = getContent(location)
 
@@ -34,7 +34,7 @@ exports.create = function (api) {
     const page = h('DarkCrystal -show', { title: `/dark-crystal — ${name}` }, [
       h('h1', ['Dark Crystal', h('i.fa.fa-diamond')]),
       h('h2', name),
-      CrystalsShow({
+      DarkCrystalShow({
         scuttle,
         root: location,
         routeTo: api.app.sync.goTo,
@@ -42,13 +42,14 @@ exports.create = function (api) {
         modal: api.app.html.modal
       }),
       h('div.Back', [
-        h('i.fa.fa-arrow-left.fa-lg', {
-          'ev-click': back,
-          'title': 'Back'
-        })
+        h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack, 'title': 'Back' })
       ])
     ])
 
     return page
+  }
+
+  function goBack () {
+    api.app.sync.goTo({ page: 'dark-crystal/rituals' })
   }
 }
