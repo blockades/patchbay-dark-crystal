@@ -16,12 +16,7 @@ exports.create = function (api) {
   return nest('styles.mcss', mcss)
 
   function mcss (sofar = {}) {
-    each(contents, (content, [filename]) => {
-      // const name = basename(filename)
-      // sofar[`dark-crystal-${name}`] = content
-      console.log(filename)
-      sofar[`dark-crystal-${filename}`] = content
-    })
+    each(contents, (content, [filename]) => sofar[filename] = content)
 
     return sofar
   }

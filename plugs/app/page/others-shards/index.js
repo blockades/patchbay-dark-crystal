@@ -3,7 +3,7 @@ const { h, Value, computed } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 
 exports.gives = nest({
-  'app.page.darkCrystalForwardNew': true
+  'app.page.darkCrystalOthersShardsIndex': true
 })
 
 exports.needs = nest({
@@ -16,18 +16,16 @@ exports.needs = nest({
 
 exports.create = function (api) {
   return nest({
-    'app.page.darkCrystalForwardNew': darkCrystalForwardNewPage
+    'app.page.darkCrystalOthersShardsIndex': darkCrystalOthersShardsIndexPage
   })
 
-  function darkCrystalForwardNewPage (location) {
+  function darkCrystalOthersShardsIndexPage (location) {
     const scuttle = Scuttle(api.sbot.obs.connection)
 
-    return h('DarkCrystal Forward -new', { title: '/dark-crystal/forward/new' }, [
+    return h('DarkCrystal OthersShards -index', { title: '/dark-crystal/others-shards' }, [
       h('header.subheader', [
-        h('div.arrow', [
-          h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack })
-        ]),
-        h('h1', 'Forward shards to a new identity')
+        h('div.arrow', [ h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack }) ]),
+        h('h1', 'Others Shards')
       ])
     ])
 

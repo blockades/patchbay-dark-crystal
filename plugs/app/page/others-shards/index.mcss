@@ -1,0 +1,17 @@
+DarkCrystal OthersShards -index {
+  header {
+    margin-top: 4rem
+    display: grid
+    grid-template-columns: 10% 90%
+    justify-content: space-between
+    align-items: start
+
+    h1 {
+      margin: 0
+      text-transform: uppercase
+      letter-spacing: .5rem
+      font-size: 1.2rem
+      color: #fff
+    }
+  }
+}

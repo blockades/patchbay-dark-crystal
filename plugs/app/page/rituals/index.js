@@ -42,8 +42,8 @@ exports.create = function (api) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const mode = Value(MINE)
 
-    const page = h('DarkCrystalRituals -index', { title: '/dark-crystal/rituals' }, [
-      h('header', [
+    const page = h('DarkCrystal Rituals -index', { title: '/dark-crystal/rituals' }, [
+      h('header.subheader', [
         h('div.arrow', [ h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack }) ]),
         h('h1', 'View and Recover a Dark Crystal')
       ]),

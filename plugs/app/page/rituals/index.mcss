@@ -1,14 +1,4 @@
-DarkCrystalRituals -index {
-  background: #140c12
-
-  display: grid
-  justify-content: center
-  align-content: start
-  grid-template-columns: 40rem
-  grid-template-rows: 6rem 1rem 1fr auto
-  grid-gap: 2rem
-  width: 100%
-  overflow-y: scroll
+DarkCrystal Rituals -index {
 
   header {
     margin-top: 4rem
@@ -23,18 +13,6 @@ DarkCrystalRituals -index {
       letter-spacing: .5rem
       font-size: 1.2rem
       color: #fff
-    }
-
-    div.arrow {
-      i {
-        margin: auto 1rem auto auto
-        color: #fff
-
-        :hover {
-          transition: color .1s ease-in .1s ease-out
-          color: rebeccapurple
-        }
-      }
     }
   }
 

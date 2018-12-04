@@ -39,7 +39,9 @@ exports.create = function (api) {
 
   function darkCrystalIndexPage (location) {
     return h('DarkCrystal -index', { title: '/dark-crystal' }, [
-      h('h1', 'Dark Crystal'),
+      h('header', [
+        h('h1', 'Dark Crystal')
+      ]),
       h('section.picker', PATHWAYS.map((pathway, index) => {
         const { name, page, option } = pathway
         const label = `${option} - ${name}`

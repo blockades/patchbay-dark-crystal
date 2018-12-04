@@ -1,4 +1,4 @@
-var api  = {
+module.exports = {
   darkCrystal: {
     app: {
       page: {
@@ -8,6 +8,7 @@ var api  = {
           index: require('./app/page/rituals/index'),
           show: require('./app/page/rituals/show')
         },
+        othersShards: require('./app/page/others-shards/index'),
         forward: {
           new: require('./app/page/forward/new')
         }
@@ -23,5 +24,3 @@ var api  = {
     }
   }
 }
-console.log(api)
-module.exports = api

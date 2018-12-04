@@ -25,31 +25,26 @@ exports.create = function (api) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const { name } = getContent(location)
 
-    const back = () => {
-      api.app.sync.goTo({ page: 'dark-crystal' })
-      // mix: TODO close the current tab
-      // this will be especially important if / when we make the tabs hidden in a standalone install, which I think we should
-    }
-
-    const page = h('DarkCrystal -show', { title: `/dark-crystal — ${name}` }, [
-      h('h1', ['Dark Crystal', h('i.fa.fa-diamond')]),
-      h('h2', name),
+    const page = h('DarkCrystal Rituals -show', { title: `/dark-crystal — ${name}` }, [
+      h('header.subheader', [
+        h('div.arrow', [ h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack, 'title': 'Back' }) ]),
+        h('h1', name)
+      ]),
       DarkCrystalShow({
         scuttle,
         root: location,
         routeTo: api.app.sync.goTo,
         avatar: api.about.html.avatar,
         modal: api.app.html.modal
-      }),
-      h('div.Back', [
-        h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack, 'title': 'Back' })
-      ])
+      })
     ])
 
     return page
   }
 
   function goBack () {
+    // mix: TODO close the current tab
+    // this will be especially important if / when we make the tabs hidden in a standalone install, which I think we should
     api.app.sync.goTo({ page: 'dark-crystal/rituals' })
   }
 }

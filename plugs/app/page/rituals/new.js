@@ -5,7 +5,7 @@ const Scuttle = require('scuttle-dark-crystal')
 const DarkCrystalNew = require('../../../../views/crystals/new')
 
 exports.gives = nest({
-  'app.page.darkCrystalNew': true
+  'app.page.darkCrystalRitualsNew': true
 })
 
 exports.needs = nest({
@@ -18,19 +18,16 @@ exports.needs = nest({
 
 exports.create = function (api) {
   return nest({
-    'app.page.darkCrystalNew': darkCrystalNewPage
+    'app.page.darkCrystalRitualsNew': darkCrystalRitualsNewPage
   })
 
-  function darkCrystalNewPage (location) {
+  function darkCrystalRitualsNewPage (location) {
     const scuttle = Scuttle(api.sbot.obs.connection)
 
-    return h('DarkCrystal -new', { title: '/dark-crystal/new' }, [
-      h('header', [
+    return h('DarkCrystal Rituals -new', { title: '/dark-crystal/new' }, [
+      h('header.subheader', [
         h('div.arrow', [
-          h('i', {
-            classList: ['fa', 'fa-arrow-left', 'fa-lg'],
-            'ev-click': goBack
-          })
+          h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack })
         ]),
         h('h1', 'Create a new Dark Crystal')
       ]),
