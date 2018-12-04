@@ -26,9 +26,7 @@ exports.create = function (api) {
 
     return h('DarkCrystal Rituals -new', { title: '/dark-crystal/new' }, [
       h('header.subheader', [
-        h('div.arrow', [
-          h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack })
-        ]),
+        h('div.Back', [ h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack }) ]),
         h('h1', 'Create a new Dark Crystal')
       ]),
       DarkCrystalNew({

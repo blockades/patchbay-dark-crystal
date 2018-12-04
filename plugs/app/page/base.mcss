@@ -26,7 +26,7 @@ DarkCrystal {
 
     }
 
-    div.arrow {
+    div.Back {
       i {
         margin: auto 1rem auto auto
         color: #fff

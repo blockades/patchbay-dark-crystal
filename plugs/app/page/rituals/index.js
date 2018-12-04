@@ -44,7 +44,7 @@ exports.create = function (api) {
 
     const page = h('DarkCrystal Rituals -index', { title: '/dark-crystal/rituals' }, [
       h('header.subheader', [
-        h('div.arrow', [ h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack }) ]),
+        h('div.Back', [ h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack }) ]),
         h('h1', 'View and Recover a Dark Crystal')
       ]),
       DarkCrystalRitualsIndex({ scuttle, routeTo: api.app.sync.goTo }),

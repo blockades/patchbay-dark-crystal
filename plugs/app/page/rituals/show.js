@@ -27,7 +27,7 @@ exports.create = function (api) {
 
     const page = h('DarkCrystal Rituals -show', { title: `/dark-crystal — ${name}` }, [
       h('header.subheader', [
-        h('div.arrow', [ h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack, 'title': 'Back' }) ]),
+        h('div.Back', [ h('i.fa.fa-arrow-left.fa-lg', { 'ev-click': goBack, 'title': 'Back' }) ]),
         h('h1', name)
       ]),
       DarkCrystalShow({
