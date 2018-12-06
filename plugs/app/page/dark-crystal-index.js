@@ -6,6 +6,7 @@ const CrystalsIndex = require('../../../views/crystals/index')
 const CrystalsNew = require('../../../views/crystals/new')
 const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
+const ForwardIndex = require('../../../views/forward/index')
 
 exports.gives = nest({
   'app.html.menuItem': true,
@@ -25,6 +26,7 @@ exports.needs = nest({
 // modes
 const MINE = 'My Crystals'
 const OTHERS = 'Others Shards'
+const FORWARD = 'Forward Shards'
 
 exports.create = function (api) {
   return nest({
@@ -47,14 +49,15 @@ exports.create = function (api) {
 
     const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
       h('h1', { title: '' }, [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
-      h('section.picker', { title: '' }, [MINE, OTHERS].map(m => {
+      h('section.picker', { title: '' }, [MINE, OTHERS, FORWARD].map(m => {
         return h('div', {
           'ev-click': () => mode.set(m),
           className: computed(mode, mode => mode === m ? '-active' : '')
         }, m)
       })),
       MySecrets({ mode, scuttle }),
-      OthersShards({ mode, scuttle })
+      OthersShards({ mode, scuttle }),
+      ForwardShards({ mode, scuttle })
     ])
 
     // page.scroll = () => {} // stops keyboard shortcuts from breaking
@@ -94,6 +97,17 @@ exports.create = function (api) {
         showFriend
       }),
       friendModal
+    ])
+  }
+
+  function ForwardShards ({ mode, scuttle }) {
+    return h('section.content', { className: computed(mode, m => m === FORWARD ? '-active' : '') }, [
+      ForwardIndex({
+        scuttle,
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        modal: api.app.html.modal
+      })
     ])
   }
 
