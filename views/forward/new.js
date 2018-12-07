@@ -39,7 +39,7 @@ module.exports = function DarkCrystalForwardNew (opts) {
     h('section.description', [
       h('div.from', [
         h('span', 'Shards belonging to...'),
-        Recipient({ recp: { name: resolve(name(feedId)), link: feedId }, avatar })
+        Recipient({ recp: { name: (resolve(name(feedId)) || 'unknown'), link: feedId }, avatar })
       ]),
       h('div.between', [
         h('i.fa.fa-arrow-right.fa-lg')
@@ -69,7 +69,7 @@ module.exports = function DarkCrystalForwardNew (opts) {
 
       // For clarity's sake...
       const source = { name: resolve(name(feedId)), id: feedId }
-      const destination = { name: recp.name, id: recp.link }
+      const destination = { name: recp.name || 'unknown', id: recp.link }
 
       return AreYouSure({
         message: `Are you sure that ${source.name} and ${destination.name} are the same person?`,
