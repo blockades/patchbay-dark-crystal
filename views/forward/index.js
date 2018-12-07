@@ -7,9 +7,17 @@ const sortBy = require('lodash.sortby')
 const getContent = require('ssb-msg-content')
 const { isForward } = require('ssb-dark-crystal-schema')
 
-const DarkCrystalForwardAll = require('./all')
+const DarkCrystalForwardNew = require('./new')
 
-module.exports = function DarkCrystalForwardIndex ({ scuttle, avatar, name, modal }) {
+module.exports = function DarkCrystalForwardIndex (opts) {
+  const {
+    scuttle,
+    suggest,
+    avatar = identity,
+    name = identity,
+    newForward = noop
+  } = opts
+
   const state = {
     isLoading: Value(true),
     friends: Value(),
@@ -22,7 +30,7 @@ module.exports = function DarkCrystalForwardIndex ({ scuttle, avatar, name, moda
 
   return h('DarkCrystalForwardIndex', [
     computed([state.isLoading, state.friends], (isLoading, friends) => {
-      if (isLoading) return 'Loading...' // mix: TODO improve this!
+      if (isLoading) return 'Loading...'
 
       return friends.map(Friend)
     })
@@ -32,17 +40,10 @@ module.exports = function DarkCrystalForwardIndex ({ scuttle, avatar, name, moda
     return h('DarkCrystalFriendShards', [
       h('div.avatar', avatar(feedId, 6)),
       h('div.name', name(feedId)),
-      h('div.forward', [
-        DarkCrystalForwardAll({
-          scuttle,
-          shards,
-          modal
-        })
-      ])
+      h('button', { 'ev-click': (e) => newForward({ shards, feedId }) }, 'Forward')
     ])
   }
 }
-
 
 function getRecords ({ scuttle, state }) {
   const newRecords = {
