@@ -6,12 +6,13 @@ function Recipients (opts) {
   const {
     state,
     suggest,
-    avatar
+    avatar,
+    maxRecps = 7,
   } = opts
 
   return h('DarkCrystalRecipients', [
     map(state.recps, recp => Recipient({ recp, avatar })),
-    RecipientInput({ state, suggest })
+    RecipientInput({ state, suggest, maxRecps })
   ])
 }
 
