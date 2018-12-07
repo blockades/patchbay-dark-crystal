@@ -7,7 +7,7 @@ module.exports = function RecipientInput (opts) {
   const {
     state,
     suggest,
-    maxRecps = 7
+    maxRecps
   } = opts
 
   const { recps } = state
@@ -19,7 +19,11 @@ module.exports = function RecipientInput (opts) {
   var boxActive = false
   suggestify()
 
+  var shouldPopRecp = false
   input.addEventListener('keyup', (e) => {
+    let recpsLength = recps.getLength()
+    let shouldPop = (e.code === 'Backspace' || e.key === 'Backspace' || e.keyCode === 8)
+
     // don't pop the previous entry if still entering a name!
     if (boxActive) {
       // if you delete a name you were typing completely, mark box inactive
@@ -28,10 +32,16 @@ module.exports = function RecipientInput (opts) {
       return
     }
 
-    if (e.code === 'Backspace' || e.key === 'Backspace' || e.keyCode === 8) {
-      if (recps.getLength() < MIN_RECPS) return // can only delete down to 2 recps (sender + 1 recp)
+    // only pop a name if the last (not this) backspace you hit set the value to empty
+    // TODO: we should also disable the input field when this is the case so you can't enter
+    // new characters (the only ones enterable is backspace)
+    if (e.target.value !== '') shouldPopRecp = false
+    else if (shouldPop && shouldPopRecp) {
+      if (recpsLength < MIN_RECPS) return // can only delete down to 2 recps (sender + 1 recp)
 
       recps.pop()
+    } else {
+      shouldPopRecp = true
     }
   })
 
@@ -41,7 +51,7 @@ module.exports = function RecipientInput (opts) {
     if (!input.parentElement) return setTimeout(suggestify, 100)
 
     addSuggest(input, (inputText, cb) => {
-      if (recps.getLength() >= 7) return
+      if (recps.getLength() >= maxRecps) return
       // TODO - tell the user they're only allowed 6 (or 7?!) people in a message
 
       boxActive = true
