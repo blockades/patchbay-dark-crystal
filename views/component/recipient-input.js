@@ -7,42 +7,39 @@ module.exports = function RecipientInput (opts) {
   const {
     state,
     suggest,
-    maxRecps
+    maxRecps,
+    placeholder = ''
   } = opts
 
   const { recps } = state
 
-  const input = h('input', {
-    placeholder: 'those you trust to guard your secret'
-  })
+  const input = h('input', { placeholder })
 
   var boxActive = false
   suggestify()
 
-  var shouldPopRecp = false
+  var targetEmpty = false
   input.addEventListener('keyup', (e) => {
+    let targetIsntEmpty = e.target.value.length !== 0
     let recpsLength = recps.getLength()
-    let shouldPop = (e.code === 'Backspace' || e.key === 'Backspace' || e.keyCode === 8)
+    let isBackspace = (e.code === 'Backspace' || e.key === 'Backspace' || e.keyCode === 8)
 
-    // don't pop the previous entry if still entering a name!
     if (boxActive) {
-      // if you delete a name you were typing completely, mark box inactive
-      // so that further deletes pop names
-      if (e.target.value === '') boxActive = false
+      if (targetIsntEmpty) boxActive = false
       return
     }
 
-    // only pop a name if the last (not this) backspace you hit set the value to empty
-    // TODO: we should also disable the input field when this is the case so you can't enter
-    // new characters (the only ones enterable is backspace)
-    if (e.target.value !== '') shouldPopRecp = false
-    else if (shouldPop && shouldPopRecp) {
-      if (recpsLength < MIN_RECPS) return // can only delete down to 2 recps (sender + 1 recp)
-
-      recps.pop()
-    } else {
-      shouldPopRecp = true
+    if (targetIsntEmpty) {
+      targetEmpty = false
+      return
     }
+
+    if (isBackspace && targetEmpty) {
+      if (recpsLength < MIN_RECPS) return
+      recps.pop()
+    }
+
+    targetEmpty = true
   })
 
   return input

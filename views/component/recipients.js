@@ -8,11 +8,12 @@ function Recipients (opts) {
     suggest,
     avatar,
     maxRecps = 7,
+    placeholder = ''
   } = opts
 
   return h('DarkCrystalRecipients', [
     map(state.recps, recp => Recipient({ recp, avatar })),
-    RecipientInput({ state, suggest, maxRecps })
+    RecipientInput({ state, suggest, maxRecps, placeholder })
   ])
 }
 

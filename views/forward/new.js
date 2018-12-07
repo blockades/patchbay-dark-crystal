@@ -30,7 +30,8 @@ module.exports = function DarkCrystalForwardNew (opts) {
           state,
           suggest,
           avatar,
-          maxRecps: 1
+          maxRecps: 1,
+          placeholder: `another of ${resolve(name(feedId))}'s identities...?`
         })
       ]),
     ]),

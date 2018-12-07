@@ -52,7 +52,7 @@ module.exports = function CrystalsNew (opts) {
       ]),
       h('div.recps', [
         h('label.recps', 'Custodians'),
-        Recipients({ state, suggest, avatar })
+        Recipients({ state, suggest, avatar, placeholder: 'those you trust to guard your secret' })
       ]),
       h('div.quorum', [
         h('label.quorum', 'Quorum'),
