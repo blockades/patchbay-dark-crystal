@@ -8,7 +8,8 @@ module.exports = function RecipientInput (opts) {
     state,
     suggest,
     maxRecps,
-    placeholder = ''
+    placeholder = '',
+    onChange
   } = opts
 
   const { recps } = state
@@ -37,6 +38,7 @@ module.exports = function RecipientInput (opts) {
     if (isBackspace && targetEmpty) {
       if (recpsLength < MIN_RECPS) return
       recps.pop()
+      onChange()
     }
 
     targetEmpty = true
