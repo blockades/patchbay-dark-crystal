@@ -13,8 +13,8 @@ exports.needs = nest({
 })
 
 const NEW_DARK_CRYSTAL = "Create a new Dark Crystal"
-const SHOW_RITUALS = "View and Recover a Dark Crystal"
-const RETURN_A_SHARD = "Return a friend's shard"
+const SHOW_RITUALS = "View and recover a Dark Crystal"
+const RETURN_A_SHARD = "View and return your friends' shards"
 const FORWARD_A_SHARD = "Forward shards to a new identity"
 
 const PATHWAYS = [
