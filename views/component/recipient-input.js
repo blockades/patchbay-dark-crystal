@@ -1,5 +1,6 @@
 const { h } = require('mutant')
 const addSuggest = require('suggest-box')
+const { isFeedId } = require('ssb-ref')
 
 const MIN_RECPS = 0
 
@@ -24,6 +25,14 @@ module.exports = function RecipientInput (opts) {
     let targetIsntEmpty = e.target.value.length !== 0
     let recpsLength = recps.getLength()
     let isBackspace = (e.code === 'Backspace' || e.key === 'Backspace' || e.keyCode === 8)
+    let isEnter = (e.code === 'Enter' || e.key === 'Enter' || e.keyCode == 13)
+
+    if (isEnter && isFeedId(e.target.value)) {
+      recps.push(e.target.value)
+      boxActive = false
+      e.target.value = ''
+      e.target.placeholder = ''
+    }
 
     if (boxActive) {
       if (targetIsntEmpty) boxActive = false
