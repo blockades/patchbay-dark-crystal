@@ -11,7 +11,9 @@ module.exports = function CrystalsIndex (opts) {
   const forwards = getForwards()
 
   return h('CrystalsIndex', [
+    h('h1', 'My secrets'),
     h('DarkCrystalCrystalsIndex', [ map(roots, Root, { comparer }) ]),
+    h('h1', 'Secrets forwarded to me'),
     h('div.forwards', [ map(forwards, Forward, { comparer }) ])
   ])
 
