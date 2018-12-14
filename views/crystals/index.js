@@ -1,5 +1,6 @@
 const pull = require('pull-stream')
 const { h, Array: MutantArray, map, throttle } = require('mutant')
+const forward = require('./forwards')
 
 module.exports = function CrystalsIndex (opts) {
   const {
@@ -8,13 +9,12 @@ module.exports = function CrystalsIndex (opts) {
   } = opts
 
   const roots = getRoots()
-  const forwards = getForwards()
 
   return h('CrystalsIndex', [
     h('h1', 'My secrets'),
     h('DarkCrystalCrystalsIndex', [ map(roots, Root, { comparer }) ]),
     h('h1', 'Secrets forwarded to me'),
-    h('div.forwards', [ map(forwards, Forward, { comparer }) ])
+    forward(scuttle)
   ])
 
   function Root (msg) {
@@ -33,25 +33,6 @@ module.exports = function CrystalsIndex (opts) {
       scuttle.root.pull.mine({ live: true }),
       pull.filter(m => !m.sync),
       pull.drain(root => store.insert(root, 0))
-    )
-    return throttle(store, 100)
-  }
-
-  function Forward (msg) {
-    return h('div.forward', [
-      h('div.sent', new Date(msg.value.timestamp).toLocaleDateString())
-    ])
-  }
-
-  function getForwards () {
-    const store = MutantArray([])
-
-    pull(
-      scuttle.forward.pull.fromOthers({ live: true }),
-      pull.filter(m => !m.sync),
-      // get only one forward per rootId
-      pull.unique(msg => msg.value.content.rootId),
-      pull.drain(forward => store.insert(forward, 0))
     )
     return throttle(store, 100)
   }
