@@ -33,14 +33,14 @@
     "pull-paramap": "^1.2.2",
     "pull-stream": "^3.6.8",
     "read-directory": "^3.0.0",
-    "scuttle-dark-crystal": "^1.0.0",
+    "scuttle-dark-crystal": "github:blockades/scuttle-dark-crystal#development",
     "ssb-msg-content": "^1.0.1",
     "ssb-sort": "^1.1.0",
     "suggest-box": "^2.2.3"
   },
   "devDependencies": {
     "electro": "^2.1.1",
-    "electron": "^1.8.8",
+    "electron": "^2.0.12",
     "micro-css": "^2.0.1",
     "scuttle-testbot": "^1.1.6",
     "ssb-backlinks": "^0.7.3",

@@ -77,7 +77,7 @@ function getRecords ({ scuttle, state }) {
   }
 
   pull(
-    // mix: TODO write a tigher query which gets only data needed
+    // mix: TODO write a tighter query which gets only data needed
     scuttle.shard.pull.fromOthers({ reverse: true, live: false }),
     pullParamap((shard, done) => {
       const { root } = getContent(shard) // root is the unique key for a shard
