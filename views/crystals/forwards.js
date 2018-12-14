@@ -1,16 +1,18 @@
 const pull = require('pull-stream')
 const { h, Array: MutantArray, map, throttle, when } = require('mutant')
 
-module.exports = function forward (scuttle) {
+module.exports = function forward ({ scuttle, avatar }) {
   const forwards = getForwards()
 
-  return h('div.forwards', [ map(forwards, Forward, { comparer }) ])
+  return h('DarkCrystalCrystalsIndex', [ map(forwards, Forward, { comparer }) ])
 
   function Forward (msg) {
-    return h('div.forward', [
-      h('div.sent', new Date(msg.value.timestamp).toLocaleDateString()),
-      h('div.forwardShards', [ map(getForwardShards(msg.value.content.root), ForwardShard, { comparer }) ]),
-      when(msg.recombinable, h('button -primary', { 'ev-click': () => {} }, 'Recombine'))
+    return h('div.crystal', [
+      h('div.overview', [
+        h('div.forwardShards', [ map(getForwardShards(msg.value.content.root), ForwardShard, { comparer }) ]),
+        h('div.sent', new Date(msg.value.timestamp).toLocaleDateString()),
+        when(msg.recombinable, h('button -primary', { 'ev-click': () => {} }, 'Recombine'))
+      ])
     ])
   }
 
@@ -46,7 +48,7 @@ module.exports = function forward (scuttle) {
   }
 
   function ForwardShard (msg) {
-    return h('div.author', msg.value.author)
+    return h('div.author', avatar(msg.value.author))
   }
 }
 

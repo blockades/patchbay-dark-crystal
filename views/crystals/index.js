@@ -5,7 +5,8 @@ const forward = require('./forwards')
 module.exports = function CrystalsIndex (opts) {
   const {
     scuttle,
-    routeTo
+    routeTo,
+    avatar
   } = opts
 
   const roots = getRoots()
@@ -14,7 +15,7 @@ module.exports = function CrystalsIndex (opts) {
     h('h1', 'My secrets'),
     h('DarkCrystalCrystalsIndex', [ map(roots, Root, { comparer }) ]),
     h('h1', 'Secrets forwarded to me'),
-    forward(scuttle)
+    forward(opts)
   ])
 
   function Root (msg) {
