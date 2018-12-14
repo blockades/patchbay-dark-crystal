@@ -31,7 +31,7 @@ module.exports = function DarkCrystalForwardNew (opts) {
           suggest,
           avatar,
           maxRecps: 1,
-          placeholder: `another of ${resolve(name(feedId))}'s identities...?`,
+          placeholder: `a known alternative identity / trusted party`,
           onChange: (e) => state.confirmed.set(false)
         })
       ])
@@ -82,19 +82,21 @@ module.exports = function DarkCrystalForwardNew (opts) {
 
       return AreYouSure({
         message: 'Final Check. Do you have sufficient consent to proceed?',
-        onSubmit: (e) => onSubmit(recp.link),
+        onSubmit: (e) => publishForwards(recp.link),
         onCancel: (e) => state.confirmed.set(false)
       })
     })
   }
 
-  function onSubmit (recp) {
+  function publishForwards (feedId) {
     pull(
       pull.values(shards),
       pull.map(shard => shard.root),
-      pull.asyncMap((root, callback) => scuttle.forward.async.publish({ root, recp }, callback)),
+      pull.asyncMap((root, cb) => scuttle.forward.async.publish(root, feedId, cb)),
       pull.collect((err, forwards) => {
-        console.log(forwards)
+        // TODO handle this better
+        if (err) return console.err(err)
+
         // Just exit modal for the moment...
         onCancel()
       })

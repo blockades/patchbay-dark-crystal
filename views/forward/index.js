@@ -3,16 +3,12 @@ const pullParamap = require('pull-paramap')
 const { h, Value, computed } = require('mutant')
 const set = require('lodash.set')
 const transform = require('lodash.transform')
-const sortBy = require('lodash.sortby')
 const getContent = require('ssb-msg-content')
-const { isForward } = require('ssb-dark-crystal-schema')
-
-const DarkCrystalForwardNew = require('./new')
+// const { isForward } = require('ssb-dark-crystal-schema')
 
 module.exports = function DarkCrystalForwardIndex (opts) {
   const {
     scuttle,
-    suggest,
     avatar = identity,
     name = identity,
     newForward = noop
@@ -62,23 +58,25 @@ function getRecords ({ scuttle, state }) {
       const { root } = getContent(shard) // root is the unique key for a shard
       set(newRecords, [shard.value.author, root, 'receivedAt'], new Date(shard.timestamp).toLocaleDateString())
 
-      pull(
-        scuttle.root.pull.backlinks(root, { reverse: true }),
-        pull.filter(m => getContent(m).root === root), // root.pull.backlinks should perhaps do this for us
-        pull.collect((err, thread) => {
-          if (err) return done(err)
+      // TODO - currently unused
+      // pull(
+      //   scuttle.root.pull.backlinks(root, { reverse: true }),
+      //   pull.filter(m => getContent(m).root === root), // root.pull.backlinks should perhaps do this for us
+      //   pull.collect((err, thread) => {
+      //     if (err) return done(err)
 
-          // Grab all forwards that already exist for this root,
-          // it might be the case we've already forwarded shards to a new identity
-          var forward = thread.find(isForward)
-          if (forward) {
-            set(newRecords, [shard.value.author, root, 'forward'], forward.key)
-            set(newRecords, [shard.value.author, root, 'sentAt'], forward.timestamp.toLocaleDateString())
-          } 
+      //     // Grab all forwards that already exist for this root,
+      //     // it might be the case we've already forwarded shards to a new identity
+      //     var forward = thread.find(isForward)
+      //     if (forward) {
+      //       set(newRecords, [shard.value.author, root, 'forward'], forward.key)
+      //       set(newRecords, [shard.value.author, root, 'sentAt'], new Date(forward.value.timestamp).toLocaleDateString())
+      //     }
 
-          done(null)
-        })
-      )
+      //     done(null)
+      //   })
+      // )
+      done(null)
     }, 10), // "width 10"
     pull.collect((err) => {
       if (err) return console.error(err)
