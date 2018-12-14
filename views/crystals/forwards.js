@@ -23,7 +23,7 @@ module.exports = function forward ({ scuttle, avatar }) {
       scuttle.forward.pull.fromOthers({ live: true }),
       pull.filter(m => !m.sync),
       // get only one forward per rootId
-      pull.unique(msg => msg.value.content.rootId),
+      pull.unique(msg => msg.value.content.root),
       // test if we can recombine
       pull.asyncMap(function (msg, cb) {
         scuttle.recover.async.recombine(msg.value.content.rootId, (err, secret) => {
