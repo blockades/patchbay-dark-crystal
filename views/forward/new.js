@@ -22,6 +22,8 @@ module.exports = function DarkCrystalForwardNew (opts) {
     recps: MutantArray([])
   }
 
+  const avatarBig = (feedId) => avatar(feedId, 5)
+
   return h('DarkCrystalForwardNew', [
     h('section.inputs', [
       h('div.select', [
@@ -37,18 +39,16 @@ module.exports = function DarkCrystalForwardNew (opts) {
       ])
     ]),
     h('section.description', [
-      h('div.from', [
-        h('span', 'Shards belonging to...'),
-        Recipient({ recp: feedId, avatar })
-      ]),
+      h('div.from.description', 'Shards belonging to...'),
+      h('div.from.feedId', Recipient({ recp: feedId, avatar: avatarBig })),
       h('div.between', [
         h('i.fa.fa-arrow-right.fa-lg')
       ]),
+      h('div.to.description', 'will be forwarded to...'),
       computed([state.recps], (recps) => {
         if (recps.length < 1) return
-        return h('div.to', [
-          Recipient({ recp: recps[0], avatar }),
-          h('span', 'will be forwarded to...')
+        return h('div.to.feedId', [
+          Recipient({ recp: recps[0].link, avatar: avatarBig })
         ])
       })
     ]),

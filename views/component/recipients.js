@@ -14,8 +14,10 @@ module.exports = function Recipients (opts) {
     onChange = console.log
   } = opts
 
+  const avatarSmall = (feedId) => avatar(feedId, 2.5)
+
   return h('DarkCrystalRecipients', [
-    map(state.recps, recp => Recipient({ recp, name, avatar })),
+    map(state.recps, recp => Recipient({ recp, name, avatar: avatarSmall })),
     RecipientInput({ state, suggest, maxRecps, placeholder, onChange })
   ])
 }

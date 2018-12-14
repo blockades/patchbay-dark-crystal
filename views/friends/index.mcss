@@ -8,9 +8,7 @@ DarkCrystalFriendsIndex {
   align-content: start
 
   div.DarkCrystalFriendShards {
-
   }
-
 }
 
 DarkCrystalFriendShards {
@@ -21,6 +19,8 @@ DarkCrystalFriendShards {
   div.avatar {}
   div.name {}
   div.shards {
+    cursor: pointer
+
     display: grid
     grid-template-columns: repeat(auto-fill, 1rem)
     grid-gap: .5rem
