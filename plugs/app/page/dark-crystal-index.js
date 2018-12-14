@@ -106,7 +106,7 @@ exports.create = function (api) {
     const view = Value('Cats are cooler')
     const isOpen = Value(false)
     const forwardModal = api.app.html.modal(view, { isOpen })
-    const message = "Select a friend whose shards you have been asked to forward..."
+    const message = 'Select a friend whose shards you have been asked to forward...'
 
     const newForward = (opts) => {
       view.set(ForwardNew(Object.assign({}, opts, {
@@ -141,6 +141,7 @@ exports.create = function (api) {
         console.log('ritual complete', data)
       },
       suggest: { about: api.about.async.suggest },
+      name: api.about.obs.name,
       avatar: api.about.html.avatar
     })
     const formOpen = Value(false)

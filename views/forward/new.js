@@ -1,4 +1,4 @@
-const { h, Value, when, computed, Array: MutantArray, resolve } = require('mutant')
+const { h, Value, computed, Array: MutantArray, resolve } = require('mutant')
 const pull = require('pull-stream')
 
 const Recipients = require('../component/recipients')
@@ -34,24 +34,20 @@ module.exports = function DarkCrystalForwardNew (opts) {
           placeholder: `another of ${resolve(name(feedId))}'s identities...?`,
           onChange: (e) => state.confirmed.set(false)
         })
-      ]),
+      ])
     ]),
     h('section.description', [
       h('div.from', [
         h('span', 'Shards belonging to...'),
-        Recipient({ recp: { name: (resolve(name(feedId)) || 'unknown'), link: feedId }, avatar })
+        Recipient({ recp: feedId, avatar })
       ]),
       h('div.between', [
         h('i.fa.fa-arrow-right.fa-lg')
       ]),
       computed([state.recps], (recps) => {
-        const recp = recps[0]
         if (recps.length < 1) return
         return h('div.to', [
-          Recipient({
-            recp: recps[0],
-            avatar
-          }),
+          Recipient({ recp: recps[0], avatar }),
           h('span', 'will be forwarded to...')
         ])
       })
@@ -87,7 +83,7 @@ module.exports = function DarkCrystalForwardNew (opts) {
       return AreYouSure({
         message: 'Final Check. Do you have sufficient consent to proceed?',
         onSubmit: (e) => onSubmit(recp.link),
-        onCancel: (e) => state.confirmed.set(false),
+        onCancel: (e) => state.confirmed.set(false)
       })
     })
   }

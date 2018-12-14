@@ -57,7 +57,6 @@ DarkCrystalForwardNew {
       justify-content: right
 
       div.DarkCrystalRecipient {
-        padding: 0 0 0 1rem
       }
     }
 

@@ -4,11 +4,6 @@ $RecpientBackground {
   background: rebeccapurple
 }
 
-$RecipientCard {
-  background-color: #fff
-  color: #222
-}
-
 DarkCrystalRecipients {
   $RecpientBackground
   flex-grow: 1
@@ -20,27 +15,9 @@ DarkCrystalRecipients {
   display: flex
   flex-wrap: wrap
   align-items: center
+  justifiy-items: flex-start
 
-  div.DarkCrystalRecipient {
-    $RecipientCard
-    height: 2.5rem
-    margin: .4rem .5rem
-
-    display: flex
-    align-items: center
-
-    a.Avatar {
-      width: 2.5rem
-      height: 2.5rem
-      img {
-        height: 2.5rem
-        width: 2.5rem
-      }
-    }
-
-    div.name {
-      margin: 0 1rem 0 .5rem
-    }
+  div.Recipient {
   }
 
   input {
@@ -59,5 +36,3 @@ DarkCrystalRecipients {
     ::placeholder { color: #ccbcc7 }
   }
 }
-
-
