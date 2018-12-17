@@ -4,6 +4,7 @@ const Scuttle = require('scuttle-dark-crystal')
 
 const CrystalsIndex = require('../../../views/crystals/index')
 const CrystalsNew = require('../../../views/crystals/new')
+const ForwardsIndex = require('../../../views/crystals/forwards')
 const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
 
@@ -67,13 +68,24 @@ exports.create = function (api) {
     return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
       formModal,
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      CrystalsIndex({
-        scuttle,
-        routeTo: api.app.sync.goTo,
-        avatar: api.about.html.avatar,
-        modal: api.app.html.modal
-      })
+      h('CrystalsIndex', [
+        h('h1', 'My secrets'),
+        CrystalsIndex({
+          scuttle,
+          routeTo: api.app.sync.goTo
+        }),
+        h('h1', 'Secrets forwarded to me'),
+        Forwards({ mode, scuttle })
+      ])
     ])
+  }
+
+  function Forwards ({ mode, scuttle }) {
+    return ForwardsIndex({
+      scuttle,
+      avatar: api.about.html.avatar,
+      modal: api.app.html.modal
+    })
   }
 
   function OthersShards ({ mode, scuttle }) {

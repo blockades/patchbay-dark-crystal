@@ -1,6 +1,5 @@
 const pull = require('pull-stream')
 const { h, Array: MutantArray, map, throttle } = require('mutant')
-const forward = require('./forwards')
 
 module.exports = function CrystalsIndex (opts) {
   const {
@@ -10,13 +9,7 @@ module.exports = function CrystalsIndex (opts) {
 
   const roots = getRoots()
 
-
-  return h('CrystalsIndex', [
-    h('h1', 'My secrets'),
-    h('DarkCrystalCrystalsIndex', [ map(roots, Root, { comparer }) ]),
-    h('h1', 'Secrets forwarded to me'),
-    forward(opts)
-  ])
+  return h('DarkCrystalCrystalsIndex', [ map(roots, Root, { comparer }) ])
 
   function Root (msg) {
     return h('div.crystal', [

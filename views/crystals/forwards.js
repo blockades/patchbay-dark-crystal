@@ -18,6 +18,7 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
   // watchForUpdates({ scuttle, refresh })
   refresh()
 
+  console.log('i am now here')
   return h('DarkCrystalCrystalsIndex', [
     computed([state.isLoading, state.forwards], (isLoading, forwards) => {
       if (isLoading) return 'Loading...'
