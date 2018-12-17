@@ -1,6 +1,6 @@
 const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
-const { h, Array: MutantArray, Value, map, computed, throttle, when } = require('mutant')
+const { h, Value, computed, when } = require('mutant')
 const set = require('lodash.set')
 const { performRecombine, RecombineModal } = require('./shards/recombine')
 
@@ -18,7 +18,6 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
   // watchForUpdates({ scuttle, refresh })
   refresh()
 
-  console.log('i am now here')
   return h('DarkCrystalCrystalsIndex', [
     computed([state.isLoading, state.forwards], (isLoading, forwards) => {
       if (isLoading) return 'Loading...'
@@ -32,7 +31,6 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
         // h('div.something', JSON.stringify(msg))
         // h('div.secretAuthor', avatar(msg.SecretAuthor) ]),
         msg.forwardMsgs.map(m => h('i.DarkCrystalShard.fa.fa-diamond', {})),
-        // h('div.forwardShards', [ map(getForwardShards(msg.value.content.root), ForwardShard, { comparer }) ]),
         // h('div.sent', new Date(msg.value.timestamp).toLocaleDateString()),
         when(msg.recombinable, h('button -primary',
           { 'ev-click': () => performRecombine(msg.recombinable, scuttle, state) },
@@ -65,6 +63,8 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
           pull.collect((err, forwardMsgs) => {
             if (err) return cb(err)
             set(newForwards, [ msg.value.content.root, 'forwardMsgs' ], forwardMsgs)
+
+            // test if we can recombine
             scuttle.recover.async.recombine(msg.value.content.root, (err, secret) => {
               if (err) return cb(null)
               if (secret) set(newForwards, [ msg.value.content.root, 'recombinable' ], msg.value.content.root)
@@ -73,14 +73,6 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
           })
         )
       }),
-      // test if we can recombine
-      // pullParamap((msg, cb) => {
-      //   scuttle.recover.async.recombine(msg.value.content.root, (err, secret) => {
-      //     if (err) return cb(null, msg)
-      //     // if (secret) return cb(null, Object.assign({ recombinable: true }, msg))
-      //     if (secret) return cb(null, msg)
-      //   })
-      // }),
       pull.collect((err) => {
         if (err) console.error(err)
         state.forwards.set(newForwards)
@@ -89,10 +81,3 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
     )
   }
 }
-//   function ForwardShard (msg) {
-//     return h('div.author', avatar(msg.value.author))
-//   }
-// }
-//
-// function comparer (a, b) {
-//   return a && b && a.key === b.key
