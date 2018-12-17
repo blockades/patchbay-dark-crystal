@@ -2,11 +2,16 @@ const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
 const { h, Array: MutantArray, Value, map, computed, throttle, when } = require('mutant')
 const set = require('lodash.set')
+const { performRecombine, RecombineModal } = require('./shards/recombine')
 
-module.exports = function forward ({ scuttle, avatar }) {
+module.exports = function forward ({ scuttle, avatar, modal }) {
   const state = {
     isLoading: Value(true),
-    forwards: Value()
+    forwards: Value(),
+    recombining: Value(false),
+    error: Value(),
+    secret: Value(),
+    modalOpen: Value(false)
   }
 
   const refresh = () => getForwards({ scuttle, state })
@@ -28,7 +33,11 @@ module.exports = function forward ({ scuttle, avatar }) {
         msg.forwardMsgs.map(m => h('i.DarkCrystalShard.fa.fa-diamond', {})),
         // h('div.forwardShards', [ map(getForwardShards(msg.value.content.root), ForwardShard, { comparer }) ]),
         // h('div.sent', new Date(msg.value.timestamp).toLocaleDateString()),
-        when(msg.recombinable, h('button -primary', { 'ev-click': () => {} }, 'Recombine'))
+        when(msg.recombinable, h('button -primary',
+          { 'ev-click': () => performRecombine(msg.recombinable, scuttle, state) },
+          when(state.recombining, h('i.fa.fa-spinner.fa-pulse'), 'Recombine')
+        )),
+        RecombineModal(modal, state)
       ])
     ])
   }
@@ -57,7 +66,7 @@ module.exports = function forward ({ scuttle, avatar }) {
             set(newForwards, [ msg.value.content.root, 'forwardMsgs' ], forwardMsgs)
             scuttle.recover.async.recombine(msg.value.content.root, (err, secret) => {
               if (err) return cb(null)
-              if (secret) set(newForwards, [ msg.value.content.root, 'recombinable' ], true)
+              if (secret) set(newForwards, [ msg.value.content.root, 'recombinable' ], msg.value.content.root)
               return cb(null)
             })
           })

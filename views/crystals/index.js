@@ -5,11 +5,11 @@ const forward = require('./forwards')
 module.exports = function CrystalsIndex (opts) {
   const {
     scuttle,
-    routeTo,
-    avatar
+    routeTo
   } = opts
 
   const roots = getRoots()
+
 
   return h('CrystalsIndex', [
     h('h1', 'My secrets'),
