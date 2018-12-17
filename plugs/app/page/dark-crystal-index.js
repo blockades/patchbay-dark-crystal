@@ -67,7 +67,12 @@ exports.create = function (api) {
     return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
       formModal,
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      CrystalsIndex({ scuttle, routeTo: api.app.sync.goTo, avatar: api.about.html.avatar })
+      CrystalsIndex({
+        scuttle,
+        routeTo: api.app.sync.goTo,
+        avatar: api.about.html.avatar,
+        modal: api.app.html.modal
+      })
     ])
   }
 
