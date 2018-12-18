@@ -54,15 +54,15 @@ module.exports = function FriendsShow (opts) {
 
             case FORWARD: return [
               h('div.forwards', [
-                computed(state.forwards, forwards => {
-                  if (!forwards) return
+                h('div.history', [
+                  h('div.heading', 'history of shards forwarded'),
+                  computed(state.forwards, forwards => {
+                    if (!forwards) return 'you have not forwarded any of this users shards to anyone'
 
-                  return h('div.history', [
-                    h('div.heading', 'history of shards forwarded'),
-                    Object.keys(forwards)
+                    return Object.keys(forwards)
                       .map(feedId => ForwardDetail({ feedId, forwards: forwards[feedId], name, avatar }))
-                  ])
-                }),
+                  })
+                ]),
                 h('div.actions', [
                   h('button', { 'ev-click': (e) => newForward(state) }, 'Forward all shards')
                 ])
