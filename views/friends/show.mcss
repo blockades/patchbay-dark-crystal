@@ -1,7 +1,7 @@
 DarkCrystalFriendsShow {
   --side-pad: 1rem
 
-  width: 30rem
+  width: 40rem
   height: 40rem
   padding: 2rem 0 1rem
 
@@ -42,11 +42,34 @@ DarkCrystalFriendsShow {
       padding: 0 var(--side-pad)
     }
 
+    div.tabs {
+      padding: 0 var(--side-pad)
+      margin: 1rem 0
+
+      display: grid
+      grid-template-columns: auto auto
+      grid-gap: 1.5rem
+      justify-content: start
+      text-transform: uppercase
+      letter-spacing: 2px
+      font-size: .7rem
+
+      div.tab {
+        cursor: pointer
+        padding-bottom: .5rem
+        border-bottom: 1px solid rgba(0,0,0,0)
+
+        -selected { border-bottom: 1px solid black }
+
+        span { padding-left: .5rem }
+      }
+    }
+
     div.shards {
-      margin-top: 1rem
       overflow-y: auto
 
       display: grid
+      align-content: start
       grid-gap: .2rem
 
       div.shard {
@@ -84,6 +107,42 @@ DarkCrystalFriendsShow {
           transition: background .5s ease-in
           color: white
           background: rebeccapurple
+        }
+      }
+    }
+
+    div.forwards {
+      overflow-y: auto
+      padding: 0 var(--side-pad)
+
+
+      display: grid
+      align-content: start
+      grid-gap: .5rem
+
+      div.actions {
+        button { }
+      }
+
+      div.history {
+        div.heading {
+          margin-bottom: 1rem
+          text-transform: uppercase
+          letter-spacing: 2px
+          font-weight: 600
+          font-size: .8rem
+        }
+
+        div.forward {
+          display: grid
+          grid-template-columns: auto auto
+          justify-content: start
+          align-content: center
+          align-items: center
+          grid-gap: 1rem
+
+          div.avatar {}
+          div.message {}
         }
       }
     }

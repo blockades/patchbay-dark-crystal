@@ -18,6 +18,7 @@ module.exports = function DarkCrystalForwardNew (opts) {
 
   const state = {
     confirmed: Value(false),
+    publishing: Value(false),
     completed: Value(false), // TODO: Render a success or failure message and reset the UI back to home page...
     recps: MutantArray([])
   }
@@ -76,9 +77,10 @@ module.exports = function DarkCrystalForwardNew (opts) {
   }
 
   function SecondCheck () {
-    return computed([state.confirmed, state.recps], (confirmed, recps) => {
+    return computed([state.confirmed, state.recps, state.publishing], (confirmed, recps, publishing) => {
       const recp = recps[0]
       if (!confirmed || !recp) return
+      if (publishing) return // hide buttons to block any double-clicks!
 
       return AreYouSure({
         message: 'Final Check. Do you have sufficient consent to proceed?',
@@ -89,6 +91,8 @@ module.exports = function DarkCrystalForwardNew (opts) {
   }
 
   function publishForwards (feedId) {
+    state.publishing.set(true)
+
     pull(
       pull.values(shards),
       pull.map(shard => shard.root),
@@ -99,6 +103,7 @@ module.exports = function DarkCrystalForwardNew (opts) {
 
         // Just exit modal for the moment...
         onCancel()
+        state.publishing.set(false)
       })
     )
   }
