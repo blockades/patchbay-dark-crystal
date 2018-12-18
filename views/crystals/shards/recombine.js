@@ -7,8 +7,7 @@ module.exports = {
 
     scuttle.recover.async.recombine(rootId, (err, s) => {
       if (err) error.set(err)
-      else secret.set(s)
-
+      else secret.set(s.secret)
       recombining.set(false)
       modalOpen.set(true)
     })

@@ -2,6 +2,7 @@ const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
 const { h, Value, computed, when } = require('mutant')
 const set = require('lodash.set')
+const get = require('lodash.get')
 const { performRecombine, RecombineModal } = require('./shards/recombine')
 
 module.exports = function forward ({ scuttle, avatar, modal }) {
@@ -28,10 +29,9 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
   function Forward (msg) {
     return h('div.crystal', [
       h('div.overview', { 'ev-click': () => {} }, [
-        // h('div.something', JSON.stringify(msg))
-        // h('div.secretAuthor', avatar(msg.SecretAuthor) ]),
+        when(msg.secretAuthor, h('div.secretAuthor', avatar(msg.secretAuthor))),
         msg.forwardMsgs.map(m => h('i.DarkCrystalShard.fa.fa-diamond', {})),
-        // h('div.sent', new Date(msg.value.timestamp).toLocaleDateString()),
+        when(msg.secretCreated, h('div.created', new Date(msg.secretCreated).toLocaleDateString())),
         when(msg.recombinable, h('button -primary',
           { 'ev-click': () => performRecombine(msg.recombinable, scuttle, state) },
           when(state.recombining, h('i.fa.fa-spinner.fa-pulse'), 'Recombine')
@@ -47,28 +47,36 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
       scuttle.forward.pull.fromOthers({ live: false }),
       // get only one forward per rootId
       pull.unique(msg => msg.value.content.root),
-      // pullParamap((msg, cb) => {
-      //   scuttle.root.pull.get(msg.value.content.root, (err, rootMsg) => {
-      //     if (err) console.log(err)
-      //     console.log(rootMsg)
-      //     cb(null)
-      //     // TODO: use lodash get
-      //     // set(newForwards, [ msg.value.content.root, 'secretAuthor' ], roots[0].value.author)
-      //     // set(newForwards, [ msg.value.content.root, 'secretCreated' ], roots[0].value.timestamp)
-      //   })
-      // }),
+      // should this be multiple separate maps?
       pullParamap((msg, cb) => {
+        const root = get(msg, 'value.content.root')
         pull(
-          scuttle.forward.pull.byRoot(msg.value.content.root),
+          scuttle.forward.pull.byRoot(root),
           pull.collect((err, forwardMsgs) => {
             if (err) return cb(err)
-            set(newForwards, [ msg.value.content.root, 'forwardMsgs' ], forwardMsgs)
+            set(newForwards, [ root, 'forwardMsgs' ], forwardMsgs)
 
             // test if we can recombine
-            scuttle.recover.async.recombine(msg.value.content.root, (err, secret) => {
+            scuttle.recover.async.recombine(root, (err, secret) => {
               if (err) return cb(null)
-              if (secret) set(newForwards, [ msg.value.content.root, 'recombinable' ], msg.value.content.root)
-              return cb(null)
+              if (secret) set(newForwards, [ root, 'recombinable' ], root)
+
+              // get the original secret message, if within follow graph
+              scuttle.root.async.get(root, (err, rootMsg) => {
+                if (!err) {
+                  set(
+                    newForwards,
+                    [ root, 'secretAuthor' ],
+                    get(rootMsg, 'author') || get(rootMsg, 'value.author')
+                  )
+                  set(
+                    newForwards,
+                    [ root, 'secretCreated' ],
+                    get(rootMsg, 'timestamp') || get(rootMsg, 'value.timestamp')
+                  )
+                }
+                return cb(null)
+              })
             })
           })
         )
