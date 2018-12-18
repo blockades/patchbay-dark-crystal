@@ -16,7 +16,7 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
   }
 
   const refresh = () => getForwards({ scuttle, state })
-  // watchForUpdates({ scuttle, refresh })
+  // TODO: watchForUpdates({ scuttle, refresh })
   refresh()
 
   return h('DarkCrystalCrystalsIndex', [
@@ -28,10 +28,12 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
 
   function Forward (msg) {
     return h('div.crystal', [
+      // TODO: clicking takes you to a page with more detail, move recombine button there
       h('div.overview', { 'ev-click': () => {} }, [
         when(msg.secretAuthor, h('div.secretAuthor', avatar(msg.secretAuthor))),
-        msg.forwardMsgs.map(m => h('i.DarkCrystalShard.fa.fa-diamond', {})),
         when(msg.secretCreated, h('div.created', new Date(msg.secretCreated).toLocaleDateString())),
+        // one diamond icon per shard you hold (these could be mini-avatars of the forwarders)
+        msg.forwardMsgs.map(m => h('i.DarkCrystalShard.fa.fa-diamond', {})),
         when(msg.recombinable, h('button -primary',
           { 'ev-click': () => performRecombine(msg.recombinable, scuttle, state) },
           when(state.recombining, h('i.fa.fa-spinner.fa-pulse'), 'Recombine')
@@ -44,6 +46,7 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
   function getForwards () {
     const newForwards = {}
     pull(
+      // Would this be faster with reverse: true? (and sort afterwards)
       scuttle.forward.pull.fromOthers({ live: false }),
       // get only one forward per rootId
       pull.unique(msg => msg.value.content.root),
@@ -55,28 +58,30 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
           pull.collect((err, forwardMsgs) => {
             if (err) return cb(err)
             set(newForwards, [ root, 'forwardMsgs' ], forwardMsgs)
-
-            // test if we can recombine
-            scuttle.recover.async.recombine(root, (err, secret) => {
-              if (err) return cb(null)
-              if (secret) set(newForwards, [ root, 'recombinable' ], root)
-
-              // get the original secret message, if within follow graph
-              scuttle.root.async.get(root, (err, rootMsg) => {
-                if (!err) {
-                  set(
-                    newForwards,
-                    [ root, 'secretAuthor' ],
-                    get(rootMsg, 'author') || get(rootMsg, 'value.author')
-                  )
-                  set(
-                    newForwards,
-                    [ root, 'secretCreated' ],
-                    get(rootMsg, 'timestamp') || get(rootMsg, 'value.timestamp')
-                  )
-                }
+            // get the original secret message, if within follow graph
+            scuttle.root.async.get(root, (err, rootMsg) => {
+              if (!err) {
+                set(
+                  newForwards,
+                  [ root, 'secretAuthor' ],
+                  get(rootMsg, 'author') || get(rootMsg, 'value.author')
+                )
+                set(
+                  newForwards,
+                  [ root, 'secretCreated' ],
+                  get(rootMsg, 'timestamp') || get(rootMsg, 'value.timestamp')
+                )
+              }
+              if (forwardMsgs.length > 1) {
+                // test if we can recombine
+                // TODO: handle v1 forwarded message (eg: Is this your secret '<garbage>'?)
+                scuttle.recover.async.recombine(root, (err, secret) => {
+                  if (secret && !err) set(newForwards, [ root, 'recombinable' ], root)
+                  return cb(null)
+                })
+              } else {
                 return cb(null)
-              })
+              }
             })
           })
         )

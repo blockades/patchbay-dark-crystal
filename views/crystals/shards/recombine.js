@@ -8,6 +8,7 @@ module.exports = {
     scuttle.recover.async.recombine(rootId, (err, s) => {
       if (err) error.set(err)
       else secret.set(s.secret)
+      // TODO: handle labels (mix is on this one i think)
       recombining.set(false)
       modalOpen.set(true)
     })
