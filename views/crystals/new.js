@@ -15,7 +15,8 @@ module.exports = function CrystalsNew (opts) {
   } = opts
 
   const initialState = {
-    crystalName: '',
+    crystalName: '', // name is a reserved key in mutant!
+    label: '',
     secret: '',
     recps: MutantArray([]),
     quorum: undefined,
@@ -38,9 +39,17 @@ module.exports = function CrystalsNew (opts) {
       h('div.name', [
         h('label.name', 'Name'),
         h('input.name', {
-          placeholder: 'name this crystal',
+          placeholder: 'a short name for this crystal',
           value: state.crystalName,
           'ev-input': ev => state.crystalName.set(ev.target.value)
+        })
+      ]),
+      h('div.label', [
+        h('label.label', 'label'),
+        h('input.label', {
+          placeholder: 'a more detailed description for future you / family who might recover this',
+          value: state.label,
+          'ev-input': ev => state.label.set(ev.target.value)
         })
       ]),
       h('div.secret', [
@@ -92,11 +101,11 @@ module.exports = function CrystalsNew (opts) {
   ])
 
   function performRitual (state) {
-    const { crystalName: name, secret, recps, quorum } = resolve(state)
+    const { crystalName: name, label, secret, recps, quorum } = resolve(state)
 
     state.performingRitual.set(true)
 
-    scuttle.share.async.share({ name, secret, recps, quorum }, (err, data) => {
+    scuttle.share.async.share({ name, label, secret, recps, quorum }, (err, data) => {
       if (err) {
         state.performingRitual.set(false)
         errors.ritual.set(err)
@@ -109,9 +118,10 @@ module.exports = function CrystalsNew (opts) {
   }
 }
 
-function checkForErrors ({ crystalName, secret, recps, quorum }) {
+function checkForErrors ({ crystalName, label, secret, recps, quorum }) {
   const err = {}
   if (!crystalName) err.name = 'required'
+  if (typeof label !== 'string') err.label = 'label must be string'
   if (!secret) err.secret = 'required'
   if (secret.length > 1350) err.secret = 'your secret must be shorter'
   if (recps.length < MIN_RECPS) err.custodians = `you need to offer at least ${MIN_RECPS}`
