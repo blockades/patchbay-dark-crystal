@@ -2,20 +2,25 @@ const { h, when, computed, Value, resolve } = require('mutant')
 const { clipboard } = require('electron')
 
 module.exports = {
-  performRecombine: function performRecombine (rootId, scuttle, { recombining, error, secret, modalOpen }) {
+  performRecombine: function performRecombine (rootId, scuttle, state) {
+    const { recombining, error, secret, secretLabel, modalOpen } = state
     recombining.set(true)
 
-    scuttle.recover.async.recombine(rootId, (err, s) => {
+    scuttle.recover.async.recombine(rootId, (err, secretObject) => {
       if (err) error.set(err)
-      else secret.set(s.secret)
-      // TODO: handle labels (mix is on this one i think)
+      else {
+        // TODO: this is a bit ugly. i had problems passing an object
+        // to a Value().  Maybe we need to use Struct?
+        secret.set(secretObject.secret)
+        if (secretObject.label) secretLabel.set(secretObject.label)
+      }
       recombining.set(false)
       modalOpen.set(true)
     })
   },
 
   RecombineModal: function RecombineModal (modal, state) {
-    const { error, modalOpen, secret } = state
+    const { error, modalOpen, secret, secretLabel } = state
     const copyBtnVisible = Value(true)
     const copySecret = () => {
       copyBtnVisible.set(false)
@@ -37,6 +42,8 @@ module.exports = {
       ],
       [
         h('h1', 'Your secret'),
+        when(secretLabel, [ h('h3', 'Label'), h('pre', secretLabel) ]),
+        h('h3', 'Secret'),
         h('pre', secret),
         h('div.actions', [
           when(copyBtnVisible,

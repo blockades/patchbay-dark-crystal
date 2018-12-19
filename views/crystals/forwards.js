@@ -12,6 +12,7 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
     recombining: Value(false),
     error: Value(),
     secret: Value(),
+    secretLabel: Value(),
     modalOpen: Value(false)
   }
 
@@ -54,7 +55,7 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
       pullParamap((msg, cb) => {
         const root = get(msg, 'value.content.root')
         pull(
-          scuttle.forward.pull.byRoot(root),
+          scuttle.forward.pull.fromOthersByRoot(root),
           pull.collect((err, forwardMsgs) => {
             if (err) return cb(err)
             set(newForwards, [ root, 'forwardMsgs' ], forwardMsgs)

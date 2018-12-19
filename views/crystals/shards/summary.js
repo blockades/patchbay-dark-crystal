@@ -10,6 +10,7 @@ module.exports = function DarkCrystalShardsSummary ({ ritual, shardRecords, scut
     recombining: Value(false),
     modalOpen: Value(false),
     secret: Value(),
+    secretLabel: Value(),
     error: Value()
   }
 
