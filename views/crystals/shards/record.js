@@ -7,7 +7,7 @@ const Timestamp = require('../../component/timestamp')
 const getRecp = require('../../lib/get-recp')
 const RequestNew = require('../requests/new')
 
-module.exports = function DarkCrystalShardsRecord ({ root, record, scuttle, modal, avatar, msg }) {
+module.exports = function DarkCrystalShardsRecord ({ root, record, scuttle, modal, name, avatar, msg }) {
   const { shard, requests, replies } = record
 
   const recp = getRecp(shard)

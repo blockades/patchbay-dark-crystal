@@ -8,6 +8,9 @@ const ForwardsIndex = require('../../../views/crystals/forwards')
 const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
 
+const ForwardNew = require('../../../views/forward/new')
+// const ForwardIndex = require('../../../views/forward/index')
+
 exports.gives = nest({
   'app.html.menuItem': true,
   'app.page.darkCrystalIndex': true
@@ -26,6 +29,7 @@ exports.needs = nest({
 // modes
 const MINE = 'My Crystals'
 const OTHERS = 'Others Shards'
+// const FORWARD = 'Forward Shards'
 
 exports.create = function (api) {
   return nest({
@@ -56,6 +60,7 @@ exports.create = function (api) {
       })),
       MySecrets({ mode, scuttle }),
       OthersShards({ mode, scuttle })
+      // ForwardShards({ mode, scuttle })
     ])
 
     // page.scroll = () => {} // stops keyboard shortcuts from breaking
@@ -91,12 +96,24 @@ exports.create = function (api) {
   function OthersShards ({ mode, scuttle }) {
     const view = Value('Dogs are cool')
     const isOpen = Value(false)
-    const friendModal = api.app.html.modal(view, { isOpen })
+    const modal = api.app.html.modal(view, { isOpen })
 
-    const showFriend = (opts) => {
+    function showFriend (opts) {
       view.set(FriendsShow(Object.assign({}, opts, {
         avatar: api.about.html.avatar,
         name: api.about.obs.name,
+        scuttle,
+        newForward,
+        onCancel: () => isOpen.set(false)
+      })))
+      isOpen.set(true)
+    }
+
+    function newForward (opts) {
+      view.set(ForwardNew(Object.assign({}, opts, {
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        suggest: { about: api.about.async.suggest },
         scuttle,
         onCancel: () => isOpen.set(false)
       })))
@@ -110,9 +127,37 @@ exports.create = function (api) {
         name: api.about.obs.name,
         showFriend
       }),
-      friendModal
+      modal
     ])
   }
+
+  // function ForwardShards ({ mode, scuttle }) {
+  //   const view = Value('Cats are cooler')
+  //   const isOpen = Value(false)
+  //   const forwardModal = api.app.html.modal(view, { isOpen })
+
+  //   const newForward = (opts) => {
+  //     view.set(ForwardNew(Object.assign({}, opts, {
+  //       avatar: api.about.html.avatar,
+  //       name: api.about.obs.name,
+  //       suggest: { about: api.about.async.suggest },
+  //       scuttle,
+  //       onCancel: () => isOpen.set(false)
+  //     })))
+  //     isOpen.set(true)
+  //   }
+
+  //   return h('section.content', { className: computed(mode, m => m === FORWARD ? '-active' : '') }, [
+  //     h('div.message', [ h('div.span',  'Select a friend whose shards you have been asked to forward...') ]),
+  //     ForwardIndex({
+  //       scuttle,
+  //       avatar: api.about.html.avatar,
+  //       name: api.about.obs.name,
+  //       newForward
+  //     }),
+  //     forwardModal
+  //   ])
+  // }
 
   function NewCrystalForm (scuttle) {
     const form = CrystalsNew({
@@ -124,6 +169,7 @@ exports.create = function (api) {
         console.log('ritual complete', data)
       },
       suggest: { about: api.about.async.suggest },
+      name: api.about.obs.name,
       avatar: api.about.html.avatar
     })
     const formOpen = Value(false)
