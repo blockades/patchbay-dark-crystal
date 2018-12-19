@@ -119,11 +119,12 @@ module.exports = function CrystalsNew (opts) {
 }
 
 function checkForErrors ({ crystalName, label, secret, recps, quorum }) {
+  const MAX_LENGTH = 1350
   const err = {}
   if (!crystalName) err.name = 'required'
   if (typeof label !== 'string') err.label = 'label must be string'
   if (!secret) err.secret = 'required'
-  if (secret.length > 1350) err.secret = 'your secret must be shorter'
+  if (secret.length + label.length > MAX_LENGTH) err['secret + label'] = `combined length must be less (${MAX_LENGTH - secret.length - label.length})`
   if (recps.length < MIN_RECPS) err.custodians = `you need to offer at least ${MIN_RECPS}`
   if (recps.length < quorum) err.quorum = 'you need more custodians, or a lower quorum.'
   if (quorum !== Math.floor(quorum)) err.quorum = 'must be a whole number' // will over-write the above message
