@@ -6,7 +6,7 @@ module.exports = function CopyToClipboard (opts) {
   const btnVisible = Value(true)
 
   return h('div.copy', [
-    when(btnVisible, 
+    when(btnVisible,
       h('button -primary', { 'ev-click': copy }, [
         h('i.fa.fa-copy'),
         'Copy to clipboard'

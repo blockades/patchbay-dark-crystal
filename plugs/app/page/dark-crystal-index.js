@@ -80,7 +80,7 @@ exports.create = function (api) {
         CrystalsIndex({
           scuttle,
           routeTo: api.app.sync.goTo
-        }),
+        })
       ])
     ])
   }
@@ -124,7 +124,7 @@ exports.create = function (api) {
   }
 
   function ForwardedToMe ({ mode, scuttle }) {
-    const view = Value("Cats always make a comeback!")
+    const view = Value('Cats always make a comeback!')
     const isOpen = Value(false)
     const forwardsModal = api.app.html.modal(view, { isOpen })
 
