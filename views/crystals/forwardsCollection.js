@@ -20,6 +20,7 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
   const {
     forwards,
     recombinable,
+    root,
     secretAuthor: author,
     secretCreated: createdAt
   } = crystal
@@ -78,7 +79,7 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
         ])
       ],
       [
-        h('button -primary', { 'ev-click': (e) => { scuttle.recover.async.recombine(recombinable, (err, secret) => {
+        h('button -primary', { 'ev-click': (e) => { scuttle.recover.async.recombine(root, (err, secret) => {
           state.secret.set(secret.secret)
           state.secretLabel.set(secret.label)
           state.showSecret.set(true)

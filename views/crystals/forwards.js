@@ -21,7 +21,8 @@ module.exports = function forward ({ scuttle, avatar, name, modal, forwardsColle
   // forwards : {
   //   secretAuthor: FeedId,
   //   secretCreated: UnixTimestamp,
-  //   recombinable: rootId,
+  //   root: roodId
+  //   recombinable: boolean,
   //   forwards: [
   //     author: FeedId,
   //     timestamp: UnixTimestamp
@@ -70,6 +71,7 @@ module.exports = function forward ({ scuttle, avatar, name, modal, forwardsColle
 
     function getForwardDataBundles (msg, cb) {
       const root = get(msg, 'value.content.root')
+      set(newForwards, [ root, 'root' ], root)
       pull(
         scuttle.forward.pull.fromOthersByRoot(root),
         pull.map(forward => {
@@ -99,7 +101,6 @@ module.exports = function forward ({ scuttle, avatar, name, modal, forwardsColle
               // Test if we can recombine
               // TODO: handle v1 forwarded message (eg: Is this your secret '<garbage>'?)
               scuttle.recover.async.recombine(root, (err, secret) => {
-                // is this a bit misleading?  recombinable is not boolean it contains the roodId
                 if (secret && !err) set(newForwards, [ root, 'recombinable' ], root)
                 return cb(null)
               })
