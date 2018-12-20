@@ -1,4 +1,5 @@
-const { h, Value } = require('mutant')
+const { h, Value, resolve } = require('mutant')
+const { clipboard } = require('electron')
 
 module.exports = function Clipboard (opts) {
   const { toCopy = Value() } = opts
@@ -8,8 +9,8 @@ module.exports = function Clipboard (opts) {
     h('button -primary', { 'ev-click': copy }, [
       h('i.fa.fa-copy'),
       'Copy to clipboard'
-    ]),
-    h('button', `(ﾉ´ヮ´)ﾉ*:･ﾟ✧`)
+    ])
+    // h('button', `(ﾉ´ヮ´)ﾉ*:･ﾟ✧`)
   ])
 
   function copy () {
