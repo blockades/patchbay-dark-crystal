@@ -1,9 +1,8 @@
 const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
-const { h, Value, computed, when } = require('mutant')
+const { h, Value, computed } = require('mutant')
 const set = require('lodash.set')
 const get = require('lodash.get')
-const { performRecombine, RecombineModal } = require('./shards/recombine')
 
 const Recipient = require('../component/recipient')
 const Timestamp = require('../component/timestamp')

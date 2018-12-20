@@ -1,5 +1,4 @@
-const { h, Value, when, computed, Array: MutantArray, resolve } = require('mutant')
-const pull = require('pull-stream')
+const { h, Value, when, computed } = require('mutant')
 
 const Recipient = require('../component/recipient')
 const Timestamp = require('../component/timestamp')
@@ -10,20 +9,18 @@ const SECRET = 'SECRET'
 
 module.exports = function DarkCrystalForwardsCollection (opts) {
   const {
-    crystal,
     scuttle,
     avatar = identity,
     name = identity,
     onCancel = console.log,
+    crystal: {
+      forwards,
+      root,
+      recombinable,
+      secretAuthor: author,
+      secretCreated: createdAt
+    }
   } = opts
-
-  const {
-    forwards,
-    recombinable,
-    root,
-    secretAuthor: author,
-    secretCreated: createdAt
-  } = crystal
 
   const state = {
     tab: Value(FORWARDS),
@@ -42,18 +39,55 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
       Tabs(state),
       computed(state.tab, tab => {
         switch (tab) {
-          case FORWARDS: return [
-            h('div.forwards', [ forwards.map(Forward) ])
-          ]
-          case SECRET: return [
-            h('div.secret', [ viewSecret(state) ])
-          ]
+          case FORWARDS: return ForwardTab()
+          case SECRET: return SecretTab()
         }
       }),
       h('div.actions', [ h('button -subtle', { 'ev-click': onCancel }, 'Cancel') ])
     ]),
     h('section.right')
   ])
+
+  function SecretTab () {
+    return [
+      h('div.secret', [
+        when(state.showSecret,
+          [
+            h('button -primary', { 'ev-click': (e) => state.showSecret.set(false) }, 'Hide'),
+            h('div.section', [
+              computed([state.secret, state.secretLabel, state.error], (secret, secretLabel, error) => Secret({ secret, secretLabel, error }))
+            ])
+          ],
+          [
+            h('button -primary', {
+              'ev-click': (e) => {
+                scuttle.recover.async.recombine(root, (err, secret) => {
+                  if (err) return state.error.set(err)
+                  state.secret.set(secret.secret)
+                  state.secretLabel.set(secret.label)
+                  state.showSecret.set(true)
+                })
+              }
+            }, 'Show')
+          ]
+        )
+      ])
+    ]
+  }
+
+  function ForwardTab () {
+    return [ h('div.forwards', [ forwards.map(Forward) ]) ]
+  }
+
+  function Forward (forward) {
+    const { author, timestamp } = forward
+
+    return h('div.forward', [
+      h('div.author', avatar(author)),
+      h('div.name', name(author)),
+      Timestamp({ timestamp })
+    ])
+  }
 
   function Tabs (state) {
     return computed(state.tab, tab => {
@@ -68,32 +102,6 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
         )
       ])
     })
-  }
-
-  function viewSecret (state) {
-    return when(state.showSecret,
-      [
-        h('button -primary', { 'ev-click': (e) => state.showSecret.set(false) }, 'Hide'),
-        h('div.section', [
-          computed([state.secret, state.secretLabel, state.error], (secret, secretLabel, error) => Secret({ secret, secretLabel, error }))
-        ])
-      ],
-      [
-        h('button -primary', { 'ev-click': (e) => { scuttle.recover.async.recombine(root, (err, secret) => {
-          state.secret.set(secret.secret)
-          state.secretLabel.set(secret.label)
-          state.showSecret.set(true)
-        }) } }, 'Show')
-      ]
-    )
-  }
-
-  function Forward (forward) {
-    return h('div.forward', [
-      h('div.author', avatar(forward.author)),
-      h('div.name', name(forward.author)),
-      h('div.sent', new Date(forward.timestamp).toLocaleDateString())
-    ])
   }
 }
 

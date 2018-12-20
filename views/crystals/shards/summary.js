@@ -1,9 +1,9 @@
 const { h, when, computed, Value } = require('mutant')
 const getContent = require('ssb-msg-content')
-const { performRecombine, RecombineModal } = require('./recombine')
 
 const ProgressBar = require('../../component/progress-bar')
 const getRecp = require('../../lib/get-recp')
+const Secret = require('../../component/secret')
 
 module.exports = function DarkCrystalShardsSummary ({ ritual, shardRecords, scuttle, modal, avatar }) {
   const state = {
@@ -48,7 +48,19 @@ module.exports = function DarkCrystalShardsSummary ({ ritual, shardRecords, scut
         h('section.recombine', [
           // h('span', 'Quorum reached!'),
           h('button -primary',
-            { 'ev-click': () => performRecombine(root, scuttle, state) },
+            { 'ev-click': () => {
+              state.recombining.set(true)
+
+              scuttle.recover.async.recombine(root, (err, secretObject) => {
+                if (err) state.error.set(err)
+                else {
+                  state.secret.set(secretObject.secret)
+                  if (secretObject.label) state.secretLabel.set(secretObject.label)
+                }
+                state.recombining.set(false)
+                state.modalOpen.set(true)
+              })
+            } },
             when(state.recombining,
               h('i.fa.fa-spinner.fa-pulse'),
               'Show secret'
@@ -56,7 +68,7 @@ module.exports = function DarkCrystalShardsSummary ({ ritual, shardRecords, scut
           )
         ])
       ),
-      RecombineModal(modal, state)
+      modal(Secret(state), { isOpen: state.modalOpen })
     ])
   })
 }
