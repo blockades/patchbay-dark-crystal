@@ -143,6 +143,7 @@ exports.create = function (api) {
       ForwardsIndex({
         scuttle,
         avatar: api.about.html.avatar,
+        name: api.about.obs.name,
         modal: api.app.html.modal,
         forwardsCollection
       }),

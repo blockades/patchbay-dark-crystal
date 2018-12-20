@@ -5,7 +5,10 @@ const set = require('lodash.set')
 const get = require('lodash.get')
 const { performRecombine, RecombineModal } = require('./shards/recombine')
 
-module.exports = function forward ({ scuttle, avatar, modal, forwardsCollection }) {
+const Recipient = require('../component/recipient')
+const Timestamp = require('../component/timestamp')
+
+module.exports = function forward ({ scuttle, avatar, name, modal, forwardsCollection }) {
   const state = {
     isLoading: Value(true),
     recombining: Value(false),
@@ -37,10 +40,12 @@ module.exports = function forward ({ scuttle, avatar, modal, forwardsCollection 
   ])
 
   function Forward (forwardCrystal) {
+    const { secretAuthor: recp } = forwardCrystal
     return h('div.crystal', [
       h('div.overview', { 'ev-click': (e) => forwardsCollection({ crystal: forwardCrystal }) }, [
-        when(forwardCrystal.secretAuthor, h('div.secretAuthor', avatar(forwardCrystal.secretAuthor))),
-        when(forwardCrystal.secretCreated, h('div.created', new Date(forwardCrystal.secretCreated).toLocaleDateString())),
+        Recipient({ recp, avatar }),
+        h('div.name', name(recp)),
+        Timestamp({ timestamp: forwardCrystal.secretCreated })
       ])
     ])
   }
