@@ -11,7 +11,6 @@ const Timestamp = require('../component/timestamp')
 module.exports = function forward ({ scuttle, avatar, name, modal, forwardsCollection }) {
   const state = {
     isLoading: Value(true),
-    recombining: Value(false),
     error: Value(),
     secret: Value(),
     secretLabel: Value(),

@@ -3,6 +3,7 @@ const pull = require('pull-stream')
 
 const Recipient = require('../component/recipient')
 const Timestamp = require('../component/timestamp')
+const Secret = require('../component/secret')
 
 const FORWARDS = 'FORWARDS'
 const SECRET = 'SECRET'
@@ -13,7 +14,7 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
     scuttle,
     avatar = identity,
     name = identity,
-    onCancel = console.log
+    onCancel = console.log,
   } = opts
 
   console.log(crystal)
@@ -27,7 +28,11 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
 
   const state = {
     tab: Value(FORWARDS),
-    showSecret: Value(false)
+    recombining: Value(false),
+    showSecret: Value(false),
+    secret: Value(),
+    secretLabel: Value(),
+    error: Value()
   }
 
   return h('DarkCrystalForwardsCollection', [
@@ -42,13 +47,11 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
             h('div.forwards', [ forwards.map(Forward) ])
           ]
           case SECRET: return [
-            h('div.secret', [ Secret(state) ])
+            h('div.secret', [ viewSecret(state) ])
           ]
         }
       }),
-      h('div.actions', [
-        h('button -subtle', { 'ev-click': onCancel }, 'Cancel')
-      ])
+      h('div.actions', [ h('button -subtle', { 'ev-click': onCancel }, 'Cancel') ])
     ]),
     h('section.right')
   ])
@@ -61,17 +64,32 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
           [ FORWARDS, h('span', `(${forwards.length})`) ]
         ),
         h('div.tab',
-          tab === SECRET ? { className: '-selected' } : { 'ev-click': () => { state.showSecret.set(true); state.tab.set(SECRET) } },
+          tab === SECRET ? { className: '-selected' } : { 'ev-click': () => { state.tab.set(SECRET) } },
           [ SECRET ]
         )
       ])
     })
   }
 
-  function Secret (state) {
-    return when(state.showSecret,
-      h('button -primary', { 'ev-click': (e) => { console.log("RECOMBINING AND THEN WILL DISPLAY SECRET") } })
-    )
+  function viewSecret (state) {
+    return computed(state.showSecret, showSecret => {
+      if (!showSecret) return [
+        h('button -primary', { 'ev-click': (e) => { scuttle.recover.async.recombine(recombinable, (err, secret) => {
+          state.secret.set(secret.secret)
+          state.secretLabel.set(secret.label)
+          state.showSecret.set(true)
+        }) } }, 'Show')
+      ]
+      else return [
+        h('button -primary', { 'ev-click': (e) => { console.log("HIDING SECRET"); state.showSecret.set(false) } }, 'Hide'),
+        h('div.section', [
+          computed([state.secret, state.secretLabel, state.error], (secret, secretLabel, error) => {
+            console.log(secret, secretLabel, error)
+            return Secret({ secret, secretLabel, error })
+          })
+        ])
+      ]
+    })
   }
 
   function Forward (forward) {
