@@ -1,9 +1,9 @@
-const { h, Value, when, computed } = require('mutant')
+const { h, Value, when, computed, resolve } = require('mutant')
 
 const CopyToClipboard = require('./copy-to-clipboard')
 
-
 module.exports = function Secret (opts) {
+  // Ensure we have all required opts set as defaults
   const {
     error = Value(),
     modalOpen = Value(),
@@ -11,7 +11,6 @@ module.exports = function Secret (opts) {
     secret = Value()
   } = opts
 
-  console.log("GETS HERE")
   return h('DarkCrystalSecret', when(error, renderError(), renderSecret()))
 
   function renderSecret () {
@@ -22,19 +21,17 @@ module.exports = function Secret (opts) {
       h('pre', secret),
       h('div.actions', [
         CopyToClipboard({ toCopy: secret }),
-        h('button -subtle', { 'ev-click': () => modalOpen.set(false) }, 'close')
+        when(modalOpen, h('button -subtle', { 'ev-click': () => modalOpen.set(false) }, 'close'), [])
       ])
     ]
   }
 
   function renderError () {
     return [
-      h('h1', [
-        'Error combining shards!!!'
-      ]),
+      h('h1', [ 'Error combining shards!!!' ]),
       h('pre', computed(error, e => (e || '').toString())),
       h('div.actions', [
-        h('button -subtle', { 'ev-click': () => modalOpen.set(false) }, 'close')
+        when(modalOpen, h('button -subtle', { 'ev-click': () => modalOpen.set(false) }, 'close'), [])
       ])
     ]
   }
