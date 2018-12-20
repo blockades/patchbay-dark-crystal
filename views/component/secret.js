@@ -1,6 +1,6 @@
 const { h, Value, when, computed } = require('mutant')
 
-const Clipboard = require('./clipboard')
+const CopyToClipboard = require('./copy-to-clipboard')
 
 
 module.exports = function Secret (opts) {
@@ -21,7 +21,7 @@ module.exports = function Secret (opts) {
       h('h3', 'Secret'),
       h('pre', secret),
       h('div.actions', [
-        Clipboard({ toCopy: secret }),
+        CopyToClipboard({ toCopy: secret }),
         h('button -subtle', { 'ev-click': () => modalOpen.set(false) }, 'close')
       ])
     ]

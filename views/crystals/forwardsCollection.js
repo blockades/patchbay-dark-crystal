@@ -17,8 +17,6 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
     onCancel = console.log,
   } = opts
 
-  console.log(crystal)
-
   const {
     forwards,
     recombinable,
