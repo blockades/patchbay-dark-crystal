@@ -8,13 +8,22 @@ const { performRecombine, RecombineModal } = require('./shards/recombine')
 module.exports = function forward ({ scuttle, avatar, modal }) {
   const state = {
     isLoading: Value(true),
-    forwards: Value(),
     recombining: Value(false),
     error: Value(),
     secret: Value(),
     secretLabel: Value(),
-    modalOpen: Value(false)
+    modalOpen: Value(false),
+    forwards: Value()
   }
+
+  // forwards : {
+  //   secretAuthor: FeedId,
+  //   secretCreated: UnixTimestamp,
+  //   recombinable: rootId,
+  //   forwardMsgs: [
+  //       Forward
+  //   ]
+  // }
 
   getForwards()
   watchForUpdates()
@@ -50,7 +59,6 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
       scuttle.forward.pull.fromOthers({ live: false }),
       // get only one forward per rootId
       pull.unique(msg => msg.value.content.root),
-      // should this be multiple separate maps?
       pullParamap(getForwardDataBundles, 10),
       pull.collect((err) => {
         if (err) console.error(err)
@@ -81,9 +89,10 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
               )
             }
             if (forwardMsgs.length > 1) {
-              // test if we can recombine
+              // Test if we can recombine
               // TODO: handle v1 forwarded message (eg: Is this your secret '<garbage>'?)
               scuttle.recover.async.recombine(root, (err, secret) => {
+                // is this a bit misleading?  recombinable is not boolean it contains the roodId
                 if (secret && !err) set(newForwards, [ root, 'recombinable' ], root)
                 return cb(null)
               })
