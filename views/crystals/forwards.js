@@ -21,7 +21,8 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
   //   secretCreated: UnixTimestamp,
   //   recombinable: rootId,
   //   forwardMsgs: [
-  //       Forward
+  //     author: FeedId,
+  //     timestamp: UnixTimestamp
   //   ]
   // }
 
@@ -77,6 +78,12 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
       const root = get(msg, 'value.content.root')
       pull(
         scuttle.forward.pull.fromOthersByRoot(root),
+        pull.map(forwardMsg => {
+          return {
+            author: get(forwardMsg, 'value.author'),
+            timestamp: get(forwardMsg, 'value.timestamp')
+          }
+        }),
         pull.collect((err, forwardMsgs) => {
           if (err) return cb(err)
           set(newForwards, [ root, 'forwardMsgs' ], forwardMsgs)
