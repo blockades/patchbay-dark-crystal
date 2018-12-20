@@ -23,7 +23,7 @@ module.exports = function forward ({ scuttle, avatar, name, modal, forwardsColle
   //   secretAuthor: FeedId,
   //   secretCreated: UnixTimestamp,
   //   recombinable: rootId,
-  //   forwardMsgs: [
+  //   forwards: [
   //     author: FeedId,
   //     timestamp: UnixTimestamp
   //   ]
@@ -39,13 +39,17 @@ module.exports = function forward ({ scuttle, avatar, name, modal, forwardsColle
     })
   ])
 
-  function Forward (forwardCrystal) {
-    const { secretAuthor: recp } = forwardCrystal
+  function Forward (crystal) {
+    const {
+      secretAuthor: recp,
+      secretCreated: timestamp
+    } = crystal
+
     return h('div.crystal', [
-      h('div.overview', { 'ev-click': (e) => forwardsCollection({ crystal: forwardCrystal }) }, [
+      h('div.overview', { 'ev-click': (e) => forwardsCollection({ crystal }) }, [
         Recipient({ recp, avatar }),
         h('div.name', name(recp)),
-        Timestamp({ timestamp: forwardCrystal.secretCreated })
+        Timestamp({ timestamp })
       ])
     ])
   }
@@ -69,15 +73,15 @@ module.exports = function forward ({ scuttle, avatar, name, modal, forwardsColle
       const root = get(msg, 'value.content.root')
       pull(
         scuttle.forward.pull.fromOthersByRoot(root),
-        pull.map(forwardMsg => {
+        pull.map(forward => {
           return {
-            author: get(forwardMsg, 'value.author'),
-            timestamp: get(forwardMsg, 'value.timestamp')
+            author: get(forward, 'value.author'),
+            timestamp: get(forward, 'value.timestamp')
           }
         }),
-        pull.collect((err, forwardMsgs) => {
+        pull.collect((err, forwards) => {
           if (err) return cb(err)
-          set(newForwards, [ root, 'forwardMsgs' ], forwardMsgs)
+          set(newForwards, [ root, 'forwards' ], forwards)
           // get the original secret message, if within follow graph
           scuttle.root.async.get(root, (err, rootMsg) => {
             if (!err) {
@@ -92,7 +96,7 @@ module.exports = function forward ({ scuttle, avatar, name, modal, forwardsColle
                 get(rootMsg, 'timestamp') || get(rootMsg, 'value.timestamp')
               )
             }
-            if (forwardMsgs.length > 1) {
+            if (forwards.length > 1) {
               // Test if we can recombine
               // TODO: handle v1 forwarded message (eg: Is this your secret '<garbage>'?)
               scuttle.recover.async.recombine(root, (err, secret) => {
