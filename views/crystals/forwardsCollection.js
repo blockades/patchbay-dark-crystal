@@ -72,28 +72,24 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
   }
 
   function viewSecret (state) {
-    return computed(state.showSecret, showSecret => {
-      if (!showSecret) return [
+    return when(state.showSecret,
+      [
+        h('button -primary', { 'ev-click': (e) => state.showSecret.set(false) }, 'Hide'),
+        h('div.section', [
+          computed([state.secret, state.secretLabel, state.error], (secret, secretLabel, error) => Secret({ secret, secretLabel, error }))
+        ])
+      ],
+      [
         h('button -primary', { 'ev-click': (e) => { scuttle.recover.async.recombine(recombinable, (err, secret) => {
           state.secret.set(secret.secret)
           state.secretLabel.set(secret.label)
           state.showSecret.set(true)
         }) } }, 'Show')
       ]
-      else return [
-        h('button -primary', { 'ev-click': (e) => { console.log("HIDING SECRET"); state.showSecret.set(false) } }, 'Hide'),
-        h('div.section', [
-          computed([state.secret, state.secretLabel, state.error], (secret, secretLabel, error) => {
-            console.log(secret, secretLabel, error)
-            return Secret({ secret, secretLabel, error })
-          })
-        ])
-      ]
-    })
+    )
   }
 
   function Forward (forward) {
-    console.log(forward)
     return h('div.forward', [
       h('div.author', avatar(forward.author)),
       h('div.name', name(forward.author)),
