@@ -35,16 +35,22 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
     })
   ])
 
-  function Forward (msg) {
+  function Forward (forwardCrystal) {
     return h('div.crystal', [
       // TODO: clicking takes you to a page with more detail, move recombine button there
       h('div.overview', { 'ev-click': () => {} }, [
-        when(msg.secretAuthor, h('div.secretAuthor', avatar(msg.secretAuthor))),
-        when(msg.secretCreated, h('div.created', new Date(msg.secretCreated).toLocaleDateString())),
+        when(forwardCrystal.secretAuthor,
+          h('div.secretAuthor', avatar(forwardCrystal.secretAuthor))
+        ),
+        when(forwardCrystal.secretCreated,
+          h('div.created', new Date(forwardCrystal.secretCreated).toLocaleDateString())
+        ),
+
         // one diamond icon per shard you hold (these could be mini-avatars of the forwarders)
-        msg.forwardMsgs.map(m => h('i.DarkCrystalShard.fa.fa-diamond', {})),
-        when(msg.recombinable, h('button -primary',
-          { 'ev-click': () => performRecombine(msg.recombinable, scuttle, state) },
+        forwardCrystal.forwardMsgs.map(m => h('i.DarkCrystalShard.fa.fa-diamond', {})),
+
+        when(forwardCrystal.recombinable, h('button -primary',
+          { 'ev-click': () => performRecombine(forwardCrystal.recombinable, scuttle, state) },
           when(state.recombining, h('i.fa.fa-spinner.fa-pulse'), 'Recombine')
         )),
         RecombineModal(modal, state)
