@@ -1,6 +1,9 @@
+const { h, Value, when, computed } = require('mutant')
+
 const Clipboard = require('./clipboard')
 
-module.exports = function (opts) {
+
+module.exports = function Secret (opts) {
   const {
     error = Value(),
     modalOpen = Value(),
@@ -8,9 +11,10 @@ module.exports = function (opts) {
     secret = Value()
   } = opts
 
-  return h('DarkCrystalSecret', when(error, error(), secret()))
+  console.log("GETS HERE")
+  return h('DarkCrystalSecret', when(error, renderError(), renderSecret()))
 
-  function secret () {
+  function renderSecret () {
     return [
       h('h1', 'Your secret'),
       when(secretLabel, [ h('h3', 'Label'), h('pre', secretLabel) ]),
@@ -23,7 +27,7 @@ module.exports = function (opts) {
     ]
   }
 
-  function error () {
+  function renderError () {
     return [
       h('h1', [
         'Error combining shards!!!'

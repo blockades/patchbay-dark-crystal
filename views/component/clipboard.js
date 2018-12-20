@@ -1,3 +1,5 @@
+const { h, Value } = require('mutant')
+
 module.exports = function Clipboard (opts) {
   const { toCopy = Value() } = opts
   const btnVisible = Value(true)
