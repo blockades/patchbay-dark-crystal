@@ -1,13 +1,13 @@
 const { h, Value, when, computed } = require('mutant')
 
-const Recipient = require('../component/recipient')
-const Timestamp = require('../component/timestamp')
-const Secret = require('../component/secret')
+const Recipient = require('../../component/recipient')
+const Timestamp = require('../../component/timestamp')
+const Secret = require('../../component/secret')
 
 const FORWARDS = 'FORWARDS'
 const SECRET = 'SECRET'
 
-module.exports = function DarkCrystalForwardsCollection (opts) {
+module.exports = function DarkCrystalForwardCrystalsShow (opts) {
   const {
     scuttle,
     avatar = identity,
@@ -17,7 +17,7 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
       forwards,
       root,
       recombinable,
-      secretAuthor: author,
+      secretAuthor: feedId,
       secretCreated: createdAt
     }
   } = opts
@@ -31,11 +31,19 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
     error: Value()
   }
 
-  return h('DarkCrystalForwardsCollection', [
+  return h('DarkCrystalForwardCrystalsShow', [
     h('section.left'),
     h('section.body', [
-      Recipient({ recp: author, avatar, name }),
-      Timestamp({ timestamp: createdAt }),
+      h('div.header', [
+        h('div.author', [
+          h('div.avatar', avatar(feedId, 6)),
+          h('div.name', name(feedId)),
+        ]),
+        h('div.details', [
+          h('span', 'Created on '),
+          h('span.timestamp', new Date(createdAt).toLocaleDateString())
+        ])
+      ]),
       Tabs(state),
       computed(state.tab, tab => {
         switch (tab) {
@@ -43,7 +51,7 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
           case SECRET: return SecretTab()
         }
       }),
-      h('div.actions', [ h('button -subtle', { 'ev-click': onCancel }, 'Cancel') ])
+      h('div.actions', [ h('button -subtle', { 'ev-click': onCancel }, 'Cancel') ]),
     ]),
     h('section.right')
   ])
@@ -53,22 +61,26 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
       h('div.secret', [
         when(state.showSecret,
           [
-            h('button -primary', { 'ev-click': (e) => state.showSecret.set(false) }, 'Hide'),
+            h('div.actions', [
+              h('button -primary', { 'ev-click': (e) => state.showSecret.set(false) }, 'Hide'),
+            ]),
             h('div.section', [
               computed([state.secret, state.secretLabel, state.error], (secret, secretLabel, error) => Secret({ secret, secretLabel, error }))
             ])
           ],
           [
-            h('button -primary', {
-              'ev-click': (e) => {
-                scuttle.recover.async.recombine(root, (err, secret) => {
-                  if (err) return state.error.set(err)
-                  state.secret.set(secret.secret)
-                  state.secretLabel.set(secret.label)
-                  state.showSecret.set(true)
-                })
-              }
-            }, 'Show')
+            h('div.actions', [
+              h('button -primary', {
+                'ev-click': (e) => {
+                  scuttle.recover.async.recombine(root, (err, secret) => {
+                    if (err) return state.error.set(err)
+                    state.secret.set(secret.secret)
+                    state.secretLabel.set(secret.label)
+                    state.showSecret.set(true)
+                  })
+                }
+              }, 'Show')
+            ]),
           ]
         )
       ])
@@ -80,11 +92,11 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
   }
 
   function Forward (forward) {
-    const { author, timestamp } = forward
+    const { author: feedId, timestamp } = forward
 
     return h('div.forward', [
-      h('div.author', avatar(author)),
-      h('div.name', name(author)),
+      h('div.author', avatar(feedId, 3)),
+      h('div.name', name(feedId)),
       Timestamp({ timestamp })
     ])
   }

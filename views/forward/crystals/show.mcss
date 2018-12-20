@@ -1,8 +1,11 @@
-DarkCrystalForwardsCollection {
+DarkCrystalForwardCrystalsShow {
+  background: black
+  color: white
+
   --side-pad: 1rem
 
   width: 40rem
-  height: 40rem
+  min-height: 40rem
   padding: 2rem 0 1rem
 
   display: grid
@@ -16,6 +19,36 @@ DarkCrystalForwardsCollection {
   }
 
   section.body {
+    display: grid
+    grid-template-rows: auto auto auto 1fr
+
+    div.header {
+      display: grid
+      grid-template-columns: 50% 50%;
+
+      div.author {
+        div.avatar {
+          padding: 0 var(--side-pad)
+        }
+
+        div.name {
+          font-size: 1rem
+          font-weight: 600
+          letter-spacing: 1px
+
+          padding: 0 var(--side-pad)
+        }
+      }
+
+      div.details {
+        span {
+          font-style: italic
+          font-size: 1rem
+          letter-spacing: 1px
+        }
+      }
+    }
+
     div.tabs {
       padding: 0 var(--side-pad)
       margin: 1rem 0
@@ -56,7 +89,7 @@ DarkCrystalForwardsCollection {
         justify-items: start
         align-items: center
         grid-gap: 1rem
-        background: deeppink
+        background: rebeccapurple
         color: white
 
         div.rts {
@@ -69,9 +102,35 @@ DarkCrystalForwardsCollection {
         :hover {
           transition: background .5s ease-in
           color: white
-          background: rebeccapurple
+          background: deeppink
         }
       }
+    }
+
+    div.secret {
+      padding: 0 var(--side-pad)
+
+      div.actions {
+        display: grid
+        padding: 1rem 0
+      }
+
+      div.section {
+        div.DarkCrystalSecret {
+          min-width: inherit
+
+          pre {
+            white-space: pre-wrap
+            word-wrap: break-word
+          }
+        }
+      }
+    }
+
+    div.actions {
+      display: grid
+      padding: 1rem 0
+      align-self: end
     }
   }
 }

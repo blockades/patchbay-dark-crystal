@@ -4,10 +4,10 @@ const { h, Value, computed } = require('mutant')
 const set = require('lodash.set')
 const get = require('lodash.get')
 
-const Recipient = require('../component/recipient')
-const Timestamp = require('../component/timestamp')
+const Recipient = require('../../component/recipient')
+const Timestamp = require('../../component/timestamp')
 
-module.exports = function forward ({ scuttle, avatar, name, modal, forwardsCollection }) {
+module.exports = function DarkCrystalForwardCrystalsIndex ({ scuttle, avatar, name, modal, forwardCrystalsShow }) {
   const state = {
     isLoading: Value(true),
     error: Value(),
@@ -31,7 +31,7 @@ module.exports = function forward ({ scuttle, avatar, name, modal, forwardsColle
   getForwards()
   watchForUpdates()
 
-  return h('DarkCrystalCrystalsIndex', [
+  return h('DarkCrystalForwardCrystalsIndex', [
     computed([state.isLoading, state.forwards], (isLoading, forwards) => {
       if (isLoading) return 'Loading...'
       return Object.values(forwards).map(Forward)
@@ -40,14 +40,14 @@ module.exports = function forward ({ scuttle, avatar, name, modal, forwardsColle
 
   function Forward (crystal) {
     const {
-      secretAuthor: recp,
+      secretAuthor: feedId,
       secretCreated: timestamp
     } = crystal
 
     return h('div.crystal', [
-      h('div.overview', { 'ev-click': (e) => forwardsCollection({ crystal }) }, [
-        Recipient({ recp, avatar }),
-        h('div.name', name(recp)),
+      h('div.overview', { 'ev-click': (e) => forwardCrystalsShow({ crystal }) }, [
+        h('div.avatar', avatar(feedId, 3)),
+        h('div.name', name(feedId)),
         Timestamp({ timestamp })
       ])
     ])

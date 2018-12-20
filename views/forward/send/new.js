@@ -1,9 +1,9 @@
 const { h, Value, computed, Array: MutantArray, resolve } = require('mutant')
 const pull = require('pull-stream')
 
-const Recipients = require('../component/recipients')
-const Recipient = require('../component/recipient')
-const AreYouSure = require('../component/are-you-sure')
+const Recipients = require('../../component/recipients')
+const Recipient = require('../../component/recipient')
+const AreYouSure = require('../../component/are-you-sure')
 
 module.exports = function DarkCrystalForwardNew (opts) {
   const {

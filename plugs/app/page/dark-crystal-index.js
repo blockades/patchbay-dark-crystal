@@ -4,13 +4,15 @@ const Scuttle = require('scuttle-dark-crystal')
 
 const CrystalsIndex = require('../../../views/crystals/index')
 const CrystalsNew = require('../../../views/crystals/new')
-const ForwardsIndex = require('../../../views/crystals/forwards')
-const ForwardsCollection = require('../../../views/crystals/forwardsCollection')
+
+const ForwardCrystalsIndex = require('../../../views/forward/crystals/index')
+const ForwardCrystalsShow = require('../../../views/forward/crystals/show')
+
 const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
 
-const ForwardNew = require('../../../views/forward/new')
-// const ForwardIndex = require('../../../views/forward/index')
+const ForwardSendNew = require('../../../views/forward/send/new')
+// const ForwardSendIndex = require('../../../views/forward/send/index')
 
 exports.gives = nest({
   'app.html.menuItem': true,
@@ -61,7 +63,7 @@ exports.create = function (api) {
       })),
       MySecrets({ mode, scuttle }),
       OthersShards({ mode, scuttle }),
-      ForwardedToMe({ mode, scuttle })
+      ForwardedCrystals({ mode, scuttle })
       // ForwardShards({ mode, scuttle })
     ])
 
@@ -76,7 +78,6 @@ exports.create = function (api) {
       formModal,
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
       h('CrystalsIndex', [
-        h('h1', 'My secrets'),
         CrystalsIndex({
           scuttle,
           routeTo: api.app.sync.goTo
@@ -123,13 +124,13 @@ exports.create = function (api) {
     ])
   }
 
-  function ForwardedToMe ({ mode, scuttle }) {
+  function ForwardedCrystals ({ mode, scuttle }) {
     const view = Value('Cats always make a comeback!')
     const isOpen = Value(false)
-    const forwardsModal = api.app.html.modal(view, { isOpen })
+    const forwardModal = api.app.html.modal(view, { isOpen })
 
-    function forwardsCollection (opts) {
-      view.set(ForwardsCollection(Object.assign({}, opts, {
+    function forwardCrystalsShow (opts) {
+      view.set(ForwardCrystalsShow(Object.assign({}, opts, {
         scuttle,
         avatar: api.about.html.avatar,
         name: api.about.obs.name,
@@ -139,25 +140,24 @@ exports.create = function (api) {
     }
 
     return h('section.content', { className: computed(mode, m => m === FORWARDS ? '-active' : '') }, [
-      h('h1', 'Secrets forwarded to me'),
-      ForwardsIndex({
+      ForwardCrystalsIndex({
         scuttle,
         avatar: api.about.html.avatar,
         name: api.about.obs.name,
         modal: api.app.html.modal,
-        forwardsCollection
+        forwardCrystalsShow
       }),
-      forwardsModal
+      forwardModal
     ])
   }
 
-  // function ForwardShards ({ mode, scuttle }) {
+  // function ForwardSendShards ({ mode, scuttle }) {
   //   const view = Value('Cats are cooler')
   //   const isOpen = Value(false)
   //   const forwardModal = api.app.html.modal(view, { isOpen })
 
   //   const newForward = (opts) => {
-  //     view.set(ForwardNew(Object.assign({}, opts, {
+  //     view.set(ForwardSendNew(Object.assign({}, opts, {
   //       avatar: api.about.html.avatar,
   //       name: api.about.obs.name,
   //       suggest: { about: api.about.async.suggest },
@@ -169,7 +169,7 @@ exports.create = function (api) {
 
   //   return h('section.content', { className: computed(mode, m => m === FORWARD ? '-active' : '') }, [
   //     h('div.message', [ h('div.span',  'Select a friend whose shards you have been asked to forward...') ]),
-  //     ForwardIndex({
+  //     ForwardSendIndex({
   //       scuttle,
   //       avatar: api.about.html.avatar,
   //       name: api.about.obs.name,
