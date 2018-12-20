@@ -16,9 +16,8 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
     modalOpen: Value(false)
   }
 
-  const refresh = () => getForwards({ scuttle, state })
-  // TODO: watchForUpdates({ scuttle, refresh })
-  refresh()
+  getForwards()
+  watchForUpdates()
 
   return h('DarkCrystalCrystalsIndex', [
     computed([state.isLoading, state.forwards], (isLoading, forwards) => {
@@ -52,46 +51,56 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
       // get only one forward per rootId
       pull.unique(msg => msg.value.content.root),
       // should this be multiple separate maps?
-      pullParamap((msg, cb) => {
-        const root = get(msg, 'value.content.root')
-        pull(
-          scuttle.forward.pull.fromOthersByRoot(root),
-          pull.collect((err, forwardMsgs) => {
-            if (err) return cb(err)
-            set(newForwards, [ root, 'forwardMsgs' ], forwardMsgs)
-            // get the original secret message, if within follow graph
-            scuttle.root.async.get(root, (err, rootMsg) => {
-              if (!err) {
-                set(
-                  newForwards,
-                  [ root, 'secretAuthor' ],
-                  get(rootMsg, 'author') || get(rootMsg, 'value.author')
-                )
-                set(
-                  newForwards,
-                  [ root, 'secretCreated' ],
-                  get(rootMsg, 'timestamp') || get(rootMsg, 'value.timestamp')
-                )
-              }
-              if (forwardMsgs.length > 1) {
-                // test if we can recombine
-                // TODO: handle v1 forwarded message (eg: Is this your secret '<garbage>'?)
-                scuttle.recover.async.recombine(root, (err, secret) => {
-                  if (secret && !err) set(newForwards, [ root, 'recombinable' ], root)
-                  return cb(null)
-                })
-              } else {
-                return cb(null)
-              }
-            })
-          })
-        )
-      }),
+      pullParamap(getForwardDataBundles, 10),
       pull.collect((err) => {
         if (err) console.error(err)
         state.forwards.set(newForwards)
         state.isLoading.set(false)
       })
+    )
+
+    function getForwardDataBundles (msg, cb) {
+      const root = get(msg, 'value.content.root')
+      pull(
+        scuttle.forward.pull.fromOthersByRoot(root),
+        pull.collect((err, forwardMsgs) => {
+          if (err) return cb(err)
+          set(newForwards, [ root, 'forwardMsgs' ], forwardMsgs)
+          // get the original secret message, if within follow graph
+          scuttle.root.async.get(root, (err, rootMsg) => {
+            if (!err) {
+              set(
+                newForwards,
+                [ root, 'secretAuthor' ],
+                get(rootMsg, 'author') || get(rootMsg, 'value.author')
+              )
+              set(
+                newForwards,
+                [ root, 'secretCreated' ],
+                get(rootMsg, 'timestamp') || get(rootMsg, 'value.timestamp')
+              )
+            }
+            if (forwardMsgs.length > 1) {
+              // test if we can recombine
+              // TODO: handle v1 forwarded message (eg: Is this your secret '<garbage>'?)
+              scuttle.recover.async.recombine(root, (err, secret) => {
+                if (secret && !err) set(newForwards, [ root, 'recombinable' ], root)
+                return cb(null)
+              })
+            } else {
+              return cb(null)
+            }
+          })
+        })
+      )
+    }
+  }
+
+  function watchForUpdates () {
+    pull(
+      scuttle.forward.pull.fromOthers({ live: true, old: false }),
+      pull.filter(m => !m.sync),
+      pull.drain(m => getForwards())
     )
   }
 }
