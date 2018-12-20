@@ -5,6 +5,7 @@ const Scuttle = require('scuttle-dark-crystal')
 const CrystalsIndex = require('../../../views/crystals/index')
 const CrystalsNew = require('../../../views/crystals/new')
 const ForwardsIndex = require('../../../views/crystals/forwards')
+const ForwardsCollection = require('../../../views/crystals/forwardsCollection')
 const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
 
@@ -29,7 +30,7 @@ exports.needs = nest({
 // modes
 const MINE = 'My Crystals'
 const OTHERS = 'Others Shards'
-// const FORWARD = 'Forward Shards'
+const FORWARDS = 'Forwarded Crystals'
 
 exports.create = function (api) {
   return nest({
@@ -52,14 +53,15 @@ exports.create = function (api) {
 
     const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
       h('h1', { title: '' }, [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
-      h('section.picker', { title: '' }, [MINE, OTHERS].map(m => {
+      h('section.picker', { title: '' }, [MINE, OTHERS, FORWARDS].map(m => {
         return h('div', {
           'ev-click': () => mode.set(m),
           className: computed(mode, mode => mode === m ? '-active' : '')
         }, m)
       })),
       MySecrets({ mode, scuttle }),
-      OthersShards({ mode, scuttle })
+      OthersShards({ mode, scuttle }),
+      ForwardedToMe({ mode, scuttle })
       // ForwardShards({ mode, scuttle })
     ])
 
@@ -79,18 +81,8 @@ exports.create = function (api) {
           scuttle,
           routeTo: api.app.sync.goTo
         }),
-        h('h1', 'Secrets forwarded to me'),
-        Forwards({ mode, scuttle })
       ])
     ])
-  }
-
-  function Forwards ({ mode, scuttle }) {
-    return ForwardsIndex({
-      scuttle,
-      avatar: api.about.html.avatar,
-      modal: api.app.html.modal
-    })
   }
 
   function OthersShards ({ mode, scuttle }) {
@@ -128,6 +120,34 @@ exports.create = function (api) {
         showFriend
       }),
       modal
+    ])
+  }
+
+  function ForwardedToMe ({ mode, scuttle }) {
+    const view = Value("Cats always make a comeback!")
+    const isOpen = Value(false)
+    const forwardsModal = api.app.html.modal(view, { isOpen })
+
+    function forwardsCollection (opts) {
+      view.set(ForwardsCollection(Object.assign({}, opts, {
+        scuttle,
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        onCancel: () => isOpen.set(false)
+      })))
+      isOpen.set(true)
+    }
+
+    return h('section.content', { className: computed(mode, m => m === FORWARDS ? '-active' : '') }, [
+      h('h1', 'Secrets forwarded to me'),
+      ForwardsIndex({
+        scuttle,
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        modal: api.app.html.modal,
+        forwardsCollection
+      }),
+      forwardsModal
     ])
   }
 
