@@ -5,7 +5,7 @@ const set = require('lodash.set')
 const get = require('lodash.get')
 const { performRecombine, RecombineModal } = require('./shards/recombine')
 
-module.exports = function forward ({ scuttle, avatar, modal }) {
+module.exports = function forward ({ scuttle, avatar, modal, forwardsCollection }) {
   const state = {
     isLoading: Value(true),
     recombining: Value(false),
@@ -38,23 +38,9 @@ module.exports = function forward ({ scuttle, avatar, modal }) {
 
   function Forward (forwardCrystal) {
     return h('div.crystal', [
-      // TODO: clicking takes you to a page with more detail, move recombine button there
-      h('div.overview', { 'ev-click': () => {} }, [
-        when(forwardCrystal.secretAuthor,
-          h('div.secretAuthor', avatar(forwardCrystal.secretAuthor))
-        ),
-        when(forwardCrystal.secretCreated,
-          h('div.created', new Date(forwardCrystal.secretCreated).toLocaleDateString())
-        ),
-
-        // one diamond icon per shard you hold (these could be mini-avatars of the forwarders)
-        forwardCrystal.forwardMsgs.map(m => h('i.DarkCrystalShard.fa.fa-diamond', {})),
-
-        when(forwardCrystal.recombinable, h('button -primary',
-          { 'ev-click': () => performRecombine(forwardCrystal.recombinable, scuttle, state) },
-          when(state.recombining, h('i.fa.fa-spinner.fa-pulse'), 'Recombine')
-        )),
-        RecombineModal(modal, state)
+      h('div.overview', { 'ev-click': (e) => forwardsCollection({ crystal: forwardCrystal }) }, [
+        when(forwardCrystal.secretAuthor, h('div.secretAuthor', avatar(forwardCrystal.secretAuthor))),
+        when(forwardCrystal.secretCreated, h('div.created', new Date(forwardCrystal.secretCreated).toLocaleDateString())),
       ])
     ])
   }
