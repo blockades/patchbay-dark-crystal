@@ -73,13 +73,15 @@ module.exports = function DarkCrystalForwardsCollection (opts) {
       h('button -primary', { 'ev-click': (e) => { console.log("RECOMBINING AND THEN WILL DISPLAY SECRET") } })
     )
   }
-}
 
-function Forward (forward) {
-  console.log(forward)
-  return h('div.forward', [
-    h('i.DarkCrystalShard.fa.fa-diamond')
-  ])
+  function Forward (forward) {
+    console.log(forward)
+    return h('div.forward', [
+      h('div.author', avatar(forward.author)),
+      h('div.name', name(forward.author)),
+      h('div.sent', new Date(forward.timestamp).toLocaleDateString())
+    ])
+  }
 }
 
 function identity (id) { return id }
