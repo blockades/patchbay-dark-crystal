@@ -73,7 +73,7 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
         when(state.showSecret,
           [
             h('div.actions', [
-              h('button -primary', { 'ev-click': (e) => state.showSecret.set(false) }, 'Hide'),
+              h('button -primary', { 'ev-click': (e) => state.showSecret.set(false) }, 'Hide Secret'),
             ]),
             h('div.section', [
               computed([state.secret, state.secretLabel, state.error], (secret, secretLabel, error) => (
@@ -95,7 +95,7 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
                     state.showSecret.set(true)
                   })
                 }
-              }, 'Show')
+              }, 'Display Secret')
             ]),
           ]
         )
