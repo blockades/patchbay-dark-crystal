@@ -15,10 +15,10 @@ module.exports = function DarkCrystalForwardCrystalsShow (opts) {
     onCancel = console.log,
     crystal: {
       forwards,
-      root,
+      rootId,
       recombinable,
-      secretAuthor: feedId,
-      secretCreated: createdAt
+      author: feedId,
+      createdAt
     }
   } = opts
 
@@ -72,7 +72,7 @@ module.exports = function DarkCrystalForwardCrystalsShow (opts) {
             h('div.actions', [
               h('button -primary', {
                 'ev-click': (e) => {
-                  scuttle.recover.async.recombine(root, (err, secret) => {
+                  scuttle.recover.async.recombine(rootId, (err, secret) => {
                     if (err) return state.error.set(err)
                     state.secret.set(secret.secret)
                     state.secretLabel.set(secret.label)

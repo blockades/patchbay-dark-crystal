@@ -117,7 +117,9 @@ DarkCrystalForwardCrystalsShow {
 
       div.section {
         div.DarkCrystalSecret {
+          grid-template-rows: auto
           min-width: inherit
+          min-height: 300px
 
           pre {
             white-space: pre-wrap

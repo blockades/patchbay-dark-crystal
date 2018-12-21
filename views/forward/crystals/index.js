@@ -1,8 +1,9 @@
 const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
-const { h, Value, computed } = require('mutant')
+const { h, Value, computed, Array: MutantArray } = require('mutant')
 const set = require('lodash.set')
 const get = require('lodash.get')
+const transform = require('lodash.transform')
 
 const Recipient = require('../../component/recipient')
 const Timestamp = require('../../component/timestamp')
@@ -14,47 +15,72 @@ module.exports = function DarkCrystalForwardCrystalsIndex ({ scuttle, avatar, na
     secret: Value(),
     secretLabel: Value(),
     modalOpen: Value(false),
-    forwards: Value()
+    friends: MutantArray([])
   }
 
-  // forwards : {
-  //   secretAuthor: FeedId,
-  //   secretCreated: UnixTimestamp,
-  //   root: roodId
-  //   recombinable: boolean,
-  //   forwards: [
-  //     author: FeedId,
-  //     timestamp: UnixTimestamp
-  //   ]
-  // }
+  // friends: [
+  //   {
+  //     feedId,
+  //     crystals: [
+  //       { rootId, createdAt, forwards: [{ feedId, createdAt }, { feedId, createdAt }] }
+  //       { rootId, forwards: ... }
+  //     ]
+  //   },
+  //   {
+  //     feedId,
+  //     createdAt,
+  //     crystals: ...
+  //   }
+  // ]
 
   getForwards()
   watchForUpdates()
 
   return h('DarkCrystalForwardCrystalsIndex', [
-    computed([state.isLoading, state.forwards], (isLoading, forwards) => {
+    computed([state.isLoading, state.friends], (isLoading, friends) => {
       if (isLoading) return 'Loading...'
-      return Object.values(forwards).map(Forward)
+      return friends.map(Friend)
     })
   ])
 
-  function Forward (crystal) {
-    const {
-      secretAuthor: feedId,
-      secretCreated: timestamp
-    } = crystal
+  function Friend ({ feedId, crystals }) {
+    return h('DarkCrystalFriendsCrystals', [
+      h('div.avatar', avatar(feedId, 6)),
+      h('div.name', name(feedId)),
+      h('div.crystals', crystals.map(Crystal))
+    ])
+  }
 
-    return h('div.crystal', [
-      h('div.overview', { 'ev-click': (e) => forwardCrystalsShow({ crystal }) }, [
-        h('div.avatar', avatar(feedId, 3)),
-        h('div.name', name(feedId)),
-        Timestamp({ timestamp })
-      ])
+  function Crystal (crystal) {
+    const { createdAt, rootId } = crystal
+
+    return h('div.crystal', { 'ev-click': (e) => forwardCrystalsShow({ crystal }) }, [
+      h('i.DarkCrystalShard.fa.fa-diamond', {
+        title: `${createdAt}\n${rootId}`,
+      })
     ])
   }
 
   function getForwards () {
     const newForwards = {}
+    const collection = {}
+
+    // forwardsArray Shape
+    // [
+    //   {
+    //     feedId,
+    //     crystals: [
+    //       { author, rootId, createdAt, forwards: [{ feedId, createdAt }, { feedId, createdAt }] }
+    //       { author, rootId, forwards: ... }
+    //     ]
+    //   },
+    //   {
+    //     feedId,
+    //     createdAt,
+    //     crystals: ...
+    //   }
+    // ]
+
     pull(
       // Would this be faster with reverse: true? (and sort afterwards)
       scuttle.forward.pull.fromOthers({ live: false }),
@@ -63,53 +89,127 @@ module.exports = function DarkCrystalForwardCrystalsIndex ({ scuttle, avatar, na
       pullParamap(getForwardDataBundles, 10),
       pull.collect((err) => {
         if (err) console.error(err)
-        state.forwards.set(newForwards)
+
+        var friendsWithCrystals = transform(collection, (acc, crystals, feedId) => {
+          acc.push({
+            feedId,
+            crystals: transform(crystals, (acc, crystal, root) => (
+              acc.push(Object.assign({}, crystal, { author: feedId, root })
+            )), [])
+          })
+        }, [])
+
+        console.log(friendsWithCrystals)
+        state.friends.set(friendsWithCrystals)
         state.isLoading.set(false)
       })
     )
 
     function getForwardDataBundles (msg, cb) {
-      const root = get(msg, 'value.content.root')
-      set(newForwards, [ root, 'root' ], root)
+      // collection Shape
+      // {
+      //   feedId: {
+      //     rootId: {
+      //       createdAt, (UnixTimestamp)
+      //       recombinable, (Boolean)
+      //       forwards: [
+      //         { feedId, createdAt }]
+      //       ]
+      //     },
+      //     rootId: {
+      //       ...
+      //     }
+      //   },
+      //   feedId: {
+      //     ...
+      //   }
+      // }
+
+      const feedId = get(msg, 'value.author')
+      const rootId = get(msg, 'value.content.root')
+
       pull(
-        scuttle.forward.pull.fromOthersByRoot(root),
-        pull.map(forward => {
-          return {
-            author: get(forward, 'value.author'),
-            timestamp: get(forward, 'value.timestamp')
-          }
-        }),
+        scuttle.forward.pull.fromOthersByRoot(rootId),
+        pull.map(forward => ({
+          author: get(forward, 'value.author'),
+          timestamp: get(forward, 'value.timestamp')
+        })),
         pull.collect((err, forwards) => {
           if (err) return cb(err)
-          set(newForwards, [ root, 'forwards' ], forwards)
-          // get the original secret message, if within follow graph
-          scuttle.root.async.get(root, (err, rootMsg) => {
-            if (!err) {
-              set(
-                newForwards,
-                [ root, 'secretAuthor' ],
-                get(rootMsg, 'author') || get(rootMsg, 'value.author')
-              )
-              set(
-                newForwards,
-                [ root, 'secretCreated' ],
-                get(rootMsg, 'timestamp') || get(rootMsg, 'value.timestamp')
-              )
-            }
-            if (forwards.length > 1) {
-              // Test if we can recombine
-              // TODO: handle v1 forwarded message (eg: Is this your secret '<garbage>'?)
-              scuttle.recover.async.recombine(root, (err, secret) => {
-                if (secret && !err) set(newForwards, [ root, 'recombinable' ], root)
+
+          if (forwards.length > 0) {
+            scuttle.root.async.get(rootId, (err, root) => {
+              if (err) return cb(err)
+
+              let author = get(root, 'author') || get(root, 'value.author')
+              set(collection, [feedId, rootId, 'author'], author)
+
+              let timestamp = get(root, 'timestamp') || get(root, 'value.timestamp')
+              set(collection, [feedId, rootId, 'createdAt'], timestamp)
+
+              set(collection, [feedId, rootId, 'forwards'], forwards)
+
+              if (forwards.length > 0) {
+                scuttle.recover.async.recombine(rootId, (err, secret) => {
+                  if (err) return cb(err)
+
+                  set(collection, [feedId, rootId, 'recombinable'], Boolean(secret))
+
+                  return cb(null)
+                })
+              } else {
                 return cb(null)
-              })
-            } else {
-              return cb(null)
-            }
-          })
+              }
+            })
+          } else {
+            return cb(null)
+          }
         })
       )
     }
+
+    // const root = get(msg, 'value.content.root')
+    // set(newForwards, [ root, 'root' ], root)
+    // pull(
+    //   scuttle.forward.pull.fromOthersByRoot(root),
+    //   pull.map(forward => {
+    //     return {
+    //       author: get(forward, 'value.author'),
+    //       timestamp: get(forward, 'value.timestamp')
+    //     }
+    //   }),
+    //   pull.collect((err, forwards) => {
+    //     if (err) return cb(err)
+    //     set(newForwards, [ root, 'forwards' ], forwards)
+    //     // get the original secret message, if within follow graph
+    //     scuttle.root.async.get(root, (err, rootMsg) => {
+    //       if (err) return cb(err)
+
+    //       if (!err) {
+    //         set(
+    //           newForwards,
+    //           [ root, 'secretAuthor' ],
+    //           get(rootMsg, 'author') || get(rootMsg, 'value.author')
+    //         )
+    //         set(
+    //           newForwards,
+    //           [ root, 'secretCreated' ],
+    //           get(rootMsg, 'timestamp') || get(rootMsg, 'value.timestamp')
+    //         )
+    //       }
+    //       if (forwards.length > 1) {
+    //         // Test if we can recombine
+    //         // TODO: handle v1 forwarded message (eg: Is this your secret '<garbage>'?)
+    //         scuttle.recover.async.recombine(root, (err, secret) => {
+    //           if (secret && !err) set(newForwards, [ root, 'recombinable' ], root)
+    //           return cb(null)
+    //         })
+    //       } else {
+    //         return cb(null)
+    //       }
+    //     })
+    //   })
+    // )
   }
 
   function watchForUpdates () {
