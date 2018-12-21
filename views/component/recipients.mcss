@@ -9,7 +9,7 @@ DarkCrystalRecipients {
   flex-grow: 1
   min-height: 3.8rem
 
-  /* padding-left: .5rem */
+  padding-right: .5rem
   /* border: 1px solid gainsboro */
 
   display: flex

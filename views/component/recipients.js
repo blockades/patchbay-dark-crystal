@@ -48,8 +48,9 @@ function RecipientInput (opts) {
     }
   })
 
+  let wasEmpty
   input.addEventListener('keyup', (e) => {
-    state.isEmpty = e.target.value.length === 0
+    state.isEmpty = wasEmpty && e.target.value.length === 0
 
     if (isFeedId(e.target.value)) {
       addRecp({ state, link: e.target.value }, (err) => {
@@ -65,9 +66,18 @@ function RecipientInput (opts) {
       recps.pop()
       onChange()
     }
+
+    wasEmpty = e.target.value.length === 0
   })
 
-  return input
+  return [
+    input,
+    h('i.fa.fa-times', {
+      'ev-click': (e) => state.recps.set([]),
+      'style': { 'cursor': 'pointer' },
+      'title': 'Clear'
+    })
+  ]
 }
 
 function suggestify (input, suggest, state) {
