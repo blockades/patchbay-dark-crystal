@@ -40,8 +40,11 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
           h('div.name', name(feedId)),
         ]),
         h('div.details', [
-          h('span', 'Created on '),
-          h('span.timestamp', new Date(createdAt).toLocaleDateString())
+          h('div.date', [
+            h('span', 'Created on '),
+            h('span.timestamp', new Date(createdAt).toLocaleDateString()),
+          ]),
+          h('div.root', [ h('span', rootId) ])
         ])
       ]),
       Tabs(state),

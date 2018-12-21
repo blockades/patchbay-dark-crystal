@@ -7,6 +7,9 @@ const transform = require('lodash.transform')
 
 const Recipient = require('../../component/recipient')
 
+const RECOVERED = 'recovered'
+const WAITING = 'waiting'
+
 module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, name, modal, friendsCrystal }) {
   const state = {
     isLoading: Value(true),
@@ -56,6 +59,7 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
     return h('div.crystal', { 'ev-click': (e) => friendsCrystal({ crystal }) }, [
       h('i.DarkCrystalCrystal.fa.fa-diamond', {
         title: `${new Date(createdAt).toLocaleString()}\n${rootId}`,
+        className: crystal.state ? `-${crystal.state}` : null
       })
     ])
   }
@@ -151,7 +155,12 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
                 scuttle.recover.async.recombine(rootId, (err, secret) => {
                   if (err) return cb(err)
 
+                  var state
+                  if (Boolean(secret)) state = RECOVERED
+                  else state = WAITING
+
                   set(collection, [feedId, rootId, 'recombinable'], Boolean(secret))
+                  set(collection, [feedId, rootId, 'state'], state)
 
                   return cb(null)
                 })

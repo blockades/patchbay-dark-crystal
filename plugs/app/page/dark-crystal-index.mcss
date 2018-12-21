@@ -34,6 +34,10 @@ DarkCrystal -index {
       margin-top: 2.8rem
       /* aligns with my crystal index */
     }
+
+    div.DarkCrystalFriendsCrystalsIndex {
+      margin-top: 2.8rem
+    }
   }
 }
 

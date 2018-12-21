@@ -6,7 +6,6 @@ DarkCrystalFriendsCrystalsIndex {
   grid-column-gap: 2rem
   grid-row-gap: 1.5rem
   align-content: start
-
 }
 
 DarkCrystalFriendsCrystals {
@@ -28,20 +27,19 @@ DarkCrystalFriendsCrystals {
 DarkCrystalCrystal {
   cursor: pointer
 
-  -received {
+  -recovered {
     color: purple
     /* filter: drop-shadow(grey 0 0 5px) */
-  }
-
-  -requested {
-    color: fuchsia
-    animation: pulse 1s infinite
   }
 
   -returned {
     color: rgba(0,0,0,.3)
   }
 
+  :hover {
+    transition: color: 0.2 ease-in
+    color: fuchsia
+  }
 }
 
 @keyframes pulse {
