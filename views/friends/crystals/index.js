@@ -57,7 +57,7 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
     const { createdAt, rootId } = crystal
 
     return h('div.crystal', { 'ev-click': (e) => friendsCrystal({ crystal }) }, [
-      h('i.DarkCrystalCrystal.fa.fa-diamond', {
+      h('i.DarkCrystalCrystal.fa.fa-diamond.fa-lg', {
         title: `${new Date(createdAt).toLocaleString()}\n\n${rootId}`,
         className: crystal.state ? `-${crystal.state}` : null
       })

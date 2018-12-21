@@ -2,7 +2,6 @@ DarkCrystalFriendsCrystalsIndex {
   font-family: sans, sans-serif, arial
 
   display: grid
-  grid-template-columns: repeat(auto-fill, 6rem)
   grid-column-gap: 2rem
   grid-row-gap: 1.5rem
   align-content: start
@@ -12,6 +11,7 @@ DarkCrystalFriendsCrystals {
   display: grid
   grid-gap: .5rem
   align-content: start
+  grid-template-columns: auto auto 70%
 
   div.avatar {}
   div.name {}
@@ -20,7 +20,7 @@ DarkCrystalFriendsCrystals {
 
     display: grid
     grid-template-columns: repeat(auto-fill, 1rem)
-    grid-gap: .5rem
+    grid-gap: 1rem
   }
 }
 
