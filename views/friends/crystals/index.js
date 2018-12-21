@@ -113,7 +113,7 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
       //   feedId: {
       //     rootId: {
       //       createdAt, (UnixTimestamp)
-      //       recombinable, (Boolean)
+      //       state, (String)
       //       forwards: [
       //         { feedId, createdAt }]
       //       ]
@@ -134,15 +134,19 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
         scuttle.forward.pull.fromOthersByRoot(rootId),
         pull.map(forward => ({
           author: get(forward, 'value.author'),
-          timestamp: get(forward, 'value.timestamp')
+          timestamp: get(forward, 'value.timestamp'),
+          version: get(forward, 'value.content.shareVersion')
         })),
         pull.collect((err, forwards) => {
           if (err) return cb(err)
 
           if (forwards.length > 0) {
+            let shareVersion = forwards[0].version
+
             scuttle.root.async.get(rootId, (err, root) => {
               if (err) return cb(err)
 
+              // Build out a 'crystal' object and store it under rootId
               let author = get(root, 'author') || get(root, 'value.author')
               set(collection, [feedId, rootId, 'author'], author)
 
@@ -150,6 +154,7 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
               set(collection, [feedId, rootId, 'createdAt'], timestamp)
 
               set(collection, [feedId, rootId, 'forwards'], forwards)
+              set(collection, [feedId, rootId, 'shareVersion'], shareVersion)
 
               if (forwards.length > 0) {
                 scuttle.recover.async.recombine(rootId, (err, secret) => {
@@ -159,7 +164,6 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
                   if (Boolean(secret)) state = RECOVERED
                   else state = WAITING
 
-                  set(collection, [feedId, rootId, 'recombinable'], Boolean(secret))
                   set(collection, [feedId, rootId, 'state'], state)
 
                   return cb(null)

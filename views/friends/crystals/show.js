@@ -7,6 +7,13 @@ const Secret = require('../../component/secret')
 const FORWARDS = 'FORWARDS'
 const SECRET = 'SECRET'
 
+const RECOVERED = 'recovered'
+const V1 = "1.0.0"
+const V1_MESSAGE = "This Dark Crystal was created using an old encryption scheme." +
+  "Our cryptographic sorcery cannot determine whether you have enough shares to " + 
+  "reconstruct a valid secret, so you'll have to use your eyes! Once you have " + 
+  "received the correct quorum of shares, the secret will appear!"
+
 module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
   const {
     scuttle,
@@ -16,8 +23,9 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
     crystal: {
       forwards,
       rootId,
-      recombinable,
-      author: feedId,
+      shareVersion,
+      state: crystalState,
+      author,  // feedId,
       createdAt
     }
   } = opts
@@ -36,8 +44,8 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
     h('section.body', [
       h('div.header', [
         h('div.author', [
-          h('div.avatar', avatar(feedId, 6)),
-          h('div.name', name(feedId)),
+          h('div.avatar', avatar(author, 6)),
+          h('div.name', name(author)),
         ]),
         h('div.details', [
           h('div.date', [
@@ -68,7 +76,12 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
               h('button -primary', { 'ev-click': (e) => state.showSecret.set(false) }, 'Hide'),
             ]),
             h('div.section', [
-              computed([state.secret, state.secretLabel, state.error], (secret, secretLabel, error) => Secret({ secret, secretLabel, error }))
+              computed([state.secret, state.secretLabel, state.error], (secret, secretLabel, error) => (
+                [
+                  (crystalState === RECOVERED && shareVersion === V1) ? h('div.version', [ h('p', V1_MESSAGE) ]) : null,
+                  Secret({ secret, secretLabel, error })
+                ]
+              ))
             ])
           ],
           [
