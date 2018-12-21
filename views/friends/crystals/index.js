@@ -6,9 +6,8 @@ const get = require('lodash.get')
 const transform = require('lodash.transform')
 
 const Recipient = require('../../component/recipient')
-const Timestamp = require('../../component/timestamp')
 
-module.exports = function DarkCrystalForwardCrystalsIndex ({ scuttle, avatar, name, modal, forwardCrystalsShow }) {
+module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, name, modal, friendsCrystal }) {
   const state = {
     isLoading: Value(true),
     error: Value(),
@@ -36,7 +35,7 @@ module.exports = function DarkCrystalForwardCrystalsIndex ({ scuttle, avatar, na
   getForwards()
   watchForUpdates()
 
-  return h('DarkCrystalForwardCrystalsIndex', [
+  return h('DarkCrystalFriendsCrystalsIndex', [
     computed([state.isLoading, state.friends], (isLoading, friends) => {
       if (isLoading) return 'Loading...'
       return friends.map(Friend)
@@ -54,9 +53,9 @@ module.exports = function DarkCrystalForwardCrystalsIndex ({ scuttle, avatar, na
   function Crystal (crystal) {
     const { createdAt, rootId } = crystal
 
-    return h('div.crystal', { 'ev-click': (e) => forwardCrystalsShow({ crystal }) }, [
-      h('i.DarkCrystalShard.fa.fa-diamond', {
-        title: `${createdAt}\n${rootId}`,
+    return h('div.crystal', { 'ev-click': (e) => friendsCrystal({ crystal }) }, [
+      h('i.DarkCrystalCrystal.fa.fa-diamond', {
+        title: `${new Date(createdAt).toLocaleString()}\n${rootId}`,
       })
     ])
   }
@@ -99,7 +98,6 @@ module.exports = function DarkCrystalForwardCrystalsIndex ({ scuttle, avatar, na
           })
         }, [])
 
-        console.log(friendsWithCrystals)
         state.friends.set(friendsWithCrystals)
         state.isLoading.set(false)
       })

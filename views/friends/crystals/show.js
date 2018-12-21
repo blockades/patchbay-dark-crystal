@@ -7,7 +7,7 @@ const Secret = require('../../component/secret')
 const FORWARDS = 'FORWARDS'
 const SECRET = 'SECRET'
 
-module.exports = function DarkCrystalForwardCrystalsShow (opts) {
+module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
   const {
     scuttle,
     avatar = identity,
@@ -31,7 +31,7 @@ module.exports = function DarkCrystalForwardCrystalsShow (opts) {
     error: Value()
   }
 
-  return h('DarkCrystalForwardCrystalsShow', [
+  return h('DarkCrystalFriendsCrystalsShow', [
     h('section.left'),
     h('section.body', [
       h('div.header', [
