@@ -4,6 +4,10 @@ const Scuttle = require('scuttle-dark-crystal')
 
 const CrystalsIndex = require('../../../views/crystals/index')
 const CrystalsNew = require('../../../views/crystals/new')
+
+const FriendsCrystalsIndex = require('../../../views/friends/crystals/index')
+const FriendsCrystalsShow = require('../../../views/friends/crystals/show')
+
 const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
 
@@ -28,7 +32,7 @@ exports.needs = nest({
 // modes
 const MINE = 'My Crystals'
 const OTHERS = 'Others Shards'
-// const FORWARD = 'Forward Shards'
+const FORWARDS = 'Others Crystals'
 
 exports.create = function (api) {
   return nest({
@@ -51,14 +55,15 @@ exports.create = function (api) {
 
     const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
       h('h1', { title: '' }, [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
-      h('section.picker', { title: '' }, [MINE, OTHERS].map(m => {
+      h('section.picker', { title: '' }, [MINE, OTHERS, FORWARDS].map(m => {
         return h('div', {
           'ev-click': () => mode.set(m),
           className: computed(mode, mode => mode === m ? '-active' : '')
         }, m)
       })),
       MySecrets({ mode, scuttle }),
-      OthersShards({ mode, scuttle })
+      OthersShards({ mode, scuttle }),
+      FriendsCrystals({ mode, scuttle })
       // ForwardShards({ mode, scuttle })
     ])
 
@@ -72,7 +77,12 @@ exports.create = function (api) {
     return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
       formModal,
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      CrystalsIndex({ scuttle, routeTo: api.app.sync.goTo })
+      h('CrystalsIndex', [
+        CrystalsIndex({
+          scuttle,
+          routeTo: api.app.sync.goTo
+        })
+      ])
     ])
   }
 
@@ -109,6 +119,33 @@ exports.create = function (api) {
         avatar: api.about.html.avatar,
         name: api.about.obs.name,
         showFriend
+      }),
+      modal
+    ])
+  }
+
+  function FriendsCrystals ({ mode, scuttle }) {
+    const view = Value('Cats always make a comeback!')
+    const isOpen = Value(false)
+    const modal = api.app.html.modal(view, { isOpen })
+
+    function friendsCrystal (opts) {
+      view.set(FriendsCrystalsShow(Object.assign({}, opts, {
+        scuttle,
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        onCancel: () => isOpen.set(false)
+      })))
+      isOpen.set(true)
+    }
+
+    return h('section.content', { className: computed(mode, m => m === FORWARDS ? '-active' : '') }, [
+      FriendsCrystalsIndex({
+        scuttle,
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        modal: api.app.html.modal,
+        friendsCrystal
       }),
       modal
     ])
