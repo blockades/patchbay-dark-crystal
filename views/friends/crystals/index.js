@@ -41,7 +41,7 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
   return h('DarkCrystalFriendsCrystalsIndex', [
     computed([state.isLoading, state.friends], (isLoading, friends) => {
       if (isLoading) return 'Loading...'
-      return friends.map(Friend)
+      return friends.length > 0 ? friends.map(Friend) : h('p', 'You possess no forwarded crystals')
     })
   ])
 
@@ -58,7 +58,7 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
 
     return h('div.crystal', { 'ev-click': (e) => friendsCrystal({ crystal }) }, [
       h('i.DarkCrystalCrystal.fa.fa-diamond', {
-        title: `${new Date(createdAt).toLocaleString()}\n${rootId}`,
+        title: `${new Date(createdAt).toLocaleString()}\n\n${rootId}`,
         className: crystal.state ? `-${crystal.state}` : null
       })
     ])
@@ -178,6 +178,8 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
         })
       )
     }
+
+    // This code groups forwards by root rather than by friends (which the above code does). It may be useful in future.
 
     // const root = get(msg, 'value.content.root')
     // set(newForwards, [ root, 'root' ], root)

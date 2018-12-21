@@ -32,7 +32,7 @@ exports.needs = nest({
 // modes
 const MINE = 'My Crystals'
 const OTHERS = 'Others Shards'
-const FORWARDS = 'Forwarded Crystals'
+const FORWARDS = 'Others Crystals'
 
 exports.create = function (api) {
   return nest({

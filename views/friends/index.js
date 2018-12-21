@@ -38,7 +38,7 @@ module.exports = function FriendsIndex (opts) {
     computed([state.isLoading, state.friends], (isLoading, friends) => {
       if (isLoading) return 'Loading...' // mix: TODO improve this!
 
-      return friends.map(Friend)
+      return friends.length > 0 ? friends.map(Friend) : h('p', 'You possess no shards')
     })
   ])
 
