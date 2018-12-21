@@ -93,8 +93,8 @@ module.exports = function DarkCrystalForwardCrystalsIndex ({ scuttle, avatar, na
         var friendsWithCrystals = transform(collection, (acc, crystals, feedId) => {
           acc.push({
             feedId,
-            crystals: transform(crystals, (acc, crystal, root) => (
-              acc.push(Object.assign({}, crystal, { author: feedId, root })
+            crystals: transform(crystals, (acc, crystal, rootId) => (
+              acc.push(Object.assign({}, crystal, { author: feedId, rootId })
             )), [])
           })
         }, [])
