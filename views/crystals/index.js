@@ -9,9 +9,7 @@ module.exports = function CrystalsIndex (opts) {
 
   const roots = getRoots()
 
-  return h('DarkCrystalCrystalsIndex', [
-    map(roots, Root, { comparer })
-  ])
+  return h('DarkCrystalCrystalsIndex', [ map(roots, Root, { comparer }) ])
 
   function Root (msg) {
     return h('div.crystal', [

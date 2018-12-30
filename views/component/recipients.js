@@ -41,7 +41,17 @@ function RecipientInput (opts) {
   const input = h('input', { placeholder })
   suggestify(input, suggest, state)
 
+  input.addEventListener('keydown', (e) => {
+    if (state.recps.getLength() >= maxRecps && !isBackspace(e)) {
+      e.preventDefault()
+      return false
+    }
+  })
+
+  let wasEmpty
   input.addEventListener('keyup', (e) => {
+    state.isEmpty = wasEmpty && e.target.value.length === 0
+
     if (isFeedId(e.target.value)) {
       addRecp({ state, link: e.target.value }, (err) => {
         if (err) console.error(err)
@@ -57,10 +67,17 @@ function RecipientInput (opts) {
       onChange()
     }
 
-    state.isEmpty = e.target.value.length === 0
+    wasEmpty = e.target.value.length === 0
   })
 
-  return input
+  return [
+    input,
+    h('i.fa.fa-times', {
+      'ev-click': (e) => state.recps.set([]),
+      'style': { 'cursor': 'pointer' },
+      'title': 'Clear'
+    })
+  ]
 }
 
 function suggestify (input, suggest, state) {
