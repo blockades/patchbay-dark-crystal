@@ -5,8 +5,6 @@ const set = require('lodash.set')
 const get = require('lodash.get')
 const transform = require('lodash.transform')
 
-const Recipient = require('../../component/recipient')
-
 const RECOVERED = 'recovered'
 const WAITING = 'waiting'
 
@@ -65,7 +63,6 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
   }
 
   function getForwards () {
-    const newForwards = {}
     const collection = {}
 
     // forwardsArray Shape
@@ -98,7 +95,7 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
             feedId,
             crystals: transform(crystals, (acc, crystal, rootId) => (
               acc.push(Object.assign({}, crystal, { author: feedId, rootId })
-            )), [])
+              )), [])
           })
         }, [])
 
@@ -161,7 +158,7 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
                   if (err) return cb(err)
 
                   var state
-                  if (Boolean(secret)) state = RECOVERED
+                  if (secret) state = RECOVERED
                   else state = WAITING
 
                   set(collection, [feedId, rootId, 'state'], state)

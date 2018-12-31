@@ -1,6 +1,5 @@
 const { h, Value, when, computed } = require('mutant')
 
-const Recipient = require('../../component/recipient')
 const Timestamp = require('../../component/timestamp')
 const Secret = require('../../component/secret')
 
@@ -8,11 +7,11 @@ const FORWARDS = 'FORWARDS'
 const SECRET = 'SECRET'
 
 const RECOVERED = 'recovered'
-const V1 = "1.0.0"
-const V1_MESSAGE = "This Dark Crystal was created using an old encryption scheme." +
-  "Our cryptographic sorcery cannot determine whether you have enough shares to " + 
-  "reconstruct a valid secret, so you'll have to use your eyes! Once you have " + 
-  "received the correct quorum of shares, the secret will appear!"
+const V1 = '1.0.0'
+const V1_MESSAGE = 'This Dark Crystal was created using an old encryption scheme.' +
+  'Our cryptographic sorcery cannot determine whether you have enough shares to ' +
+  "reconstruct a valid secret, so you'll have to use your eyes! Once you have " +
+  'received the correct quorum of shares, the secret will appear!'
 
 module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
   const {
@@ -25,7 +24,7 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
       rootId,
       shareVersion,
       state: crystalState,
-      author,  // feedId,
+      author, // feedId,
       createdAt
     }
   } = opts
@@ -45,12 +44,12 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
       h('div.header', [
         h('div.author', [
           h('div.avatar', avatar(author, 6)),
-          h('div.name', name(author)),
+          h('div.name', name(author))
         ]),
         h('div.details', [
           h('div.date', [
             h('span', 'Created on '),
-            h('span.timestamp', new Date(createdAt).toLocaleDateString()),
+            h('span.timestamp', new Date(createdAt).toLocaleDateString())
           ]),
           h('div.root', [ h('span', rootId) ])
         ])
@@ -62,7 +61,7 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
           case SECRET: return SecretTab()
         }
       }),
-      h('div.actions', [ h('button -subtle', { 'ev-click': onCancel }, 'Cancel') ]),
+      h('div.actions', [ h('button -subtle', { 'ev-click': onCancel }, 'Cancel') ])
     ]),
     h('section.right')
   ])
@@ -73,7 +72,7 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
         when(state.showSecret,
           [
             h('div.actions', [
-              h('button -primary', { 'ev-click': (e) => state.showSecret.set(false) }, 'Hide Secret'),
+              h('button -primary', { 'ev-click': (e) => state.showSecret.set(false) }, 'Hide Secret')
             ]),
             h('div.section', [
               computed([state.secret, state.secretLabel, state.error], (secret, secretLabel, error) => (
@@ -96,7 +95,7 @@ module.exports = function DarkCrystalFriendsCrystalsShow (opts) {
                   })
                 }
               }, 'Display Secret')
-            ]),
+            ])
           ]
         )
       ])

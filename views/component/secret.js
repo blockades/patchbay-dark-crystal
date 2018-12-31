@@ -1,4 +1,4 @@
-const { h, Value, when, computed, resolve } = require('mutant')
+const { h, Value, when, computed } = require('mutant')
 
 const CopyToClipboard = require('./copy-to-clipboard')
 
