@@ -124,7 +124,6 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
       //   }
       // }
 
-      const feedId = get(msg, 'value.author')
       const rootId = get(msg, 'value.content.root')
 
       pull(
@@ -144,8 +143,8 @@ module.exports = function DarkCrystalFriendsCrystalsIndex ({ scuttle, avatar, na
               if (err) return cb(err)
 
               // Build out a 'crystal' object and store it under rootId
-              let author = get(root, 'author') || get(root, 'value.author')
-              set(collection, [feedId, rootId, 'author'], author)
+              let feedId = get(root, 'author') || get(root, 'value.author')
+              set(collection, [feedId, rootId, 'author'], feedId)
 
               let timestamp = get(root, 'timestamp') || get(root, 'value.timestamp')
               set(collection, [feedId, rootId, 'createdAt'], timestamp)
