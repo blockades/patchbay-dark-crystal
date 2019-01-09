@@ -29,13 +29,5 @@ DarkCrystal {
 
     margin-top: 2.5rem
   }
-
-  section.queries {
-    align-self: end
-    margin-bottom: 2rem
-
-    strong { margin-right: .5rem }
-    a { color: rebeccapurple }
-  }
 }
 

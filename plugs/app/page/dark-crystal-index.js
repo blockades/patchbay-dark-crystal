@@ -2,9 +2,17 @@ const nest = require('depnest')
 const { h, Value, computed } = require('mutant')
 const Scuttle = require('scuttle-dark-crystal')
 
-const DarkCrystalIndex = require('../../../views/index')
-const DarkCrystalNew = require('../../../views/new')
-const DarkCrystalOthersShardsIndex = require('../../../views/others-shards/index')
+const CrystalsIndex = require('../../../views/crystals/index')
+const CrystalsNew = require('../../../views/crystals/new')
+
+const FriendsCrystalsIndex = require('../../../views/friends/crystals/index')
+const FriendsCrystalsShow = require('../../../views/friends/crystals/show')
+
+const FriendsIndex = require('../../../views/friends/index')
+const FriendsShow = require('../../../views/friends/show')
+
+const ForwardNew = require('../../../views/forward/new')
+// const ForwardIndex = require('../../../views/forward/index')
 
 exports.gives = nest({
   'app.html.menuItem': true,
@@ -24,6 +32,7 @@ exports.needs = nest({
 // modes
 const MINE = 'My Crystals'
 const OTHERS = 'Others Shards'
+const FORWARDS = 'Others Crystals'
 
 exports.create = function (api) {
   return nest({
@@ -42,49 +51,136 @@ exports.create = function (api) {
     const scuttle = Scuttle(api.sbot.obs.connection)
     const mode = Value(MINE)
 
+    // mix: TODO seperate this page and the routing out
+
     const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
-      h('h1', [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
-      h('section.picker', [MINE, OTHERS].map(m => {
+      h('h1', { title: '' }, [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
+      h('section.picker', { title: '' }, [MINE, OTHERS, FORWARDS].map(m => {
         return h('div', {
           'ev-click': () => mode.set(m),
           className: computed(mode, mode => mode === m ? '-active' : '')
         }, m)
       })),
-      Mine({ mode, scuttle }),
+      MySecrets({ mode, scuttle }),
       OthersShards({ mode, scuttle }),
-      h('section.queries', [
-        h('strong', 'queries:'),
-        h('a', { href: '#', 'ev-click': goToAll }, 'All'),
-        ' | ',
-        h('a', { href: '#', 'ev-click': goToMyRoots }, 'My roots')
-      ])
+      FriendsCrystals({ mode, scuttle })
+      // ForwardShards({ mode, scuttle })
     ])
 
-    page.scroll = () => {} // stops keyboard shortcuts from breaking
+    // page.scroll = () => {} // stops keyboard shortcuts from breaking
     return page
   }
 
-  function Mine ({ mode, scuttle }) {
-    const { formModal, formOpen } = Form(scuttle)
+  function MySecrets ({ mode, scuttle }) {
+    const { formModal, formOpen } = NewCrystalForm(scuttle)
+
     return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
       formModal,
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      DarkCrystalIndex({ scuttle, routeTo: api.app.sync.goTo })
+      h('CrystalsIndex', [
+        CrystalsIndex({
+          scuttle,
+          routeTo: api.app.sync.goTo
+        })
+      ])
     ])
   }
 
   function OthersShards ({ mode, scuttle }) {
+    const view = Value('Dogs are cool')
+    const isOpen = Value(false)
+    const modal = api.app.html.modal(view, { isOpen })
+
+    function showFriend (opts) {
+      view.set(FriendsShow(Object.assign({}, opts, {
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        scuttle,
+        newForward,
+        onCancel: () => isOpen.set(false)
+      })))
+      isOpen.set(true)
+    }
+
+    function newForward (opts) {
+      view.set(ForwardNew(Object.assign({}, opts, {
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        suggest: { about: api.about.async.suggest },
+        scuttle,
+        onCancel: () => isOpen.set(false)
+      })))
+      isOpen.set(true)
+    }
+
     return h('section.content', { className: computed(mode, m => m === OTHERS ? '-active' : '') }, [
-      DarkCrystalOthersShardsIndex({
+      FriendsIndex({
         scuttle,
         avatar: api.about.html.avatar,
-        name: api.about.obs.name
-      })
+        name: api.about.obs.name,
+        showFriend
+      }),
+      modal
     ])
   }
 
-  function Form (scuttle) {
-    const form = DarkCrystalNew({
+  function FriendsCrystals ({ mode, scuttle }) {
+    const view = Value('Cats always make a comeback!')
+    const isOpen = Value(false)
+    const modal = api.app.html.modal(view, { isOpen })
+
+    function friendsCrystal (opts) {
+      view.set(FriendsCrystalsShow(Object.assign({}, opts, {
+        scuttle,
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        onCancel: () => isOpen.set(false)
+      })))
+      isOpen.set(true)
+    }
+
+    return h('section.content', { className: computed(mode, m => m === FORWARDS ? '-active' : '') }, [
+      FriendsCrystalsIndex({
+        scuttle,
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name,
+        modal: api.app.html.modal,
+        friendsCrystal
+      }),
+      modal
+    ])
+  }
+
+  // function ForwardShards ({ mode, scuttle }) {
+  //   const view = Value('Cats are cooler')
+  //   const isOpen = Value(false)
+  //   const forwardModal = api.app.html.modal(view, { isOpen })
+
+  //   const newForward = (opts) => {
+  //     view.set(ForwardNew(Object.assign({}, opts, {
+  //       avatar: api.about.html.avatar,
+  //       name: api.about.obs.name,
+  //       suggest: { about: api.about.async.suggest },
+  //       scuttle,
+  //       onCancel: () => isOpen.set(false)
+  //     })))
+  //     isOpen.set(true)
+  //   }
+
+  //   return h('section.content', { className: computed(mode, m => m === FORWARD ? '-active' : '') }, [
+  //     h('div.message', [ h('div.span',  'Select a friend whose shards you have been asked to forward...') ]),
+  //     ForwardIndex({
+  //       scuttle,
+  //       avatar: api.about.html.avatar,
+  //       name: api.about.obs.name,
+  //       newForward
+  //     }),
+  //     forwardModal
+  //   ])
+  // }
+
+  function NewCrystalForm (scuttle) {
+    const form = CrystalsNew({
       scuttle,
       onCancel: () => formOpen.set(false),
       afterRitual: (err, data) => {
@@ -93,42 +189,12 @@ exports.create = function (api) {
         console.log('ritual complete', data)
       },
       suggest: { about: api.about.async.suggest },
+      name: api.about.obs.name,
       avatar: api.about.html.avatar
     })
     const formOpen = Value(false)
     const formModal = api.app.html.modal(form, { isOpen: formOpen })
 
     return { formModal, formOpen }
-  }
-
-  function goToAll (ev) {
-    ev.preventDefault()
-
-    const initialQuery = [{
-      $filter: {
-        value: {
-          timestamp: { $gt: 0 }, // needed for how I set up /query page
-          content: {
-            type: { $prefix: 'dark-crystal' }
-          }
-        }
-      }
-    }]
-    return api.app.sync.goTo({ page: 'query', initialQuery })
-  }
-
-  function goToMyRoots (ev) {
-    ev.preventDefault()
-
-    const initialQuery = [{
-      $filter: {
-        value: {
-          author: api.keys.sync.id(),
-          timestamp: { $gt: 0 }, // needed for how I set up /query page
-          content: { type: 'dark-crystal/root' }
-        }
-      }
-    }]
-    return api.app.sync.goTo({ page: 'query', initialQuery })
   }
 }
