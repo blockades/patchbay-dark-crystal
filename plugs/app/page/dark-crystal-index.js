@@ -12,7 +12,8 @@ const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
 
 const ForwardNew = require('../../../views/forward/new')
-// const ForwardIndex = require('../../../views/forward/index')
+
+const LocalPeersIndex = require('../../../views/local/index')
 
 exports.gives = nest({
   'app.html.menuItem': true,
@@ -26,7 +27,9 @@ exports.needs = nest({
   'app.html.modal': 'first',
   'app.sync.goTo': 'first',
   'keys.sync.id': 'first',
-  'sbot.obs.connection': 'first'
+  'sbot.obs.connection': 'first',
+  'sbot.obs.localPeers': 'first',
+  'sbot.obs.connectedPeers': 'first'
 })
 
 // modes
@@ -53,6 +56,7 @@ exports.create = function (api) {
 
     // mix: TODO seperate this page and the routing out
 
+
     const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
       h('h1', { title: '' }, [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
       h('section.picker', { title: '' }, [MINE, OTHERS, FORWARDS].map(m => {
@@ -63,7 +67,12 @@ exports.create = function (api) {
       })),
       MySecrets({ mode, scuttle }),
       OthersShards({ mode, scuttle }),
-      FriendsCrystals({ mode, scuttle })
+      FriendsCrystals({ mode, scuttle }),
+      LocalPeersIndex({
+        localPeers: api.sbot.obs.localPeers,
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name
+      }),
       // ForwardShards({ mode, scuttle })
     ])
 
