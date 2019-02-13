@@ -62,7 +62,7 @@ exports.create = function (api) {
       h('h1', { title: '' }, [
         'Dark Crystal',
         h('i.fa.fa-diamond'),
-        Settings({ scuttle }),
+        Settings({ scuttle })
       ]),
       h('section.picker', { title: '' }, [MINE, OTHERS, FORWARDS].map(m => {
         return h('div', {
@@ -86,10 +86,11 @@ exports.create = function (api) {
     const view = SettingsEdit({
       scuttle,
       onCancel: () => isOpen.set(false),
+      feedId: api.keys.sync.id(),
       avatar: api.about.html.avatar,
       name: api.about.obs.name,
       publish: api.message.async.publish,
-      syncBlob: api.blob.sync.url,
+      blobUrl: api.blob.sync.url,
       addBlob: api.sbot.async.addBlob
     })
 
