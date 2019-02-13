@@ -14,6 +14,8 @@ const FriendsShow = require('../../../views/friends/show')
 const ForwardNew = require('../../../views/forward/new')
 // const ForwardIndex = require('../../../views/forward/index')
 
+const SettingsEdit = require('../../../views/settings/edit')
+
 exports.gives = nest({
   'app.html.menuItem': true,
   'app.page.darkCrystalIndex': true
@@ -26,7 +28,10 @@ exports.needs = nest({
   'app.html.modal': 'first',
   'app.sync.goTo': 'first',
   'keys.sync.id': 'first',
-  'sbot.obs.connection': 'first'
+  'sbot.obs.connection': 'first',
+  'blob.sync.url': 'first',
+  'message.async.publish': 'first',
+  'sbot.async.addBlob': 'first',
 })
 
 // modes
@@ -54,7 +59,11 @@ exports.create = function (api) {
     // mix: TODO seperate this page and the routing out
 
     const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
-      h('h1', { title: '' }, [ 'Dark Crystal', h('i.fa.fa-diamond') ]),
+      h('h1', { title: '' }, [
+        'Dark Crystal',
+        h('i.fa.fa-diamond'),
+        Settings({ scuttle }),
+      ]),
       h('section.picker', { title: '' }, [MINE, OTHERS, FORWARDS].map(m => {
         return h('div', {
           'ev-click': () => mode.set(m),
@@ -70,6 +79,28 @@ exports.create = function (api) {
     // page.scroll = () => {} // stops keyboard shortcuts from breaking
     return page
   }
+
+  function Settings ({ scuttle }) {
+    const isOpen = Value(false)
+
+    const view = SettingsEdit({
+      scuttle,
+      onCancel: () => isOpen.set(false),
+      avatar: api.about.html.avatar,
+      name: api.about.obs.name,
+      publish: api.message.async.publish,
+      syncBlob: api.blob.sync.url,
+      addBlob: api.sbot.async.addBlob
+    })
+
+    const modal = api.app.html.modal(view, { isOpen })
+
+    return [
+      h('i.fa.fa-cog', { 'ev-click': () => isOpen.set(true) }),
+      modal
+    ]
+  }
+
 
   function MySecrets ({ mode, scuttle }) {
     const { formModal, formOpen } = NewCrystalForm(scuttle)
