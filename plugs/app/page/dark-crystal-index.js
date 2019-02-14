@@ -1,20 +1,34 @@
 const nest = require('depnest')
-const { h, Value, computed } = require('mutant')
+const pull = require('pull-stream')
 const Scuttle = require('scuttle-dark-crystal')
 
+const {
+  h,
+  Value,
+  computed,
+  when,
+  onceTrue,
+  Array: MutantArray,
+  Struct,
+} = require('mutant')
+
+// Views
 const CrystalsIndex = require('../../../views/crystals/index')
 const CrystalsNew = require('../../../views/crystals/new')
-
 const FriendsCrystalsIndex = require('../../../views/friends/crystals/index')
 const FriendsCrystalsShow = require('../../../views/friends/crystals/show')
-
 const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
-
 const ForwardNew = require('../../../views/forward/new')
-// const ForwardIndex = require('../../../views/forward/index')
-
 const SettingsEdit = require('../../../views/settings/edit')
+
+// Components
+const Tooltip = require('../../../views/component/tooltip')
+
+// Modes / Tabs
+const MINE = 'My Crystals'
+const OTHERS = 'Others Shards'
+const FORWARDS = 'Others Crystals'
 
 exports.gives = nest({
   'app.html.menuItem': true,
@@ -34,10 +48,6 @@ exports.needs = nest({
   'sbot.async.addBlob': 'first'
 })
 
-// modes
-const MINE = 'My Crystals'
-const OTHERS = 'Others Shards'
-const FORWARDS = 'Others Crystals'
 
 exports.create = function (api) {
   return nest({
@@ -53,34 +63,82 @@ exports.create = function (api) {
   }
 
   function darkCrystalIndexPage (location) {
-    const scuttle = Scuttle(api.sbot.obs.connection)
-    const mode = Value(MINE)
+    const server = api.sbot.obs.connection
+    const scuttle = Scuttle(server)
 
-    // mix: TODO seperate this page and the routing out
+    const state = Struct({
+      ready: Value(false),
+      mode: Value(MINE),
+      abouts: MutantArray([])
+    })
 
-    const page = h('DarkCrystal -index', { title: '/dark-crystal' }, [
-      h('h1', { title: '' }, [
-        'Dark Crystal',
-        h('i.fa.fa-diamond'),
-        Settings({ scuttle })
+    onceTrue(server, server => {
+      updateStore()
+      watchForUpdates()
+
+      function aboutsQuery () {
+        return {
+          query: [{
+            $filter: {
+              value: {
+                author: server.id,
+                timestamp: { $gt: 0 },
+                content: {
+                  type: 'about',
+                  about: server.id
+                }
+              }
+            }
+          }]
+        }
+      }
+
+      function updateStore () {
+        pull(
+          server.query.read(Object.assign({}, aboutsQuery(), { live: false })),
+          pull.collect(
+            (err, abouts) => {
+              if (err) throw err
+              else {
+                state.abouts.set(abouts)
+                state.ready.set(true)
+              }
+            }
+          )
+        )
+      }
+
+      function watchForUpdates () {
+        pull(
+          server.query.read(Object.assign({}, aboutsQuery(), { old: false, live: true })),
+          pull.filter(m => !m.sync),
+          pull.drain(m => updateStore())
+        )
+      }
+    })
+
+    return when(state.ready,
+      h('DarkCrystal -index', { title: '/dark-crystal' }, [
+        h('h1', [
+          'Dark Crystal',
+          h('i.fa.fa-diamond'),
+          Settings({ abouts: state.abouts, scuttle })
+        ]),
+        h('section.picker', [MINE, OTHERS, FORWARDS].map(m => {
+          return h('div', {
+            'ev-click': () => state.mode.set(m),
+            className: computed(state.mode, mode => mode === m ? '-active' : '')
+          }, m)
+        })),
+        MySecrets({ mode: state.mode, scuttle }),
+        OthersShards({ mode: state.mode, scuttle }),
+        FriendsCrystals({ mode: state.mode, scuttle })
       ]),
-      h('section.picker', { title: '' }, [MINE, OTHERS, FORWARDS].map(m => {
-        return h('div', {
-          'ev-click': () => mode.set(m),
-          className: computed(mode, mode => mode === m ? '-active' : '')
-        }, m)
-      })),
-      MySecrets({ mode, scuttle }),
-      OthersShards({ mode, scuttle }),
-      FriendsCrystals({ mode, scuttle })
-      // ForwardShards({ mode, scuttle })
-    ])
-
-    // page.scroll = () => {} // stops keyboard shortcuts from breaking
-    return page
+      h('i.fa.fa-spinner.fa-pulse')
+    )
   }
 
-  function Settings ({ scuttle }) {
+  function Settings ({ scuttle, abouts }) {
     const isOpen = Value(false)
 
     const view = SettingsEdit({
@@ -97,6 +155,12 @@ exports.create = function (api) {
 
     return [
       h('i.fa.fa-cog', { 'ev-click': () => isOpen.set(true), title: 'Settings' }),
+      // TODO: integrate a tooltip or flash alert system to begin to show warning messages to users...
+      abouts.getLength() > 0 ? null : h('i.fa.fa-warning'), // currently shows when is first time user (i.e. they haven't published a name or avatar)
+      // abouts.getLength() > 0 ? null : Tooltip({
+      //   text: 'Setup your account details in the settings page...',
+      //   position: 'top'
+      // }),
       modal
     ]
   }
@@ -227,4 +291,5 @@ exports.create = function (api) {
 
     return { formModal, formOpen }
   }
+
 }
