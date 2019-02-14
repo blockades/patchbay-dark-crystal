@@ -21,6 +21,7 @@ const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
 const ForwardNew = require('../../../views/forward/new')
 const SettingsEdit = require('../../../views/settings/edit')
+const LocalPeers = require('../../../views/peers/local')
 
 // Components
 const Tooltip = require('../../../views/component/tooltip')
@@ -45,7 +46,8 @@ exports.needs = nest({
   'sbot.obs.connection': 'first',
   'blob.sync.url': 'first',
   'message.async.publish': 'first',
-  'sbot.async.addBlob': 'first'
+  'sbot.async.addBlob': 'first',
+  'sbot.obs.localPeers': 'first'
 })
 
 
@@ -122,7 +124,8 @@ exports.create = function (api) {
         h('h1', [
           'Dark Crystal',
           h('i.fa.fa-diamond'),
-          Settings({ abouts: state.abouts, scuttle })
+          Settings({ abouts: state.abouts, scuttle }),
+          Peers()
         ]),
         h('section.picker', [MINE, OTHERS, FORWARDS].map(m => {
           return h('div', {
@@ -136,6 +139,24 @@ exports.create = function (api) {
       ]),
       h('i.fa.fa-spinner.fa-pulse')
     )
+  }
+
+  function Peers () {
+    const isOpen = Value(false)
+
+    const view = LocalPeers({
+      onCancel: () => isOpen.set(false),
+      peers: api.sbot.obs.localPeers,
+      avatar: api.about.html.avatar,
+      name: api.about.obs.name,
+    })
+
+    const modal = api.app.html.modal(view, { isOpen })
+
+    return [
+      h('i.fa.fa-users', { 'ev-click': () => isOpen.set(true), title: 'Connections' }),
+      modal
+    ]
   }
 
   function Settings ({ scuttle, abouts }) {
