@@ -1,9 +1,6 @@
 const { h, resolve, Value, computed, when } = require('mutant')
-const dataurl = require('dataurl-')
-const hyperfile = require('hyperfile')
-const hypercrop = require('hypercrop')
-const hyperlightbox = require('hyperlightbox')
-const pull = require('pull-stream')
+
+const Cropper = require('../lib/cropper')
 
 module.exports = function SettingsEdit (opts) {
   const {
@@ -14,97 +11,55 @@ module.exports = function SettingsEdit (opts) {
     name = identity,
     publish,
     blobUrl,
-    addBlob,
+    addBlob
   } = opts
 
-  const currentName = name(feedId)
-  const newName = Value()
+  const about = {
+    type: 'about',
+    about: feedId
+  }
 
-  var currentAvatar = avatar(feedId)
-  const newAvatar = Value()
-
-  const displayAvatar = computed(newAvatar, img => (
-    img ? h('img', { src: blobUrl(img.link) }) : currentAvatar
-  ))
-
-  const canSave = Value(false)
-
-  var lightbox = hyperlightbox()
+  const state = {
+    isSaving: Value(false),
+    name: Value(),
+    avatar: Value(),
+    crop: Value()
+  }
 
   return h('Settings', [
-    h('section -avatar', [
-      lightbox,
-      h('header', 'Avatar'),
-      h('div.input', [
-        displayAvatar,
-        hyperfile.asDataURL((data) => {
-          lightbox.show(Crop(data, (err, cropData) => {
-            if (err) throw err
-            if (!cropData) return lightbox.close()
-
-            var _data = dataurl.parse(cropData)
-
-            addBlob(pull.once(_data.data), (err, hash) => {
-              if (err) throw err
-
-              newAvatar.set({
-                link: hash,
-                size: _data.data.length,
-                type: _data.mimetype,
-                width: 512,
-                height: 512
-              })
-            })
-            lightbox.close()
-          }))
-        })
-      ])
-    ]),
-    h('section -name', [
-      h('header', 'Name'),
-      computed(currentName, name => {
-        return h('input', { value: name, 'ev-input': (e) => newName.set(e.target.value) })
-      })
-    ]),
-    h('div.actions', [
-      h('button', { 'ev-click': onCancel }, 'Cancel'),
-      h('button -primary', { 'ev-click': () => {
-        publish({
-          type: 'about',
-          about: feedId,
-          image: resolve(newAvatar),
-          name: resolve(newName),
-        }, (err, about) => {
-          console.log(about)
-        })
-      }, className: when(canSave, '', '-disabled') }, 'Save')
+    h('h1', 'Settings'),
+    h('section.inputs', [
+      h('div.avatar', [
+        h('label.avatar', 'Avatar'),
+        Cropper({ addBlob, image: state.avatar }),
+        computed(state.avatar, img => (img ? h('img.avatar', { src: blobUrl(img.link) }) : avatar(feedId, 10)))
+      ]),
+      h('div.name', [
+        h('label.name', 'Name'),
+        computed(name(feedId), name => (
+          h('input.name', {
+            value: name,
+            'ev-input': (e) => state.name.set(e.target.value)
+          })
+        ))
+      ]),
+      h('section.actions', when(state.isSaving,
+        h('i.fa.fa-spinner.fa-pulse'),
+        [
+          h('button -subtle', { 'ev-click': onCancel }, 'Cancel'),
+          h('button -primary', { 'ev-click': () => {
+            state.isSaving.set(false)
+            const name = resolve(state.name)
+            const image = resolve(state.avatar)
+            console.log("IS PUBLISHING")
+            // publish(Object.assign(about, { name, image }), (err, about) => {
+            //   canSave.set(true)
+            //   if (err) throw err
+            //   console.log(about)
+            // })
+          } }, 'Save')
+        ]
+      ))
     ])
   ])
-}
-
-function Crop (data, callback) {
-  var img = h('img', { src: data })
-  var crop = Value()
-  waitForImg()
-
-  return h('div.cropper', [
-    crop,
-    h('div.background')
-  ])
-
-  function waitForImg () {
-    if (!img.height && !img.width) return setTimeout(waitForImg, 100)
-
-    var canvas = hypercrop(img)
-    crop.set(
-      h('PatchProfileCrop', [
-        h('header', 'Click and drag to crop your avatar'),
-        canvas,
-        h('section.actions', [
-          h('Button', { 'ev-click': () => callback() }, 'Cancel'),
-          h('Button -primary', { 'ev-click': () => callback(null, canvas.selection.toDataURL()) }, 'OK')
-        ])
-      ])
-    )
-  }
 }

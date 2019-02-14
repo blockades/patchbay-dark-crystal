@@ -1,0 +1,69 @@
+Settings {
+  font-family: sans, sans-serif, arial
+  font-size: 1rem
+  color: #fff
+  background: #000
+
+  width: 50rem
+  min-height: 32rem
+
+  h1 {
+    font-size: 1rem
+    text-transform: uppercase
+    letter-spacing: 0.4rem
+
+    padding: 2rem
+    padding-bottom: 1rem
+    margin: 0
+  }
+
+  section {
+    padding: 1rem 2rem
+  }
+
+  section.inputs {
+    display: grid
+    grid-gap: 1rem
+
+    div {
+      div.Cropper {}
+      display: grid
+      grid-template-columns: 7.5rem 15rem auto;
+      align-items: center
+
+      label {
+        font-size: .8rem
+        text-transform: uppercase
+        letter-spacing: .1rem
+      }
+
+      input { }
+      input.quorum {
+        max-width: 18rem
+      }
+      textarea { min-height: 8rem }
+    }
+
+    div.avatar {
+      a.Avatar {
+        justify-self: center
+      }
+
+      img.avatar {
+        width: 10rem
+        height: 10rem
+        justify-self: center
+      }
+    }
+  }
+
+  section.actions {
+    display: grid
+    grid-template-columns: auto auto
+    grid-gap: 1rem
+
+    padding-bottom: 2rem
+
+    justify-content: end
+  }
+}
