@@ -31,7 +31,7 @@ exports.needs = nest({
   'sbot.obs.connection': 'first',
   'blob.sync.url': 'first',
   'message.async.publish': 'first',
-  'sbot.async.addBlob': 'first',
+  'sbot.async.addBlob': 'first'
 })
 
 // modes
@@ -84,7 +84,6 @@ exports.create = function (api) {
     const isOpen = Value(false)
 
     const view = SettingsEdit({
-      scuttle,
       onCancel: () => isOpen.set(false),
       feedId: api.keys.sync.id(),
       avatar: api.about.html.avatar,
@@ -101,7 +100,6 @@ exports.create = function (api) {
       modal
     ]
   }
-
 
   function MySecrets ({ mode, scuttle }) {
     const { formModal, formOpen } = NewCrystalForm(scuttle)

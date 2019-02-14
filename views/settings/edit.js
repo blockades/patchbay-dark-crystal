@@ -4,7 +4,6 @@ const Cropper = require('../lib/cropper')
 
 module.exports = function SettingsEdit (opts) {
   const {
-    scuttle,
     feedId,
     onCancel = console.log,
     avatar = identity,
@@ -22,8 +21,7 @@ module.exports = function SettingsEdit (opts) {
   const state = {
     isSaving: Value(false),
     name: Value(),
-    avatar: Value(),
-    crop: Value()
+    avatar: Value()
   }
 
   return h('Settings', [
@@ -32,7 +30,7 @@ module.exports = function SettingsEdit (opts) {
       h('div.inputs', [
         h('div.avatar', [
           h('label.avatar', 'Avatar'),
-          Cropper({ addBlob, image: state.avatar }),
+          Cropper({ addBlob, image: state.avatar })
         ]),
         h('div.name', [
           h('label.name', 'Name'),
@@ -53,11 +51,11 @@ module.exports = function SettingsEdit (opts) {
       [
         h('button -subtle', { 'ev-click': onCancel }, 'Cancel'),
         h('button -primary', { 'ev-click': () => {
-          state.isSaving.set(false)
+          state.isSaving.set(true)
           const name = resolve(state.name)
           const image = resolve(state.avatar)
           publish(Object.assign(about, { name, image }), (err, about) => {
-            canSave.set(true)
+            state.isSaving.set(false)
             if (err) throw err
             else onCancel()
           })
@@ -66,3 +64,5 @@ module.exports = function SettingsEdit (opts) {
     ))
   ])
 }
+
+function identity (id) { return id }
