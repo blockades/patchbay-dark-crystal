@@ -7,6 +7,9 @@ Settings {
   width: 50rem
   min-height: 32rem
 
+  display: grid
+  grid-template-rows: auto auto 1fr
+
   h1 {
     font-size: 1rem
     text-transform: uppercase
@@ -59,11 +62,9 @@ Settings {
 
   section.actions {
     display: grid
+    padding: 1rem 1rem
+    align-self: end
     grid-template-columns: auto auto
     grid-gap: 1rem
-
-    padding-bottom: 2rem
-
-    justify-content: end
   }
 }

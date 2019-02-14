@@ -43,23 +43,23 @@ module.exports = function SettingsEdit (opts) {
           })
         ))
       ]),
-      h('section.actions', when(state.isSaving,
-        h('i.fa.fa-spinner.fa-pulse'),
-        [
-          h('button -subtle', { 'ev-click': onCancel }, 'Cancel'),
-          h('button -primary', { 'ev-click': () => {
-            state.isSaving.set(false)
-            const name = resolve(state.name)
-            const image = resolve(state.avatar)
-            console.log("IS PUBLISHING")
-            // publish(Object.assign(about, { name, image }), (err, about) => {
-            //   canSave.set(true)
-            //   if (err) throw err
-            //   console.log(about)
-            // })
-          } }, 'Save')
-        ]
-      ))
-    ])
+    ]),
+    h('section.actions', when(state.isSaving,
+      h('i.fa.fa-spinner.fa-pulse'),
+      [
+        h('button -subtle', { 'ev-click': onCancel }, 'Cancel'),
+        h('button -primary', { 'ev-click': () => {
+          state.isSaving.set(false)
+          const name = resolve(state.name)
+          const image = resolve(state.avatar)
+          console.log("IS PUBLISHING")
+          // publish(Object.assign(about, { name, image }), (err, about) => {
+          //   canSave.set(true)
+          //   if (err) throw err
+          //   console.log(about)
+          // })
+        } }, 'Save')
+      ]
+    ))
   ])
 }
