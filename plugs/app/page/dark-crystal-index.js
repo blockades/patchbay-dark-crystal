@@ -97,7 +97,7 @@ exports.create = function (api) {
     const modal = api.app.html.modal(view, { isOpen })
 
     return [
-      h('i.fa.fa-cog', { 'ev-click': () => isOpen.set(true) }),
+      h('i.fa.fa-cog', { 'ev-click': () => isOpen.set(true), title: 'Settings' }),
       modal
     ]
   }
