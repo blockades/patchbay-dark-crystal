@@ -1,7 +1,4 @@
 Cropper {
-  input[type="file"] {
-    width: 14rem
-  }
   div.lightbox {
     div.lightbox__content {
       div.canvas {

@@ -29,20 +29,24 @@ module.exports = function SettingsEdit (opts) {
   return h('Settings', [
     h('h1', 'Settings'),
     h('section.inputs', [
-      h('div.avatar', [
-        h('label.avatar', 'Avatar'),
-        Cropper({ addBlob, image: state.avatar }),
+      h('div.inputs', [
+        h('div.avatar', [
+          h('label.avatar', 'Avatar'),
+          Cropper({ addBlob, image: state.avatar }),
+        ]),
+        h('div.name', [
+          h('label.name', 'Name'),
+          computed(name(feedId), name => (
+            h('input.name', {
+              value: name,
+              'ev-input': (e) => state.name.set(e.target.value)
+            })
+          ))
+        ])
+      ]),
+      h('div.current', [
         computed(state.avatar, img => (img ? h('img.avatar', { src: blobUrl(img.link) }) : avatar(feedId, 10)))
-      ]),
-      h('div.name', [
-        h('label.name', 'Name'),
-        computed(name(feedId), name => (
-          h('input.name', {
-            value: name,
-            'ev-input': (e) => state.name.set(e.target.value)
-          })
-        ))
-      ]),
+      ])
     ]),
     h('section.actions', when(state.isSaving,
       h('i.fa.fa-spinner.fa-pulse'),
@@ -52,12 +56,11 @@ module.exports = function SettingsEdit (opts) {
           state.isSaving.set(false)
           const name = resolve(state.name)
           const image = resolve(state.avatar)
-          console.log("IS PUBLISHING")
-          // publish(Object.assign(about, { name, image }), (err, about) => {
-          //   canSave.set(true)
-          //   if (err) throw err
-          //   console.log(about)
-          // })
+          publish(Object.assign(about, { name, image }), (err, about) => {
+            canSave.set(true)
+            if (err) throw err
+            else onCancel()
+          })
         } }, 'Save')
       ]
     ))

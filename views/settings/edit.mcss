@@ -25,29 +25,36 @@ Settings {
   }
 
   section.inputs {
-    display: grid
-    grid-gap: 1rem
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: 70% auto;
 
-    div {
-      div.Cropper {}
+    div.inputs {
       display: grid
-      grid-template-columns: 7.5rem 15rem auto;
-      align-items: center
+      div {
+        display: grid;
+        grid-template-columns: 9rem auto;
 
-      label {
-        font-size: .8rem
-        text-transform: uppercase
-        letter-spacing: .1rem
-      }
+        div.Cropper {
+          input[type='file'] {
+            width: 14rem
+          }
+        }
+        align-items: center
 
-      input { }
-      input.quorum {
-        max-width: 18rem
+        label {
+          font-size: .8rem
+          text-transform: uppercase
+          letter-spacing: .1rem
+        }
+
+        input {
+          width: 14rem
+        }
       }
-      textarea { min-height: 8rem }
     }
 
-    div.avatar {
+    div.current {
       a.Avatar {
         justify-self: center
       }
