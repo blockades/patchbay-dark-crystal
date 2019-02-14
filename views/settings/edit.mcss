@@ -37,7 +37,13 @@ Settings {
 
         div.Cropper {
           input[type='file'] {
+            color: white
+            border: none
+            font-family: sans, sans-serif, arial
+            font-size: 1rem
             width: 14rem
+            padding: .5rem
+            background: rebeccapurple
           }
         }
         align-items: center
@@ -49,7 +55,13 @@ Settings {
         }
 
         input {
+          color: white
+          border: none
+          font-family: sans, sans-serif, arial
+          font-size: 1rem
           width: 14rem
+          padding: .5rem
+          background: rebeccapurple
         }
       }
     }
