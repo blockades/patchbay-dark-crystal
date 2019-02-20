@@ -56,28 +56,25 @@ module.exports = function CrystalsShow ({ root, scuttle, avatar }) {
             avatar,
             state
           })
-          case SECRET: return SecretTab()
+          case SECRET:
+            const view = Value()
+
+            scuttle.recover.async.recombine(root, (err, secretObject) => {
+              if (err) state.error.set(err)
+              else {
+                state.secret.set(secretObject.secret)
+                if (secretObject.label) state.secretLabel.set(secretObject.label)
+                view.set(
+                  h('div.secret', [ h('div.section', [ Secret({ state }) ]) ])
+                )
+              }
+            })
+
+            return view
         }
       })
     ])
   ])
-
-  function SecretTab () {
-    const view = Value()
-
-    scuttle.recover.async.recombine(rootId, (err, secret) => {
-      if (err) state.error.set(err)
-      else {
-        view.set(
-          h('div.secret', [
-            h('div.section', [ Secret({ secret: secret.secret, secretLabel: secret.label }) ])
-          ])
-        )
-      }
-    })
-
-    return view
-  }
 
   function updateStore () {
     pull(

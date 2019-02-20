@@ -1,6 +1,6 @@
 const { h, Value, when } = require('mutant')
 
-module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, recipients = null }, callback) {
+module.exports = function DarkCrystalRequestNew ({ root, scuttle, recipients = null }, callback) {
   // if recipients is null, then all shard holders get a request!
   const rootId = root.key
   const requesting = Value(false)
@@ -18,13 +18,13 @@ module.exports = function DarkCrystalRequestNew ({ root, scuttle, modal, recipie
   ])
 
   function warningModal () {
-    return modal(
-      h('div.warning', [
-        h('span', 'Are you sure?'),
-        h('button -subtle', { 'ev-click': () => warningOpen.set(false) }, 'Cancel'),
-        h('button -subtle', { 'ev-click': sendRequest }, 'OK')
-      ]), { isOpen: warningOpen }
-    )
+    // return modal(
+    //   h('div.warning', [
+    //     h('span', 'Are you sure?'),
+    //     h('button -subtle', { 'ev-click': () => warningOpen.set(false) }, 'Cancel'),
+    //     h('button -subtle', { 'ev-click': sendRequest }, 'OK')
+    //   ]), { isOpen: warningOpen }
+    // )
   }
 
   function sendRequest () {

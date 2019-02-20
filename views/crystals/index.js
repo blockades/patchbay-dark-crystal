@@ -4,7 +4,7 @@ const { h, Array: MutantArray, map, throttle } = require('mutant')
 module.exports = function CrystalsIndex (opts) {
   const {
     scuttle,
-    routeTo
+    showCrystal,
   } = opts
 
   const roots = getRoots()
@@ -13,7 +13,7 @@ module.exports = function CrystalsIndex (opts) {
 
   function Root (msg) {
     return h('div.crystal', [
-      h('div.overview', { 'ev-click': () => routeTo(msg) }, [
+      h('div.overview', { 'ev-click': () => showCrystal({ root: msg }) }, [
         h('div.name', msg.value.content.name),
         h('div.started', new Date(msg.value.timestamp).toLocaleDateString())
       ])

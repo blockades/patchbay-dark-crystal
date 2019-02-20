@@ -1,3 +1,43 @@
-DarkCrystalCrystalsShow {
+CrystalsShow {
   font-family: sans, sans-serif, arial
+  font-size: 1rem
+  color: #fff
+  background: #000
+
+  width: 50rem
+  min-height: 32rem
+
+  h1 {
+    font-size: 1rem
+    text-transform: uppercase
+    letter-spacing: 0.4rem
+
+    padding: 2rem
+    padding-bottom: 1rem
+    margin: 0
+  }
+
+  section.body {
+    div.tabs {
+      padding: 0 var(--side-pad)
+
+      display: grid
+      grid-template-columns: auto auto auto
+      grid-gap: 1.5rem
+      justify-content: start
+      text-transform: uppercase
+      letter-spacing: 2px
+      font-size: .7rem
+
+      div.tab {
+        cursor: pointer
+        padding-bottom: .5rem
+        border-bottom: 1px solid rgba(0,0,0,0)
+
+        -selected { border-bottom: 1px solid rgba(255,255,255,1) }
+
+        span { padding-left: .5rem }
+      }
+    }
+  }
 }

@@ -8,9 +8,10 @@ module.exports = function Secret (opts) {
     error = Value(),
     modalOpen = Value(),
     secretLabel = Value(),
-    secret = Value()
+    secret = ''
   } = opts
 
+  console.log(secret)
   return h('DarkCrystalSecret', when(error, renderError(), renderSecret()))
 
   function renderSecret () {

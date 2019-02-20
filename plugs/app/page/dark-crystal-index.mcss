@@ -1,4 +1,11 @@
 DarkCrystal -index {
+  i.fa.fa-spinner {
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%, -50%)
+  }
+
   section.picker {
     display: flex
 

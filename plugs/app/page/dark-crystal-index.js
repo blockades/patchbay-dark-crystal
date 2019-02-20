@@ -15,13 +15,13 @@ const {
 // Views
 const CrystalsIndex = require('../../../views/crystals/index')
 const CrystalsNew = require('../../../views/crystals/new')
+const CrystalsShow = require('../../../views/crystals/show')
 const FriendsCrystalsIndex = require('../../../views/friends/crystals/index')
 const FriendsCrystalsShow = require('../../../views/friends/crystals/show')
 const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
 const ForwardNew = require('../../../views/forward/new')
-const SettingsEdit = require('../../../views/settings/edit')
-const LocalPeers = require('../../../views/peers/local')
+const SettingsShow = require('../../../views/settings/show')
 
 // Components
 const Tooltip = require('../../../views/component/tooltip')
@@ -74,6 +74,7 @@ exports.create = function (api) {
       abouts: MutantArray([])
     })
 
+    // %%TODO%% extract into separate file
     onceTrue(server, server => {
       updateStore()
       watchForUpdates()
@@ -90,7 +91,10 @@ exports.create = function (api) {
                   about: server.id
                 }
               }
-            }
+            },
+            // %%TODO%%: Work out why reduce isn't working?
+            // $map: ['value', 'content', 'type'],
+            // $reduce: { $count: true }
           }]
         }
       }
@@ -119,86 +123,79 @@ exports.create = function (api) {
       }
     })
 
-    return when(state.ready,
-      h('DarkCrystal -index', { title: '/dark-crystal' }, [
-        h('h1', [
-          'Dark Crystal',
-          h('i.fa.fa-diamond'),
-          Settings({ abouts: state.abouts, scuttle }),
-          Peers()
-        ]),
-        h('section.picker', [MINE, OTHERS, FORWARDS].map(m => {
-          return h('div', {
-            'ev-click': () => state.mode.set(m),
-            className: computed(state.mode, mode => mode === m ? '-active' : '')
-          }, m)
-        })),
-        MySecrets({ mode: state.mode, scuttle }),
-        OthersShards({ mode: state.mode, scuttle }),
-        FriendsCrystals({ mode: state.mode, scuttle })
+    return h('DarkCrystal -index', { title: '/dark-crystal' }, [
+      h('div.header', [
+        h('h1', 'Dark Crystal'),
+        h('i.fa.fa-diamond.fa-lg'),
       ]),
-      h('i.fa.fa-spinner.fa-pulse')
-    )
-  }
-
-  function Peers () {
-    const isOpen = Value(false)
-
-    const view = LocalPeers({
-      onCancel: () => isOpen.set(false),
-      peers: api.sbot.obs.localPeers,
-      avatar: api.about.html.avatar,
-      name: api.about.obs.name,
-    })
-
-    const modal = api.app.html.modal(view, { isOpen })
-
-    return [
-      h('i.fa.fa-users', { 'ev-click': () => isOpen.set(true), title: 'Connections' }),
-      modal
-    ]
+      when(state.ready,
+        [
+          h('div.nav', [
+            Settings({ abouts: state.abouts, scuttle })
+          ]),
+          h('section.picker', [MINE, OTHERS, FORWARDS].map(m => {
+            return h('div', {
+              'ev-click': () => state.mode.set(m),
+              className: computed(state.mode, mode => mode === m ? '-active' : '')
+            }, m)
+          })),
+          MySecrets({ mode: state.mode, scuttle }),
+          OthersShards({ mode: state.mode, scuttle }),
+          FriendsCrystals({ mode: state.mode, scuttle })
+        ],
+        h('i.fa.fa-spinner.fa-pulse.fa-5x')
+      )
+    ])
   }
 
   function Settings ({ scuttle, abouts }) {
     const isOpen = Value(false)
 
-    const view = SettingsEdit({
+    const view = SettingsShow({
       onCancel: () => isOpen.set(false),
       feedId: api.keys.sync.id(),
       avatar: api.about.html.avatar,
       name: api.about.obs.name,
       publish: api.message.async.publish,
       blobUrl: api.blob.sync.url,
-      addBlob: api.sbot.async.addBlob
+      addBlob: api.sbot.async.addBlob,
+      localPeers: api.sbot.obs.localPeers
     })
 
     const modal = api.app.html.modal(view, { isOpen })
 
     return [
-      h('i.fa.fa-cog', { 'ev-click': () => isOpen.set(true), title: 'Settings' }),
-      // TODO: integrate a tooltip or flash alert system to begin to show warning messages to users...
-      abouts.getLength() > 0 ? null : h('i.fa.fa-warning'), // currently shows when is first time user (i.e. they haven't published a name or avatar)
-      // abouts.getLength() > 0 ? null : Tooltip({
-      //   text: 'Setup your account details in the settings page...',
-      //   position: 'top'
-      // }),
+      h('i.fa.fa-cog.fa-lg', { 'ev-click': () => isOpen.set(true), title: 'Settings' }),
+      // %%TODO%%: integrate a tooltip or flash alert system to begin to show warning messages to users...
+      computed([abouts], abouts => {
+        if (abouts.length === 0) return h('i.fa.fa-warning')
+        else return null
+      }),
       modal
     ]
   }
 
   function MySecrets ({ mode, scuttle }) {
+    const view = Value('Rabbits!')
+    const isOpen = Value(false)
+    const modal = api.app.html.modal(view, { isOpen })
+
+    function showCrystal (opts) {
+      view.set(CrystalsShow(Object.assign({}, opts, {
+        scuttle,
+        avatar: api.about.html.avatar
+      })))
+      isOpen.set(true)
+    }
+
     const { formModal, formOpen } = NewCrystalForm(scuttle)
 
     return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
       formModal,
       h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      h('CrystalsIndex', [
-        CrystalsIndex({
-          scuttle,
-          routeTo: api.app.sync.goTo
-        })
-      ])
-    ])
+      h('CrystalsIndex', [ CrystalsIndex({ scuttle, showCrystal }) ]),
+      modal
+   ])
   }
 
   function OthersShards ({ mode, scuttle }) {
@@ -266,34 +263,6 @@ exports.create = function (api) {
     ])
   }
 
-  // function ForwardShards ({ mode, scuttle }) {
-  //   const view = Value('Cats are cooler')
-  //   const isOpen = Value(false)
-  //   const forwardModal = api.app.html.modal(view, { isOpen })
-
-  //   const newForward = (opts) => {
-  //     view.set(ForwardNew(Object.assign({}, opts, {
-  //       avatar: api.about.html.avatar,
-  //       name: api.about.obs.name,
-  //       suggest: { about: api.about.async.suggest },
-  //       scuttle,
-  //       onCancel: () => isOpen.set(false)
-  //     })))
-  //     isOpen.set(true)
-  //   }
-
-  //   return h('section.content', { className: computed(mode, m => m === FORWARD ? '-active' : '') }, [
-  //     h('div.message', [ h('div.span',  'Select a friend whose shards you have been asked to forward...') ]),
-  //     ForwardIndex({
-  //       scuttle,
-  //       avatar: api.about.html.avatar,
-  //       name: api.about.obs.name,
-  //       newForward
-  //     }),
-  //     forwardModal
-  //   ])
-  // }
-
   function NewCrystalForm (scuttle) {
     const form = CrystalsNew({
       scuttle,
@@ -312,5 +281,4 @@ exports.create = function (api) {
 
     return { formModal, formOpen }
   }
-
 }
