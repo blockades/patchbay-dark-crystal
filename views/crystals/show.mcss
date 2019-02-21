@@ -1,11 +1,18 @@
 CrystalsShow {
   font-family: sans, sans-serif, arial
   font-size: 1rem
-  color: #fff
-  background: #000
+  color: #000
+  background: #fff
 
-  width: 50rem
-  min-height: 32rem
+  width: 40rem
+  height: 40rem
+
+  display: grid
+  grid-template-rows: auto auto 1fr
+
+  section {
+    padding: 1rem 2rem
+  }
 
   h1 {
     font-size: 1rem
@@ -18,6 +25,8 @@ CrystalsShow {
   }
 
   section.body {
+    overflow-y: hidden
+
     div.tabs {
       padding: 0 var(--side-pad)
 
@@ -34,7 +43,7 @@ CrystalsShow {
         padding-bottom: .5rem
         border-bottom: 1px solid rgba(0,0,0,0)
 
-        -selected { border-bottom: 1px solid rgba(255,255,255,1) }
+        -selected { border-bottom: 1px solid rgba(0,0,0,1) }
 
         span { padding-left: .5rem }
       }

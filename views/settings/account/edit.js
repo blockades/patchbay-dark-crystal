@@ -21,23 +21,25 @@ module.exports = function AccountEdit (opts) {
 
   return (
     h('div.account', [
-      h('div.inputs', [
-        h('div.avatar', [
-          h('label.avatar', 'Avatar'),
-          Cropper({ addBlob, image: state.avatar })
+      h('div.personal', [
+        h('div.inputs', [
+          h('div.avatar', [
+            h('label.avatar', 'Avatar'),
+            Cropper({ addBlob, image: state.avatar })
+          ]),
+          h('div.name', [
+            h('label.name', 'Name'),
+            computed(name(feedId), name => (
+              h('input.name', {
+                value: name,
+                'ev-input': (e) => state.name.set(e.target.value)
+              })
+            ))
+          ])
         ]),
-        h('div.name', [
-          h('label.name', 'Name'),
-          computed(name(feedId), name => (
-            h('input.name', {
-              value: name,
-              'ev-input': (e) => state.name.set(e.target.value)
-            })
-          ))
+        h('div.current', [
+          computed(state.avatar, img => (img ? h('img.avatar', { src: blobUrl(img.link) }) : avatar(feedId, 10)))
         ])
-      ]),
-      h('div.current', [
-        computed(state.avatar, img => (img ? h('img.avatar', { src: blobUrl(img.link) }) : avatar(feedId, 10)))
       ]),
       h('div.actions', when(state.isSaving,
         h('i.fa.fa-spinner.fa-pulse'),

@@ -51,16 +51,37 @@ Settings {
     div.account {
       display: grid
       grid-gap: 1rem
-      grid-template-columns: 70% auto
 
-      div.inputs {
-        display: grid
-        div {
+      div.personal {
+        display: grid;
+        grid-template-columns: 1fr auto;
+
+        div.inputs {
           display: grid
-          grid-template-columns: 9rem auto
+          div {
+            display: grid
+            grid-template-columns: 9rem auto
 
-          div.Cropper {
-            input[type='file'] {
+            div.Cropper {
+              input[type='file'] {
+                color: white
+                border: none
+                font-family: sans, sans-serif, arial
+                font-size: 1rem
+                width: 14rem
+                padding: .5rem
+                background: rebeccapurple
+              }
+            }
+            align-items: center
+
+            label {
+              font-size: .8rem
+              text-transform: uppercase
+              letter-spacing: .1rem
+            }
+
+            input {
               color: white
               border: none
               font-family: sans, sans-serif, arial
@@ -70,35 +91,18 @@ Settings {
               background: rebeccapurple
             }
           }
-          align-items: center
-
-          label {
-            font-size: .8rem
-            text-transform: uppercase
-            letter-spacing: .1rem
-          }
-
-          input {
-            color: white
-            border: none
-            font-family: sans, sans-serif, arial
-            font-size: 1rem
-            width: 14rem
-            padding: .5rem
-            background: rebeccapurple
-          }
-        }
-      }
-
-      div.current {
-        a.Avatar {
-          justify-self: center
         }
 
-        img.avatar {
-          width: 10rem
-          height: 10rem
-          justify-self: center
+        div.current {
+          a.Avatar {
+            justify-self: center
+          }
+
+          img.avatar {
+            width: 10rem
+            height: 10rem
+            justify-self: center
+          }
         }
       }
 

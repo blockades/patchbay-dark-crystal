@@ -11,8 +11,8 @@ DarkCrystal {
 
   div.header {
     display: grid
-    grid-template-columns: repeat(4, auto)
-    grid-gap: .9rem
+    grid-template-columns: auto 1fr auto;
+    grid-gap: 1rem
     justify-content: start
     align-items: baseline
     margin-top: .5rem
@@ -23,15 +23,6 @@ DarkCrystal {
       font-size: 1.2rem
     }
 
-    i {
-      :hover {
-        color: rebeccapurple
-        cursor: pointer
-      }
-    }
-  }
-
-  div.nav {
     i {
       :hover {
         color: rebeccapurple

@@ -127,12 +127,10 @@ exports.create = function (api) {
       h('div.header', [
         h('h1', 'Dark Crystal'),
         h('i.fa.fa-diamond.fa-lg'),
+        when(state.ready, Settings({ abouts: state.abouts, scuttle }))
       ]),
       when(state.ready,
         [
-          h('div.nav', [
-            Settings({ abouts: state.abouts, scuttle })
-          ]),
           h('section.picker', [MINE, OTHERS, FORWARDS].map(m => {
             return h('div', {
               'ev-click': () => state.mode.set(m),
@@ -165,7 +163,7 @@ exports.create = function (api) {
     const modal = api.app.html.modal(view, { isOpen })
 
     return [
-      h('i.fa.fa-cog.fa-lg', { 'ev-click': () => isOpen.set(true), title: 'Settings' }),
+      h('i.fa.fa-cog.fa-2x', { 'ev-click': () => isOpen.set(true), title: 'Settings' }),
       // %%TODO%%: integrate a tooltip or flash alert system to begin to show warning messages to users...
       computed([abouts], abouts => {
         if (abouts.length === 0) return h('i.fa.fa-warning')
@@ -183,7 +181,8 @@ exports.create = function (api) {
     function showCrystal (opts) {
       view.set(CrystalsShow(Object.assign({}, opts, {
         scuttle,
-        avatar: api.about.html.avatar
+        avatar: api.about.html.avatar,
+        name: api.about.obs.name
       })))
       isOpen.set(true)
     }

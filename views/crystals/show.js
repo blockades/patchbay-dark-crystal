@@ -15,9 +15,9 @@ const DETAILS = 'details'
 const SHARDS = 'shards'
 const SECRET = 'secret'
 
-module.exports = function CrystalsShow ({ root, scuttle, avatar }) {
+module.exports = function CrystalsShow ({ root, scuttle, avatar, name }) {
   const rootId = root.key
-  const { name } = getContent(root)
+  const { name: crystalName } = getContent(root)
 
   const store = Struct({
     ready: Value(false),
@@ -28,6 +28,8 @@ module.exports = function CrystalsShow ({ root, scuttle, avatar }) {
   const state = {
     tab: Value(DETAILS),
     quorumMet: Value(false),
+    hasRequests: Value(false),
+    numReplies: Value(0),
     secret: Value(),
     secretLabel: Value(),
     error: Value()
@@ -37,7 +39,7 @@ module.exports = function CrystalsShow ({ root, scuttle, avatar }) {
   watchForUpdates()
 
   return h('CrystalsShow', { title: '' }, [
-    h('h1', name),
+    h('h1', crystalName),
     h('section.body', [
       Tabs(state),
       computed(state.tab, tab => {
@@ -54,30 +56,18 @@ module.exports = function CrystalsShow ({ root, scuttle, avatar }) {
             records: store.shardRecords,
             scuttle,
             avatar,
-            state
+            state,
+            name
           })
-          case SECRET: return SecretTab()
+          case SECRET: return SecretTab({
+            scuttle,
+            state,
+            rootId
+          })
         }
       })
     ])
   ])
-
-  function SecretTab () {
-    const view = Value()
-
-    scuttle.recover.async.recombine(rootId, (err, secret) => {
-      if (err) state.error.set(err)
-      else {
-        view.set(
-          h('div.secret', [
-            h('div.section', [ Secret({ secret: secret.secret, secretLabel: secret.label }) ])
-          ])
-        )
-      }
-    })
-
-    return view
-  }
 
   function updateStore () {
     pull(
@@ -158,3 +148,19 @@ function Tabs (state) {
   })
 }
 
+
+function SecretTab ({ scuttle, state, rootId }) {
+  const view = Value()
+
+  scuttle.recover.async.recombine(rootId, (err, secret) => {
+    if (err) state.error.set(err)
+    else {
+      let container = h('div.secret', [
+        h('div.section', [ Secret({ secret: secret.secret, secretLabel: secret.label }) ])
+      ])
+      view.set(container)
+    }
+  })
+
+  return view
+}
