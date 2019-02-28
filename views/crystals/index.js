@@ -13,7 +13,7 @@ module.exports = function CrystalsIndex (opts) {
   const roots = getRoots()
 
   return h('DarkCrystalCrystalsIndex', [
-    h('div.new', [
+    h('div.new', { title: 'Create a new Dark Crystal' }, [
       h('div.overview', { 'ev-click': () => newCrystal() }, [
         h('i.fa.fa-plus.fa-lg')
       ])
@@ -22,10 +22,12 @@ module.exports = function CrystalsIndex (opts) {
   ])
 
   function Root (msg) {
+    const { value: { timestamp, content: { name } } } = msg
+    const date = new Date(timestamp).toLocaleDateString()
     return h('div.crystal', [
-      h('div.overview', { 'ev-click': () => showCrystal({ root: msg }) }, [
-        h('div.name', msg.value.content.name),
-        h('div.started', new Date(msg.value.timestamp).toLocaleDateString())
+      h('div.overview', { title: `${name} - ${date}`, 'ev-click': () => showCrystal({ root: msg }) }, [
+        h('div.name', name),
+        h('div.started', date)
       ])
     ])
   }

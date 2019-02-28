@@ -3,7 +3,7 @@ DarkCrystal {
   align-content: start
   justify-content: center
   grid-template-columns: 40rem
-  grid-template-rows: 4rem 1rem 1rem auto
+  grid-template-rows: 4rem 3rem auto
   grid-gap: 1rem
 
   width: 100%

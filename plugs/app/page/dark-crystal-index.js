@@ -181,6 +181,7 @@ exports.create = function (api) {
     function showCrystal (opts) {
       view.set(CrystalsShow(Object.assign({}, opts, {
         scuttle,
+        onCancel: () => isOpen.set(false),
         avatar: api.about.html.avatar,
         name: api.about.obs.name
       })))

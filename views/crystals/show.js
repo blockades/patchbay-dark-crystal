@@ -15,7 +15,15 @@ const DETAILS = 'details'
 const SHARDS = 'shards'
 const SECRET = 'secret'
 
-module.exports = function CrystalsShow ({ root, scuttle, avatar, name }) {
+module.exports = function CrystalsShow (opts) {
+  const {
+    root,
+    scuttle,
+    avatar,
+    name,
+    onCancel
+  } = opts
+
   const rootId = root.key
   const { name: crystalName } = getContent(root)
 
@@ -66,7 +74,8 @@ module.exports = function CrystalsShow ({ root, scuttle, avatar, name }) {
           })
         }
       })
-    ])
+    ]),
+    h('section.actions', [ h('button -primary', { 'ev-click': onCancel }, 'Cancel') ])
   ])
 
   function updateStore () {

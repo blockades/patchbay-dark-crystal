@@ -36,15 +36,6 @@ DarkCrystal -index {
       width: 4rem
       justify-self: end
     }
-
-    div.DarkCrystalFriendsIndex {
-      margin-top: 2.8rem
-      /* aligns with my crystal index */
-    }
-
-    div.DarkCrystalFriendsCrystalsIndex {
-      margin-top: 2.8rem
-    }
   }
 }
 

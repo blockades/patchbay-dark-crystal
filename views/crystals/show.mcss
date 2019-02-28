@@ -49,4 +49,10 @@ CrystalsShow {
       }
     }
   }
+
+  section.actions {
+    padding: 1rem 1rem
+    align-self: end
+    display: grid
+  }
 }
