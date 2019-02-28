@@ -10,7 +10,7 @@ module.exports = function CrystalsNew (opts) {
     suggest,
     name,
     avatar,
-    afterRitual = console.log,
+    onSubmit = console.log,
     onCancel = console.log
   } = opts
 
@@ -112,7 +112,7 @@ module.exports = function CrystalsNew (opts) {
         return
       }
 
-      afterRitual(err, data)
+      onSubmit(err, data)
       state.set(initialState)
     })
   }

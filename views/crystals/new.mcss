@@ -4,8 +4,10 @@ DarkCrystalCrystalsNew {
   color: #fff
   background: #000
 
-  width: 50rem
-  min-height: 32rem
+  width: 40rem
+  min-height: 40rem
+  display: grid
+  grid-template-rows: 4rem auto 4rem
 
   h1 {
     font-size: 1rem

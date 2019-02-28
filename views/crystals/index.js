@@ -1,15 +1,25 @@
 const pull = require('pull-stream')
 const { h, Array: MutantArray, map, throttle } = require('mutant')
 
+const CrystalsNew = require('./new')
+
 module.exports = function CrystalsIndex (opts) {
   const {
     scuttle,
     showCrystal,
+    newCrystal,
   } = opts
 
   const roots = getRoots()
 
-  return h('DarkCrystalCrystalsIndex', [ map(roots, Root, { comparer }) ])
+  return h('DarkCrystalCrystalsIndex', [
+    h('div.new', [
+      h('div.overview', { 'ev-click': () => newCrystal() }, [
+        h('i.fa.fa-plus.fa-lg')
+      ])
+    ]),
+    map(roots, Root, { comparer })
+  ])
 
   function Root (msg) {
     return h('div.crystal', [

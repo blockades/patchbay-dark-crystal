@@ -187,12 +187,20 @@ exports.create = function (api) {
       isOpen.set(true)
     }
 
-    const { formModal, formOpen } = NewCrystalForm(scuttle)
+    function newCrystal (opts) {
+      view.set(CrystalsNew(Object.assign({}, opts, {
+        scuttle,
+        onCancel: () => isOpen.set(false),
+        onSubmit: () => isOpen.set(false),
+        suggest: { about: api.about.async.suggest },
+        name: api.about.obs.name,
+        avatar: api.about.html.avatar
+      })))
+      isOpen.set(true)
+    }
 
     return h('section.content', { className: computed(mode, m => m === MINE ? '-active' : '') }, [
-      formModal,
-      h('button -primary', { 'ev-click': () => formOpen.set(true) }, 'New'),
-      h('CrystalsIndex', [ CrystalsIndex({ scuttle, showCrystal }) ]),
+      h('CrystalsIndex', [ CrystalsIndex({ scuttle, showCrystal, newCrystal }) ]),
       modal
    ])
   }
@@ -260,24 +268,5 @@ exports.create = function (api) {
       }),
       modal
     ])
-  }
-
-  function NewCrystalForm (scuttle) {
-    const form = CrystalsNew({
-      scuttle,
-      onCancel: () => formOpen.set(false),
-      afterRitual: (err, data) => {
-        if (err) return
-        formOpen.set(false)
-        console.log('ritual complete', data)
-      },
-      suggest: { about: api.about.async.suggest },
-      name: api.about.obs.name,
-      avatar: api.about.html.avatar
-    })
-    const formOpen = Value(false)
-    const formModal = api.app.html.modal(form, { isOpen: formOpen })
-
-    return { formModal, formOpen }
   }
 }
