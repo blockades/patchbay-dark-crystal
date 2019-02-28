@@ -19,8 +19,12 @@ module.exports = function SettingsShow (opts) {
   } = opts
 
   const state = {
-    tab: Value(ACCOUNT)
+    tab: Value(ACCOUNT),
+    isSaving: Value(false),
+    name: Value(),
+    avatar: Value()
   }
+
 
   return h('Settings', [
     h('h1', 'Settings'),
@@ -33,10 +37,10 @@ module.exports = function SettingsShow (opts) {
               name,
               avatar,
               addBlob,
-              publish,
               feedId,
               blobUrl,
-              onCancel
+              onCancel,
+              state
             })
           ]
           case NETWORK: return [
@@ -47,8 +51,28 @@ module.exports = function SettingsShow (opts) {
             })
           ]
         }
-      }),
-    ])
+      })
+    ]),
+    h('section.actions', when(state.isSaving,
+      h('div.spinner', [ h('i.fa.fa-spinner.fa-pulse') ]),
+      h('div.buttons', [
+        h('button -subtle', { 'ev-click': onCancel }, 'Cancel'),
+        h('button -primary', { 'ev-click': () => {
+          state.isSaving.set(true)
+
+          const params = {
+            name: resolve(state.name),
+            image: resolve(state.avatar)
+          }
+
+          publish({ type: 'about', about: feedId, ...params }, (err, about) => {
+            state.isSaving.set(false)
+            if (err) throw err
+            else onCancel()
+          })
+        } }, 'Save')
+      ])
+    ))
   ])
 }
 
