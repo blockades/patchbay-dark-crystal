@@ -11,7 +11,6 @@ module.exports = function Secret (opts) {
     secret = ''
   } = opts
 
-  console.log(secret)
   return h('DarkCrystalSecret', when(error, renderError(), renderSecret()))
 
   function renderSecret () {
