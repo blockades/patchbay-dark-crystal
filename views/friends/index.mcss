@@ -1,6 +1,6 @@
 DarkCrystalFriendsIndex {
   overflow-y: scroll
-  min-height: 28rem
+  max-height: 28rem
 
   font-family: sans, sans-serif, arial
 
