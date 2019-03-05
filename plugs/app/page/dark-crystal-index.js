@@ -21,7 +21,7 @@ const FriendsCrystalsShow = require('../../../views/friends/crystals/show')
 const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
 const ForwardNew = require('../../../views/forward/new')
-const SettingsShow = require('../../../views/settings/show')
+const SettingsEdit = require('../../../views/settings/show')
 
 // Components
 const Tooltip = require('../../../views/component/tooltip')
@@ -149,7 +149,7 @@ exports.create = function (api) {
   function Settings ({ scuttle, abouts }) {
     const isOpen = Value(false)
 
-    const view = SettingsShow({
+    const view = SettingsEdit({
       onCancel: () => isOpen.set(false),
       feedId: api.keys.sync.id(),
       avatar: api.about.html.avatar,

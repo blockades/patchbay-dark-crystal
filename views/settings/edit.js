@@ -6,7 +6,7 @@ const AccountEdit = require('./account/edit')
 const NETWORK = 'network'
 const ACCOUNT = 'account'
 
-module.exports = function SettingsShow (opts) {
+module.exports = function SettingsEdit (opts) {
   const {
     feedId,
     onCancel = console.log,
