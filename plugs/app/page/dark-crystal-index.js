@@ -21,7 +21,7 @@ const FriendsCrystalsShow = require('../../../views/friends/crystals/show')
 const FriendsIndex = require('../../../views/friends/index')
 const FriendsShow = require('../../../views/friends/show')
 const ForwardNew = require('../../../views/forward/new')
-const SettingsEdit = require('../../../views/settings/show')
+const SettingsEdit = require('../../../views/settings/edit')
 
 // Components
 const Tooltip = require('../../../views/component/tooltip')
