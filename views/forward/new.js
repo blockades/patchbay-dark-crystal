@@ -96,7 +96,7 @@ module.exports = function DarkCrystalForwardNew (opts) {
     pull(
       pull.values(shards),
       pull.map(shard => shard.root),
-      pull.asyncMap((root, cb) => scuttle.forward.async.publish(root, feedId, cb)),
+      pull.asyncMap((root, cb) => scuttle.forward.async.publish({ root, recp: feedId }, cb)),
       pull.collect((err, forwards) => {
         // TODO handle this better
         if (err) return console.err(err)
